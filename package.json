@@ -1,10 +1,15 @@
 {
   "name": "mylo",
+    "engines": {
+    "node": ">=16.9.1" 
+  },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "requirements-check": "babel-node check-version.js",
+    "postinstall": "npm run requirements-check"
   },
   "author": "",
   "license": "ISC",
