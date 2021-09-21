@@ -40,6 +40,7 @@ client.on("messageCreate", async message => {
                 if(connection.state.subscription){
                     connection.state.subscription.player.stop()
                 }
+                queue.get(message.guildId).resources = []
                 connection.destroy()
             })
 
@@ -74,7 +75,9 @@ client.on("messageCreate", async message => {
                     adapterCreator: channel.guild.voiceAdapterCreator,
                 }).on(VoiceConnectionStatus.Disconnected, () =>{
                     if(connection.state.subscription){
-                        connection.state.subscription.player.stop()}
+                        connection.state.subscription.player.stop()
+                    }
+                    queue.get(message.guildId).resources = []
                     connection.destroy()
                 })
             }else{
