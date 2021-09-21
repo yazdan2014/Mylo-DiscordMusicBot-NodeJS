@@ -32,12 +32,14 @@ client.on("messageCreate", async message => {
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Youre not in a channel")
             if(message.guild.me.voice.channelId == message.member.voice.channelId) return message.channel.send("Im already in your vc")
-            joinVoiceChannel({
+            var connection = joinVoiceChannel({
                 channelId: channel.id,
                 guildId: channel.guild.id,
                 adapterCreator: channel.guild.voiceAdapterCreator,
             }).on(VoiceConnectionStatus.Disconnected, () =>{
-                connection.state.subscription.player.stop()
+                if(connection.state.subscription){
+                    connection.state.subscription.player.stop()
+                }
                 connection.destroy()
             })
 
