@@ -18,8 +18,5 @@
     "ffmpeg-static": "^4.4.0",
     "play-dl": "^0.9.9",
     "tweetnacl": "^1.0.3"
-  },
-  "devDependencies": {
-    "@babel/node": "^7.15.4"
   }
 }
