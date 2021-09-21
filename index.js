@@ -71,7 +71,8 @@ client.on("messageCreate", async message => {
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
                 }).on(VoiceConnectionStatus.Disconnected, () =>{
-                    connection.state.subscription.player.stop()
+                    if(connection.state.subscription){
+                        connection.state.subscription.player.stop()}
                     connection.destroy()
                 })
             }else{
