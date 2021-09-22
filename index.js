@@ -7,6 +7,7 @@ const changeSeek = require("./ffmpeg")
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id, queue_constructor{resources{} ,nowplayingdate } }
 
+
 client.once('ready', () => {
 	console.log('Ready!')
 });
@@ -53,6 +54,9 @@ client.on("messageCreate", async message => {
                 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
             var result = await play.search(query , { limit : 1 })
+
+            if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
+
             var stream = await play.stream(result[0].url)
             var data = await play.video_info(result[0].url)
             
@@ -190,7 +194,7 @@ client.on("messageCreate", async message => {
             if(!currentAudioRes) return message.channel.send("Nothing is being played")
 
             var seekVal = message.content.slice(commandWithPrefix.length +1 , message.content.length)
-            if(!seekVal || !seekVal.match(/^[0-9]+$/)) return message.channel.send("Please choose a correct NUMERIC seek value")
+            if(!(seekVal && (/^\d+$/.test(seekVal) || /^[0-5]?[0-9]:[0-5]?[0-9]$/.test(seekVal)))) return message.channel.send("Please choose a correct NATURAL NUMERIC seek value")
             var seekValFinal = 0
 
             if(seekVal.includes(":")){
@@ -199,8 +203,9 @@ client.on("messageCreate", async message => {
                 seekValFinal = parseInt(seekVal)
             }
 
-            if(seekValFinal < 0 || seekValFinal > currentAudioRes.metadata.durationInSec) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.durationInSec + "``")
-            console.log(seekValFinal)
+            if(seekValFinal <= 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" )
+            console.log(seekValFinal , currentAudioRes.metadata.secDuration)
+
             var data = currentAudioRes.metadata.data
             var player = connection.state.subscription.player
             var ffmpegInstance = changeSeek(seekValFinal.toString(), data.format[0].url)
