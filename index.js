@@ -249,13 +249,13 @@ function playSong(message , connection){
     })
 
     player.on(AudioPlayerStatus.Playing, () => {
-        if(!queue.get(message.guildId).resources[0].metadata.is_seeked){
+        if(!player.state.resource.metadata.is_seeked){
             message.channel.send("**Playing** " + "`" + queue.get(message.guildId).resources[0].metadata.title + "`")
-            queue.get(message.guildId).timeMusicStarted = new Date()
+            
         }else{
-
+            message.channel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
         }
-
+        queue.get(message.guildId).timeMusicStarted = new Date()
     });
 
     player.on('error', error => {
@@ -267,7 +267,6 @@ function playSong(message , connection){
         console.log("idle")
         queue.get(message.guildId).resources.shift()
         if(queue.get(message.guildId).resources.length !== 0){
-            console.log("gets here")
             playSong(message , connection)
         }
     })
