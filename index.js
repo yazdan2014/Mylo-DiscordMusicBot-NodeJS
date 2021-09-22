@@ -1,8 +1,8 @@
 const { Client , MessageEmbed } = require('discord.js');
-const {VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection } = require('@discordjs/voice');
+const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
-
+const changeSeek = require("./ffmpeg")
 
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id, queue_constructor{resources{} ,nowplayingdate } }
@@ -52,8 +52,9 @@ client.on("messageCreate", async message => {
             if(!query) return message.channel.send("Search for an actuall song")
                 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
-            const result = await play.search(query , { limit : 1 })
-            const stream = await play.stream(result[0].url)
+            var result = await play.search(query , { limit : 1 })
+            var stream = await play.stream(result[0].url)
+            var data = await play.video_info(result[0].url)
             
             const audioResource = createAudioResource(stream.stream,{
                 inputType : stream.type,
@@ -64,7 +65,9 @@ client.on("messageCreate", async message => {
                     guildId: message.guildId,
                     secDuration: result[0].durationInSec,
                     rawDuration: result[0].durationRaw,
-                    requestedBy: message.author.username
+                    requestedBy: message.author.username,
+                    data: data ,//used for the seek option
+                    is_seeked:false
                 }
             })
             var connection
@@ -176,42 +179,50 @@ client.on("messageCreate", async message => {
                 message.channel.send("Nothing is being played")
             }
         break
-        // case "seek":
-        //     var seekVal = message.content.slice(commandWithPrefix.length +1 , message.content.length)
-        //     var connection = getVoiceConnection(message.member.voice.guild.id)
-        //     if(connection){
-        //         if(currentAudio){
-        //             const stream = await play.stream(currentAudio)
-        //             const audioResource = createAudioResource(stream.stream,{
-        //                 inputType : stream.type
-        //             })
-        //             const player = createAudioPlayer({
-        //                 behaviors:{
-        //                     noSubscriber: NoSubscriberBehavior.Play,
-        //                 }
-        //             } , {seek: 60000})
-        //             audioResource.
-        //             player.on(AudioPlayerStatus.Playing, () => {
-        //                 message.channel.send("Seeked to" + seekVal)
-        //             });
-        //             player.on('error', error => {
-        //                 console.log(`Error: ${error} with resource`);
-        //                 message.channel.send("Something went wrong")
-        //                 currentAudio = ""
-        //             });
-        //             player.on(AudioPlayerStatus.Idle , () => {
-        //                 currentAudio = ""
-        //             })
+        case "seek":
+            var connection = getVoiceConnection(message.guildId)
 
-        //             player.play(audioResource)
-        //             connection.subscribe(player)
-        //         }else{
-        //             message.channel.send("Nothing is being played")
-        //         }
-        //     }else{
-        //         message.channel.send("Im not in a channel")
-        //     }
-        //     break
+            if(!connection ) return message.channel.send("Im not in a voice channel")
+            if(!connection.state.subscription) return message.channel.send("Nothing is being played")
+            
+            var currentAudioRes = connection.state.subscription.player.state.resource
+    
+            if(!currentAudioRes) return message.channel.send("Nothing is being played")
+
+            var seekVal = message.content.slice(commandWithPrefix.length +1 , message.content.length)
+            if(!seekVal || !seekVal.match(/^[0-9]+$/)) return message.channel.send("Please choose a correct NUMERIC seek value")
+            var seekValFinal = 0
+
+            if(seekVal.includes(":")){
+                seekValFinal += parseInt(seekVal.split(":")[0]) * 60 + parseInt(seekVal.split(":")[1])
+            }else{
+                seekValFinal = parseInt(seekVal)
+            }
+
+            if(seekValFinal < 0 || seekValFinal > currentAudioRes.metadata.durationInSec) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.durationInSec + "``")
+            console.log(seekValFinal)
+            var data = currentAudioRes.metadata.data
+            var player = connection.state.subscription.player
+            var ffmpegInstance = changeSeek(seekValFinal.toString(), data.format[0].url)
+            var resource = createAudioResource(ffmpegInstance, {
+                inputType : StreamType.OggOpus,
+                metadata:{
+                    title: currentAudioRes.metadata.title,
+                    url: currentAudioRes.metadata.url,
+                    thumbnail: currentAudioRes.metadata.thumbnail,
+                    guildId: currentAudioRes.metadata.guildId,
+                    secDuration: currentAudioRes.metadata.secDuration,
+                    rawDuration: currentAudioRes.metadata.rawDuration,
+                    requestedBy: currentAudioRes.metadata.requestedBy,
+                    data: currentAudioRes.metadata.data,//used for the seek option
+                    is_seeked:true,
+                    seekVal: seekValFinal
+                }
+             })
+            
+            player.play(resource)
+
+            break
     }
 
 });
@@ -231,16 +242,24 @@ function playSong(message , connection){
             noSubscriber: NoSubscriberBehavior.Play
         }
     })
+
     player.on(AudioPlayerStatus.Playing, () => {
-        message.channel.send("**Playing** " + "`" + queue.get(message.guildId).resources[0].metadata.title + "`")
-        queue.get(message.guildId).timeMusicStarted = new Date()
+        if(!queue.get(message.guildId).resources[0].metadata.is_seeked){
+            message.channel.send("**Playing** " + "`" + queue.get(message.guildId).resources[0].metadata.title + "`")
+            queue.get(message.guildId).timeMusicStarted = new Date()
+        }else{
+
+        }
+
     });
+
     player.on('error', error => {
         console.log(`Error: ${error} with resource`);
-        message.channel.send("Something went wrong")
-        
+        message.channel.send("Something went wrong");
     });
+
     player.on(AudioPlayerStatus.Idle , () => {
+        console.log("idle")
         queue.get(message.guildId).resources.shift()
         if(queue.get(message.guildId).resources.length !== 0){
             console.log("gets here")
@@ -248,7 +267,7 @@ function playSong(message , connection){
         }
     })
     player.play(queue.get(message.guildId).resources[0])
-    connection.subscribe(player , {volume: 1 ,seek:5000 })
+    connection.subscribe(player)
 }
 
 client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.8qfgeCwsVVFf9DsNe0MqKMnwEhQ");
