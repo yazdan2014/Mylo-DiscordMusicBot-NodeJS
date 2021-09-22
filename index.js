@@ -248,7 +248,7 @@ function playSong(message , connection){
         }
     })
     player.play(queue.get(message.guildId).resources[0])
-    connection.subscribe(player , {volume: 1 ,seek:50 })
+    connection.subscribe(player , {volume: 1 ,seek:5000 })
 }
 
 client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.8qfgeCwsVVFf9DsNe0MqKMnwEhQ");
