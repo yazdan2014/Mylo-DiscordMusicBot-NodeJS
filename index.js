@@ -104,18 +104,17 @@ client.on("messageCreate", async message => {
                 playSong(message , connection)
 
             }else if(guild_queue && guild_queue.resources.length!== 0){
-                
+                var currentAudioRes = connection.state.subscription.player.state.resource
                 var currentTime = new Date().getTime()
                 var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
-
                 var timePassedFromMusic = ((currentTime - timeMusicStarted)/1000).toFixed(0)
-
                 let estimated = -timePassedFromMusic
-
                 queue.get(message.guildId).resources.forEach(r=>{
                     estimated += r.metadata.secDuration
                 })
-
+                if(currentAudioRes.metadata.is_seeked){
+                    estimated += currentAudioRes.metadata.seekVal
+                }
                 console.log("queuing a song")
                 queue.get(message.guildId).resources.push(audioResource)
                 
@@ -138,7 +137,6 @@ client.on("messageCreate", async message => {
             }
             break
         case 'np':
-
         var currentTime = new Date()
         var connection = getVoiceConnection(message.guildId)
 
@@ -154,7 +152,8 @@ client.on("messageCreate", async message => {
         }
         let outPut = '▬'.repeat(30)
         let duration = currentAudioRes.metadata.secDuration
-        let current = ((currentTime.getTime() - queue.get(message.guildId).timeMusicStarted.getTime() )/1000).toFixed(0)
+        let current = Math.floor(((currentTime.getTime() - queue.get(message.guildId).timeMusicStarted.getTime() )/1000))
+        console.log("gets here")
         if(currentAudioRes.metadata.is_seeked){
             current += currentAudioRes.metadata.seekVal
         }
