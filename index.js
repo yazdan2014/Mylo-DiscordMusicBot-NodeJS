@@ -155,6 +155,9 @@ client.on("messageCreate", async message => {
         let outPut = '▬'.repeat(30)
         let duration = currentAudioRes.metadata.secDuration
         let current = ((currentTime.getTime() - queue.get(message.guildId).timeMusicStarted.getTime() )/1000).toFixed(0)
+        if(currentAudioRes.metadata.is_seeked){
+            current += currentAudioRes.metadata.seekVal
+        }
         y = ((current/duration)*30).toFixed(0)-1
         outPut = setCharAt(outPut , y , "🔘")
         const embed = new MessageEmbed()
