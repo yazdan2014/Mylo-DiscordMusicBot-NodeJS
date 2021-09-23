@@ -270,7 +270,7 @@ function playSong(message , connection){
 
     player.on(AudioPlayerStatus.Playing, () => {
         if(!player.state.resource.metadata.is_seeked){
-            message.channel.send("<:YT:890526793625391104>**Playing** " + "`" + queue.get(message.guildId).resources[0].metadata.title + "`")
+            message.channel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(message.guildId).resources[0].metadata.title + "`")
             
         }else{
             message.channel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
