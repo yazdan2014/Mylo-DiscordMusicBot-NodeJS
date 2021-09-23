@@ -3,6 +3,7 @@ const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource 
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
 const changeSeek = require("./ffmpeg")
+const numToEmoji = require("number-to-emoji")
 
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id, queue_constructor{resources{} ,nowplayingdate } }
@@ -16,7 +17,6 @@ client.on("messageCreate", async message => {
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length)
-    
 
     if (message.author.equals(client.user)) return;
     if (!message.content.startsWith(prefix)) return;
@@ -150,7 +150,7 @@ client.on("messageCreate", async message => {
         function setCharAt(str,index,chr) {
             return str.substring(0,index) + chr + str.substring(index+1);
         }
-        let outPut = '▬'.repeat(30)
+        var outPut = '▬'.repeat(30)
         let duration = currentAudioRes.metadata.secDuration
         let current = Math.floor(((currentTime.getTime() - queue.get(message.guildId).timeMusicStarted.getTime() )/1000))
         console.log("gets here")
@@ -226,11 +226,29 @@ client.on("messageCreate", async message => {
                     seekVal: seekValFinal
                 }
              })
-            
             player.play(resource)
-
             break
-    }
+        case "search":
+            var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
+            var channel = message.member.voice.channel
+            if(!channel) return message.channel.send("Join a channel")
+            if(!query) return message.channel.send("Search for an actuall song")
+                
+            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
+            var results = await play.search(query , { limit : 20 })
+            
+            results = results.slice(0, 5)
+            var output = ""
+
+            results.forEach(function(result , i) {
+                output += numToEmoji.toEmoji(i) + result.title + "\n\n"
+            })
+            message.channel.send("```"+ output + "```")
+            // if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
+            // var stream = await play.stream(result[0].url)
+            // var data = await play.video_info(result[0].url)
+            break
+        }
 
 });
 
@@ -252,7 +270,7 @@ function playSong(message , connection){
 
     player.on(AudioPlayerStatus.Playing, () => {
         if(!player.state.resource.metadata.is_seeked){
-            message.channel.send("**Playing** " + "`" + queue.get(message.guildId).resources[0].metadata.title + "`")
+            message.channel.send("<:YT:890526793625391104>**Playing** " + "`" + queue.get(message.guildId).resources[0].metadata.title + "`")
             
         }else{
             message.channel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
