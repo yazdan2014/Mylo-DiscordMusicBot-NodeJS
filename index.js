@@ -1,9 +1,9 @@
-const { Client , MessageEmbed } = require('discord.js');
+const { Client , MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
 const changeSeek = require("./ffmpeg")
-const numToEmoji = require("number-to-emoji")
+const {toEmoji} = require("number-to-emoji")
 
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id, queue_constructor{resources{} ,nowplayingdate } }
@@ -118,7 +118,7 @@ client.on("messageCreate", async message => {
                 console.log("queuing a song")
                 queue.get(message.guildId).resources.push(audioResource)
                 
-                const embed = new MessageEmbed()
+                var embed = new MessageEmbed()
                 .setColor('#00FFFF')
                 .setAuthor(message.member.nickname , message.author.avatarURL())
                 .setTitle(result[0].title)
@@ -159,7 +159,7 @@ client.on("messageCreate", async message => {
         }
         y = ((current/duration)*30).toFixed(0)-1
         outPut = setCharAt(outPut , y , "🔘")
-        const embed = new MessageEmbed()
+        var embed = new MessageEmbed()
             .setColor('#1202F7')
             .setAuthor('NowPlaying🎵' , client.user.avatarURL())
             .setTitle(currentAudioRes.metadata.title)
@@ -206,7 +206,6 @@ client.on("messageCreate", async message => {
             }
 
             if(seekValFinal <= 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" )
-            console.log(seekValFinal , currentAudioRes.metadata.secDuration)
 
             var data = currentAudioRes.metadata.data
             var player = connection.state.subscription.player
@@ -221,7 +220,7 @@ client.on("messageCreate", async message => {
                     secDuration: currentAudioRes.metadata.secDuration,
                     rawDuration: currentAudioRes.metadata.rawDuration,
                     requestedBy: currentAudioRes.metadata.requestedBy,
-                    data: currentAudioRes.metadata.data,//used for the seek option
+                    data: currentAudioRes.metadata.data, //used for the seek option
                     is_seeked:true,
                     seekVal: seekValFinal
                 }
@@ -233,25 +232,78 @@ client.on("messageCreate", async message => {
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
             if(!query) return message.channel.send("Search for an actuall song")
-                
-            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
-            var results = await play.search(query , { limit : 20 })
-            
-            results = results.slice(0, 5)
-            var output = ""
 
-            results.forEach(function(result , i) {
-                output += numToEmoji.toEmoji(i) + result.title + "\n\n"
+            const row = new MessageActionRow()
+            .addComponents(
+				new MessageButton()
+                    .setCustomId('previous')
+					.setLabel('ᐊ')
+					.setStyle('SECONDARY'),
+			)
+			.addComponents(
+				new MessageButton()
+                    .setCustomId('next')
+					.setLabel('ᐅ')
+					.setStyle('SECONDARY'),
+			)
+            .addComponents(
+				new MessageButton()
+                    .setCustomId('cancel')
+					.setLabel('cancel')
+					.setStyle('DANGER'),
+			)
+
+            var currentPage = 1
+            var resultsRaw = await play.search(query , { limit : 20 })
+            var results = splitArray(resultsRaw , 4)
+
+            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
+
+            function createEmbbed(){
+                var embedSearch = new MessageEmbed()
+                .setColor('#1202F7')
+                .setAuthor('Requested By ' + message.author.username , message.author.avatarURL())
+                .setTitle("Send the numbers of your choice or use the cancel button")
+                .setFooter(`Page ${currentPage}/4`)
+                
+                var outPut = ""
+                results[currentPage-1].forEach(function(result , i) {
+                    var finalResTitle 
+                    if(result.title.length >= 60){
+                        finalResTitle = result.title.substring(0 , 60) + "..."
+                    }else{
+                        finalResTitle = result.title
+                    }
+                    outPut += toEmoji(++i + 5*(currentPage-1)) + "`" + finalResTitle +"`"+ "\n"
+                })
+                embedSearch.setDescription(outPut)
+                return embedSearch
+            }
+            var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]})
+
+            const filter = i => i.user.id === message.author.id;
+            const collector = message.channel.createMessageComponentCollector({ filter, time: 40000 });
+            collector.on("collect" , async collected =>{
+                if(collected.customId == "cancel"){
+                    await collected.update({ content: '**Search proccess canceled successfuly!**', components: [], embeds:[] });
+                }
+                else if(collected.customId == "next"){
+                    if (currentPage == results.length) return console.log("bruh")
+                    currentPage++
+                    await collected.update({embeds:[createEmbbed()]})
+                }
+                else if(collected.customId == "previous"){
+                    if (currentPage == 1) return console.log("bruh")
+                    currentPage--
+                    await collected.update({embeds:[createEmbbed()]})
+                }
             })
-            message.channel.send("```"+ output + "```")
-            // if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
-            // var stream = await play.stream(result[0].url)
-            // var data = await play.video_info(result[0].url)
+            collector.on("end" ,() =>{
+                sentMessage.edit({content: 'You ran out of time!', components: [], embeds:[]})
+            })
             break
         }
-
 });
-
 
 function secToMinSec(sec){
     let durationInSec = sec
@@ -264,7 +316,7 @@ function secToMinSec(sec){
 function playSong(message , connection){
     const player = createAudioPlayer({
         behaviors:{
-            noSubscriber: NoSubscriberBehavior.Play
+            noSubscriber: NoSubscriberBehavior.Stop
         }
     })
 
@@ -294,4 +346,15 @@ function playSong(message , connection){
     connection.subscribe(player)
 }
 
+function splitArray(flatArray, numCols){
+    const newArray = []
+    for (let c = 0; c < numCols; c++) {
+      newArray.push([])
+    }
+    for (let i = 0; i < flatArray.length; i++) {
+      const mod = i % numCols
+      newArray[mod].push(flatArray[i])
+    }
+    return newArray
+}
 client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.8qfgeCwsVVFf9DsNe0MqKMnwEhQ");
