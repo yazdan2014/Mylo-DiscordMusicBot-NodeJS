@@ -14,7 +14,6 @@ client.once('ready', () => {
 });
 
 client.on("messageCreate", async message => {
-    if(message.author.id == "520267398293487617")return message.channel.send("aab koon nagoo")
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length)
