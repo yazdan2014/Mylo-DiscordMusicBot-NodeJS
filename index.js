@@ -20,11 +20,13 @@ client.once('ready', () => {
                 noSubscriber: NoSubscriberBehavior.Stop
             }
         })
+
         console.log("creating a queue system map for " + guild.name)
 
         player.on(AudioPlayerStatus.Playing, () => {
             console.log("playing")
             var messageChannel = player.state.resource.metadata.messageChannel
+            queue.get(guild.id).messageChannel = messageChannel
             if(!player.state.resource.metadata.is_seeked){
                 messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
                 
@@ -40,6 +42,7 @@ client.once('ready', () => {
         })
 
         player.on(AudioPlayerStatus.Idle , () => {
+            var messageChannel = queue.get(guild.id).messageChannel
             console.log("idle")
             var connection = getVoiceConnection(guild.id)
             if(!connection){
@@ -54,6 +57,7 @@ client.once('ready', () => {
         })
 
         const queue_constructor = {
+            messageChannel:null,
             resources: [],
             timeMusicStarted: null,
             audioPlayer: player
@@ -163,7 +167,7 @@ client.on("messageCreate", async message => {
                 
                 var embed = new MessageEmbed()
                 .setColor('#00FFFF')
-                .setAuthor(message.member.nickname , message.author.avatarURL())
+                .setAuthor(message.author.username , message.author.avatarURL())
                 .setTitle(result[0].title)
                 .setURL(result[0].url)
                 .setThumbnail(result[0].thumbnail.url)
