@@ -89,7 +89,7 @@ client.on("messageCreate", async message => {
             })
 
             break;
-        case "mame":case "play":
+        case "p":case "play":
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
