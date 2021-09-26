@@ -97,7 +97,7 @@ client.on("messageCreate", async message => {
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
-            if(!channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
+            if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(!query) return message.channel.send("Search for an actuall song")
             
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
@@ -120,11 +120,12 @@ client.on("messageCreate", async message => {
                 connection = getVoiceConnection(message.guildId)
                 console.log('exists')
             }
-            
+
             try{
                 var data = await play.video_info(selected.url)
                 var stream = await play.stream(selected.url)
             }catch(error){
+                console.log(error)
                 return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
             }
             
@@ -415,7 +416,6 @@ client.on("messageCreate", async message => {
             })  
 
             break
-        
         }
 });
 
@@ -433,15 +433,4 @@ function playSong(messageOrChannel , connection){
     connection.subscribe(player)
 }
 
-function splitArray(flatArray, numCols){
-    const newArray = []
-    for (let c = 0; c < numCols; c++) {
-      newArray.push([])
-    }
-    for (let i = 0; i < flatArray.length; i++) {
-      const mod = i % numCols
-      newArray[mod].push(flatArray[i])
-    }
-    return newArray
-}
 client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.8qfgeCwsVVFf9DsNe0MqKMnwEhQ");

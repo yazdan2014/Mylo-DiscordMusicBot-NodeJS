@@ -19,4 +19,3 @@ function changeSeek(val, url){
 }
 
 module.exports = changeSeek
-
