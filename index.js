@@ -420,7 +420,12 @@ client.on("messageCreate", async message => {
             var player = queue.get(message.guildId).audioPlayer
             player.pause()
             break
+        case "unpause":
+            var player = queue.get(message.guildId).audioPlayer
+            player.unpause()
+            break
         }
+        
 });
 
 function secToMinSec(sec){
