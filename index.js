@@ -303,7 +303,7 @@ client.on("messageCreate", async message => {
                 .setColor('#1202F7')
                 .setAuthor('Requested By ' + message.author.username , message.author.avatarURL())
                 .setTitle("Send the numbers of your choice or use the cancel button")
-                .setFooter(`Page ${currentPage}/4`)
+                .setFooter(`Page ${currentPage}/${results.length.toString()}`)
                 
                 var outPut = ""
                 results[currentPage-1].forEach(function(result , i) {
@@ -324,12 +324,13 @@ client.on("messageCreate", async message => {
             var is_collected = false
 
             const messageFilter = m => m.user.id == message.author.id
-            const mcollector = message.channel.createMessageCollector({ messageFilter ,max: 1, time: 30000 });
+            const mcollector = message.channel.createMessageCollector({ messageFilter , time: 30000 });
 
             const componnentFilter = i => i.user.id == message.author.id
             const collector = message.channel.createMessageComponentCollector({ componnentFilter, time: 30000 });
 
             mcollector.on('collect', async m => {
+                if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 1 to " + resultsRaw.length.toString())
                 var connection
                 if(!getVoiceConnection(message.guildId)){
                     connection = joinVoiceChannel({
@@ -343,16 +344,15 @@ client.on("messageCreate", async message => {
                 }else{
                     connection = getVoiceConnection(message.guildId)
                     console.log('exists')
-                }  
-
+                }
                 console.log(`Collected ${m.content}`);
                 is_collected = true
                 mcollector.stop()
                 collector.stop()
                 let selected = resultsRaw[parseInt(m.content) - 1 ]
-
-                var stream = await play.stream(selected.url)
+                
                 var data = await play.video_info(selected.url)
+                var stream = await play.stream(selected.url)
 
                 var audioResource = createAudioResource(stream.stream,{
                     inputType : stream.type,
