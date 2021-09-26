@@ -39,7 +39,7 @@ client.once('ready', () => {
         player.on(AudioPlayerStatus.Idle , () => {
             console.log("idle")
             var connection = getVoiceConnection(guild.id)
-            if(!connection.state.subscription){
+            if(!connection){
                 queue.get(guild.id).resources = []
             }
             if(queue.get(guild.id).resources){
