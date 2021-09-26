@@ -2,7 +2,10 @@ const { Client , MessageEmbed, MessageActionRow, MessageButton } = require('disc
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
+
 const changeSeek = require("./ffmpeg")
+const queueFunc = require("./queue")
+
 const {toEmoji} = require("number-to-emoji")
 
 const queue = new Map()
@@ -120,7 +123,7 @@ client.on("messageCreate", async message => {
             var stream = await play.stream(result[0].url)
             var data = await play.video_info(result[0].url)
             
-            const audioResource = createAudioResource(stream.stream,{
+            var audioResource = createAudioResource(stream.stream,{
                 inputType : stream.type,
                 metadata:{
                     messageChannel:message.channel,
@@ -135,7 +138,6 @@ client.on("messageCreate", async message => {
                     is_seeked:false
                 }
             })
-
 
             var guild_queue = queue.get(message.guildId)
             if(guild_queue.resources.length!== 0){
@@ -326,11 +328,52 @@ client.on("messageCreate", async message => {
             const componnentFilter = i => i.user.id === message.author.id;
             const collector = message.channel.createMessageComponentCollector({ componnentFilter, time: 30000 });
 
-            mcollector.on('collect', m => {
+            mcollector.on('collect', async m => {
+                var connection
+                if(!getVoiceConnection(message.guildId)){
+                    connection = joinVoiceChannel({
+                        channelId: channel.id,
+                        guildId: channel.guild.id,
+                        adapterCreator: channel.guild.voiceAdapterCreator,
+                    }).on(VoiceConnectionStatus.Disconnected , ()=>{
+                        connection.destroy()
+                    })
+                    console.log('doesnt exists')
+                }else{
+                    connection = getVoiceConnection(message.guildId)
+                    console.log('exists')
+                }  
+
                 console.log(`Collected ${m.content}`);
                 is_collected = true
                 mcollector.stop()
                 collector.stop()
+                let selected = resultsRaw[parseInt(m.content) - 1 ]
+
+                var stream = await play.stream(selected.url)
+                var data = await play.video_info(selected.url)
+
+                var audioResource = createAudioResource(stream.stream,{
+                    inputType : stream.type,
+                    metadata:{
+                        messageChannel:message.channel,
+                        title: selected.title,
+                        url: selected.url,
+                        thumbnail: selected.thumbnail.url,
+                        guildId: message.guildId,
+                        secDuration: selected.durationInSec,
+                        rawDuration: selected.durationRaw,
+                        requestedBy: message.author.username,
+                        data: data ,//used for the seek option
+                        is_seeked:false
+                    }
+                })
+
+  
+
+
+                queueFunc(queue , message , connection, playSong , audioResource)
+
             });
 
             mcollector.on('end', collected => {

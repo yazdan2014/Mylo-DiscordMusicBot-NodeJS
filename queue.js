@@ -1,5 +1,5 @@
 
-function createQueueAndPlaySong(queue , ){
+function createQueueAndPlaySong(queue , message , connection , playSong , audioResource){
     var guild_queue = queue.get(message.guildId)
     if(guild_queue.resources.length!== 0){
         var currentAudioRes = connection.state.subscription.player.state.resource
@@ -34,3 +34,5 @@ function createQueueAndPlaySong(queue , ){
         playSong(message , connection)
     }
 }
+
+module.exports = createQueueAndPlaySong
