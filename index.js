@@ -317,11 +317,34 @@ client.on("messageCreate", async message => {
             }
             var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]})
 
-            const filter = i => i.user.id === message.author.id;
-            const collector = message.channel.createMessageComponentCollector({ filter, time: 40000 });
+            var is_canceled = false
+            var is_collected = false
+
+            const messageFilter = m => m.user.id == message.author.id
+            const mcollector = message.channel.createMessageCollector({ messageFilter ,max: 1, time: 30000 });
+
+            const componnentFilter = i => i.user.id === message.author.id;
+            const collector = message.channel.createMessageComponentCollector({ componnentFilter, time: 5000 });
+
+            mcollector.on('collect', m => {
+                console.log(`Collected ${m.content}`);
+                is_collected = true
+                mcollector.stop()
+                collector.stop()
+            });
+
+            mcollector.on('end', collected => {
+                if(collected.size == 0 && !is_canceled){
+                    message.channel.send("Didn't recive any number")
+                }
+            });   
+
             collector.on("collect" , async collected =>{
                 if(collected.customId == "cancel"){
                     await collected.update({ content: 'Search proccess canceled successfuly!', components: [], embeds:[] });
+                    is_canceled = true
+                    collector.stop()
+                    mcollector.stop()
                 }
                 else if(collected.customId == "next"){
                     if (currentPage == results.length) return console.log("bruh")
@@ -334,10 +357,16 @@ client.on("messageCreate", async message => {
                     await collected.update({embeds:[createEmbbed()]})
                 }
             })
-            collector.on("end" ,() =>{
-                sentMessage.edit({content: 'You ran out of time!', components: [], embeds:[]})
+            collector.on("end" ,collector =>{
+                if(!is_canceled && !is_collected){
+                    sentMessage.edit({content: 'You ran out of time!', components: [], embeds:[]})
+                }
             })
+
+     
+
             break
+        
         }
 });
 
