@@ -122,10 +122,10 @@ client.on("messageCreate", async message => {
             }
 
             try{
-                var data = await play.video_info(selected.url)
-                var stream = await play.stream(selected.url)
+                var data = await play.video_info(result[0].url)
+                var stream = await play.stream(result[0].url)
             }catch(error){
-                console.log(error)
+                console.log("error"+error)
                 return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
             }
             
@@ -271,7 +271,7 @@ client.on("messageCreate", async message => {
              })
             player.play(resource)
             break
-        case "search":
+        case "mame":
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
@@ -297,11 +297,11 @@ client.on("messageCreate", async message => {
 					.setStyle('DANGER'),
 			)
 
+            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
             var currentPage = 1
             var resultsRaw = await play.search(query , { limit : 20 })
             var results = arraySplitter(resultsRaw,5)
 
-            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
 
             function createEmbbed(){
                 var embedSearch = new MessageEmbed()
@@ -309,7 +309,7 @@ client.on("messageCreate", async message => {
                 .setAuthor('Requested By ' + message.author.username , message.author.avatarURL())
                 .setTitle("Send the numbers of your choice or use the cancel button")
                 .setFooter(`Page ${currentPage}/${results.length.toString()}`)
-                
+
                 var outPut = ""
                 results[currentPage-1].forEach(function(result , i) {
                     var finalResTitle 
@@ -328,11 +328,11 @@ client.on("messageCreate", async message => {
             var is_canceled = false
             var is_collected = false
 
-            const messageFilter = m => m.user.id == message.author.id
-            const mcollector = message.channel.createMessageCollector({ messageFilter , time: 30000 });
+            const messageFilter = m => m.author.id == message.author.id
+            const mcollector = message.channel.createMessageCollector({ filter:messageFilter , time: 30000 });
 
             const componnentFilter = i => i.user.id == message.author.id
-            const collector = message.channel.createMessageComponentCollector({ componnentFilter, time: 30000 });
+            const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 30000 });
 
             mcollector.on('collect', async m => {
                 if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 1 to " + resultsRaw.length.toString())

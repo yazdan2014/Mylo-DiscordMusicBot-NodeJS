@@ -23,8 +23,8 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         .setURL(audioResource.metadata.url)
         .setThumbnail(audioResource.metadata.thumbnail.url)
         .addFields(
-            { name: '**Duration**', value: audioResource.metadata.durationRaw  , inline :true},
-            { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
+            { name: '**Duration**', value: audioResource.metadata.rawDuration  , inline :true},
+            { name: '**Estimated time until playing**', value: secToMinSec(estimated).toString() , inline:true },
             { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
         )
         message.channel.send({embeds:[embed]})
@@ -36,3 +36,11 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
 }
 
 module.exports = createQueueAndPlaySong
+
+function secToMinSec(sec){
+    let durationInSec = sec
+    let minutes= (Math.floor(durationInSec/60)).toString()
+    let seconds= ((durationInSec%60 < 10) ? "0" + (durationInSec%60).toString() : (durationInSec%60).toString() )
+    let output = minutes + ":"+ seconds
+    return output
+}
