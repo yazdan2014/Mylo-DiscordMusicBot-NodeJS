@@ -78,7 +78,7 @@ client.on("messageCreate", async message => {
         case "join":
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Youre not in a channel")
-            if(channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
+            if(!channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(message.guild.me.voice.channelId == message.member.voice.channelId) return message.channel.send("Im already in your vc")
             var connection = joinVoiceChannel({
                 channelId: channel.id,
@@ -93,7 +93,7 @@ client.on("messageCreate", async message => {
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
-            if(channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
+            if(!channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(!query) return message.channel.send("Search for an actuall song")
                 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
@@ -137,7 +137,6 @@ client.on("messageCreate", async message => {
 
 
             var guild_queue = queue.get(message.guildId)
-
             if(guild_queue.resources.length!== 0){
                 var currentAudioRes = connection.state.subscription.player.state.resource
                 var currentTime = new Date().getTime()
@@ -324,7 +323,7 @@ client.on("messageCreate", async message => {
             const mcollector = message.channel.createMessageCollector({ messageFilter ,max: 1, time: 30000 });
 
             const componnentFilter = i => i.user.id === message.author.id;
-            const collector = message.channel.createMessageComponentCollector({ componnentFilter, time: 5000 });
+            const collector = message.channel.createMessageComponentCollector({ componnentFilter, time: 30000 });
 
             mcollector.on('collect', m => {
                 console.log(`Collected ${m.content}`);
@@ -361,9 +360,7 @@ client.on("messageCreate", async message => {
                 if(!is_canceled && !is_collected){
                     sentMessage.edit({content: 'You ran out of time!', components: [], embeds:[]})
                 }
-            })
-
-     
+            })  
 
             break
         
