@@ -120,9 +120,13 @@ client.on("messageCreate", async message => {
                 connection = getVoiceConnection(message.guildId)
                 console.log('exists')
             }
-
-            var stream = await play.stream(result[0].url)
-            var data = await play.video_info(result[0].url)
+            
+            try{
+                var data = await play.video_info(selected.url)
+                var stream = await play.stream(selected.url)
+            }catch(error){
+                return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
+            }
             
             var audioResource = createAudioResource(stream.stream,{
                 inputType : stream.type,
