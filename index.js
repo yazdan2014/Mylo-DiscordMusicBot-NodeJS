@@ -78,6 +78,7 @@ client.on("messageCreate", async message => {
         case "join":
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Youre not in a channel")
+            if(channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(message.guild.me.voice.channelId == message.member.voice.channelId) return message.channel.send("Im already in your vc")
             var connection = joinVoiceChannel({
                 channelId: channel.id,
@@ -92,6 +93,7 @@ client.on("messageCreate", async message => {
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
+            if(channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(!query) return message.channel.send("Search for an actuall song")
                 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
@@ -319,7 +321,7 @@ client.on("messageCreate", async message => {
             const collector = message.channel.createMessageComponentCollector({ filter, time: 40000 });
             collector.on("collect" , async collected =>{
                 if(collected.customId == "cancel"){
-                    await collected.update({ content: '**Search proccess canceled successfuly!**', components: [], embeds:[] });
+                    await collected.update({ content: 'Search proccess canceled successfuly!', components: [], embeds:[] });
                 }
                 else if(collected.customId == "next"){
                     if (currentPage == results.length) return console.log("bruh")
