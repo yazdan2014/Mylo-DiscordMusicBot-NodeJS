@@ -8,7 +8,6 @@ const {toEmoji} = require("number-to-emoji")
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id, queue_constructor{resources{} ,nowplayingdate } }
 
-
 client.once('ready', () => {
 	console.log('Ready!')
     client.guilds.cache.forEach(guild => {
@@ -137,17 +136,7 @@ client.on("messageCreate", async message => {
 
             var guild_queue = queue.get(message.guildId)
 
-            if(!guild_queue){
-                console.log("creating a queue")
-                const queue_constructor = {
-                    voice_channel: channel,
-                    resources: [audioResource],
-                    timeMusicStarted: null
-                }
-                queue.set(message.guildId , queue_constructor)
-                playSong(message , connection)
-
-            }else if(guild_queue && guild_queue.resources.length!== 0){
+            if(guild_queue.resources.length!== 0){
                 var currentAudioRes = connection.state.subscription.player.state.resource
                 var currentTime = new Date().getTime()
                 var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
@@ -174,7 +163,7 @@ client.on("messageCreate", async message => {
                     { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
                 )
                 message.channel.send({embeds:[embed]})
-            }else if(guild_queue && guild_queue.resources.length == 0){
+            }else if(guild_queue.resources.length == 0){
                 console.log("playing a song after queue creation")
                 queue.get(message.guildId).resources.push(audioResource)
                 playSong(message , connection)
