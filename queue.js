@@ -19,11 +19,11 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         var embed = new MessageEmbed()
         .setColor('#00FFFF')
         .setAuthor(message.member.nickname , message.author.avatarURL())
-        .setTitle(result[0].title)
-        .setURL(result[0].url)
-        .setThumbnail(result[0].thumbnail.url)
+        .setTitle(audioResource.metadata.title)
+        .setURL(audioResource.metadata.url)
+        .setThumbnail(audioResource.metadata.thumbnail.url)
         .addFields(
-            { name: '**Duration**', value: result[0].durationRaw  , inline :true},
+            { name: '**Duration**', value: audioResource.metadata.durationRaw  , inline :true},
             { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
             { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
         )

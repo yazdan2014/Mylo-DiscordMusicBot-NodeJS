@@ -326,7 +326,7 @@ client.on("messageCreate", async message => {
             const messageFilter = m => m.user.id == message.author.id
             const mcollector = message.channel.createMessageCollector({ messageFilter ,max: 1, time: 30000 });
 
-            const componnentFilter = i => i.user.id === message.author.id;
+            const componnentFilter = i => i.user.id == message.author.id
             const collector = message.channel.createMessageComponentCollector({ componnentFilter, time: 30000 });
 
             mcollector.on('collect', async m => {
