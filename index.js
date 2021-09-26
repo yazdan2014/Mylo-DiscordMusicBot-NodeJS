@@ -84,6 +84,8 @@ client.on("messageCreate", async message => {
                 channelId: channel.id,
                 guildId: channel.guild.id,
                 adapterCreator: channel.guild.voiceAdapterCreator,
+            }).on(VoiceConnectionStatus.Disconnected , ()=>{
+                connection.destroy()
             })
 
             break;
@@ -104,9 +106,13 @@ client.on("messageCreate", async message => {
                     channelId: channel.id,
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
+                }).on(VoiceConnectionStatus.Disconnected , ()=>{
+                    connection.destroy()
                 })
+                console.log('doesnt exists')
             }else{
                 connection = getVoiceConnection(message.guildId)
+                console.log('exists')
             }
 
             var stream = await play.stream(result[0].url)
