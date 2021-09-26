@@ -271,7 +271,7 @@ client.on("messageCreate", async message => {
              })
             player.play(resource)
             break
-        case "mame":
+        case "search":
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
@@ -415,6 +415,10 @@ client.on("messageCreate", async message => {
                 }
             })  
 
+            break
+        case "pause":
+            var player = queue.get(message.guildId).audioPlayer
+            player.pause()
             break
         }
 });

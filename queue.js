@@ -21,7 +21,7 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         .setAuthor(message.member.nickname , message.author.avatarURL())
         .setTitle(audioResource.metadata.title)
         .setURL(audioResource.metadata.url)
-        .setThumbnail(audioResource.metadata.thumbnail.url)
+        .setThumbnail(audioResource.metadata.thumbnail)
         .addFields(
             { name: '**Duration**', value: audioResource.metadata.rawDuration  , inline :true},
             { name: '**Estimated time until playing**', value: secToMinSec(estimated).toString() , inline:true },
