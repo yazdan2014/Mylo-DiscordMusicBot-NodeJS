@@ -2,6 +2,7 @@ const { Client , MessageEmbed, MessageActionRow, MessageButton } = require('disc
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
+const arraySplitter = require("split-array")
 
 const changeSeek = require("./ffmpeg")
 const queueFunc = require("./queue")
@@ -293,7 +294,7 @@ client.on("messageCreate", async message => {
 
             var currentPage = 1
             var resultsRaw = await play.search(query , { limit : 20 })
-            var results = splitArray(resultsRaw , 4)
+            var results = arraySplitter(resultsRaw,5)
 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
 
