@@ -89,16 +89,17 @@ client.on("messageCreate", async message => {
             })
 
             break;
-        case "p":case "play":
+        case "mame":case "play":
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
             if(!channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(!query) return message.channel.send("Search for an actuall song")
-                
+            
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
             var result = await play.search(query , { limit : 1 })
-
+            console.log(result)
+            if(result.length == 0) return message.channel.send("Couldn't find any result")
             if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
 
             var connection
