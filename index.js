@@ -11,6 +11,53 @@ const queue = new Map()
 
 client.once('ready', () => {
 	console.log('Ready!')
+    client.guilds.cache.forEach(guild => {
+        var player = createAudioPlayer({
+            behaviors:{
+                noSubscriber: NoSubscriberBehavior.Stop
+            }
+        })
+        console.log("creating a queue system map for " + guild.name)
+
+        player.on(AudioPlayerStatus.Playing, () => {
+            console.log("playing")
+            var messageChannel = player.state.resource.metadata.messageChannel
+            if(!player.state.resource.metadata.is_seeked){
+                messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
+                
+            }else{
+                messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
+            }
+            queue.get(guild.id).timeMusicStarted = new Date()
+        });
+
+        player.on('error', error => {
+            console.log(`Error: ${error} with resource`);
+            messageChannel.send("Something went wrong");
+        })
+
+        player.on(AudioPlayerStatus.Idle , () => {
+            console.log("idle")
+            var connection = getVoiceConnection(guild.id)
+            if(!connection.state.subscription){
+                queue.get(guild.id).resources = []
+            }
+            if(queue.get(guild.id).resources){
+                queue.get(guild.id).resources.shift()
+            }
+            if(queue.get(guild.id).resources.length !== 0){
+                playSong(messageChannel , connection)
+            }
+        })
+
+        const queue_constructor = {
+            resources: [],
+            timeMusicStarted: null,
+            audioPlayer: player
+        }
+        queue.set(guild.id , queue_constructor)
+        
+    })
 });
 
 client.on("messageCreate", async message => {
@@ -37,12 +84,6 @@ client.on("messageCreate", async message => {
                 channelId: channel.id,
                 guildId: channel.guild.id,
                 adapterCreator: channel.guild.voiceAdapterCreator,
-            }).on(VoiceConnectionStatus.Disconnected, () =>{
-                if(connection.state.subscription){
-                    connection.state.subscription.player.stop()
-                }
-                queue.get(message.guildId).resources = []
-                connection.destroy()
             })
 
             break;
@@ -57,12 +98,24 @@ client.on("messageCreate", async message => {
 
             if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
 
+            var connection
+            if(!getVoiceConnection(message.guildId)){
+                connection = joinVoiceChannel({
+                    channelId: channel.id,
+                    guildId: channel.guild.id,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
+                })
+            }else{
+                connection = getVoiceConnection(message.guildId)
+            }
+
             var stream = await play.stream(result[0].url)
             var data = await play.video_info(result[0].url)
             
             const audioResource = createAudioResource(stream.stream,{
                 inputType : stream.type,
                 metadata:{
+                    messageChannel:message.channel,
                     title: result[0].title,
                     url: result[0].url,
                     thumbnail: result[0].thumbnail.url,
@@ -74,22 +127,7 @@ client.on("messageCreate", async message => {
                     is_seeked:false
                 }
             })
-            var connection
-            if(!getVoiceConnection(message.guildId)){
-                connection = joinVoiceChannel({
-                    channelId: channel.id,
-                    guildId: channel.guild.id,
-                    adapterCreator: channel.guild.voiceAdapterCreator,
-                }).on(VoiceConnectionStatus.Disconnected, () =>{
-                    if(connection.state.subscription){
-                        connection.state.subscription.player.stop()
-                    }
-                    queue.get(message.guildId).resources = []
-                    connection.destroy()
-                })
-            }else{
-                connection = getVoiceConnection(message.guildId)
-            }
+
 
             var guild_queue = queue.get(message.guildId)
 
@@ -213,6 +251,7 @@ client.on("messageCreate", async message => {
             var resource = createAudioResource(ffmpegInstance, {
                 inputType : StreamType.OggOpus,
                 metadata:{
+                    messageChannel: message.channel,
                     title: currentAudioRes.metadata.title,
                     url: currentAudioRes.metadata.url,
                     thumbnail: currentAudioRes.metadata.thumbnail,
@@ -313,36 +352,9 @@ function secToMinSec(sec){
     return output
 }
 
-function playSong(message , connection){
-    const player = createAudioPlayer({
-        behaviors:{
-            noSubscriber: NoSubscriberBehavior.Stop
-        }
-    })
-
-    player.on(AudioPlayerStatus.Playing, () => {
-        if(!player.state.resource.metadata.is_seeked){
-            message.channel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(message.guildId).resources[0].metadata.title + "`")
-            
-        }else{
-            message.channel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
-        }
-        queue.get(message.guildId).timeMusicStarted = new Date()
-    });
-
-    player.on('error', error => {
-        console.log(`Error: ${error} with resource`);
-        message.channel.send("Something went wrong");
-    });
-
-    player.on(AudioPlayerStatus.Idle , () => {
-        console.log("idle")
-        queue.get(message.guildId).resources.shift()
-        if(queue.get(message.guildId).resources.length !== 0){
-            playSong(message , connection)
-        }
-    })
-    player.play(queue.get(message.guildId).resources[0])
+function playSong(messageOrChannel , connection){    
+    var player = queue.get(messageOrChannel.guildId).audioPlayer
+    player.play(queue.get(messageOrChannel.guildId).resources[0])
     connection.subscribe(player)
 }
 
