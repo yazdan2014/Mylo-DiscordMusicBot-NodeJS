@@ -350,9 +350,12 @@ client.on("messageCreate", async message => {
                 mcollector.stop()
                 collector.stop()
                 let selected = resultsRaw[parseInt(m.content) - 1 ]
-                
-                var data = await play.video_info(selected.url)
-                var stream = await play.stream(selected.url)
+                try{
+                    var data = await play.video_info(selected.url)
+                    var stream = await play.stream(selected.url)
+                }catch(error){
+                    return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
+                }
 
                 var audioResource = createAudioResource(stream.stream,{
                     inputType : stream.type,
