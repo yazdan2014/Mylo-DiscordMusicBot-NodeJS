@@ -1,4 +1,4 @@
-
+const {MessageEmbed} = require("discord.js")
 function createQueueAndPlaySong(queue , message , connection , playSong , audioResource){
     var guild_queue = queue.get(message.guildId)
     if(guild_queue.resources.length!== 0){
