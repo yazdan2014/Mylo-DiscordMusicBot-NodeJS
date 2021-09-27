@@ -183,7 +183,7 @@ client.on("messageCreate", async message => {
                     { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
                     { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
                 )
-                .setFooter("By ``" + result[0].channel.name+ "``" , result[0].channel.icon.url)
+                .setFooter("By: **" + result[0].channel.name+ "**" , result[0].channel.icon.url)
                 message.channel.send({embeds:[embed]})
             }else if(guild_queue.resources.length == 0){
                 console.log("playing a song after queue creation")
@@ -225,6 +225,7 @@ client.on("messageCreate", async message => {
                 { name: 'time:', value: '`'+ secToMinSec(current) +'/'+ currentAudioRes.metadata.rawDuration + '`' },
                 { name: '`Requested by:`', value: currentAudioRes.metadata.requestedBy ,inline:true},    
             )
+            .setFooter("By: **" + currentAudioRes.metadata.channel.name + "**" , currentAudioRes.metadata.channel.icon.url)
         message.channel.send({embeds:[embed]})
         break
         case "skip":case "s":
@@ -442,6 +443,23 @@ client.on("messageCreate", async message => {
         case "unpause":
             var player = queue.get(message.guildId).audioPlayer
             player.unpause()
+            break
+        case "q":case "queue":
+            if(!message.member.voice.channel) return message.channel.send("Youre not in a voice channel")
+            if(message.guild.me.voice.channelId != message.member.voice.channelId) return message.channel.send("Youre not in the same channel as bot is")
+
+            var guildQueue = queue.get(message.guildId).resources
+            if(guildQueue.length == 0) return  message.channel.send("No song is being played")
+            if(guildQueue.length == 1) return  message.channel.send("There's no song in queue if you want to check")
+
+            var outPut = ""
+
+            guildQueue.forEach(resource =>{
+                outPut += resource.metadata.title + "\n"
+            })
+            message.channel.send(outPut + ".")
+
+            
             break
         }
         
