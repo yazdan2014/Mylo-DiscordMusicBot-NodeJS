@@ -132,6 +132,7 @@ client.on("messageCreate", async message => {
 
             try{
                 var data = await play.video_info(result[0].url)
+                console.log("avali anjam mishe")
                 var stream = await play.stream(result[0].url)
             }catch(error){
                 console.log("error"+error)
