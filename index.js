@@ -150,7 +150,8 @@ client.on("messageCreate", async message => {
                     rawDuration: result[0].durationRaw,
                     requestedBy: message.author.username,
                     data: data ,//used for the seek option
-                    is_seeked:false
+                    is_seeked:false,
+                    channel:result[0].channel
                 }
             })
 
@@ -181,7 +182,7 @@ client.on("messageCreate", async message => {
                     { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
                     { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
                 )
-                .setFooter("By " + result[0].channel.name , result[0].channel.icon.url)
+                .setFooter("By ``" + result[0].channel.name+ "``" , result[0].channel.icon.url)
                 message.channel.send({embeds:[embed]})
             }else if(guild_queue.resources.length == 0){
                 console.log("playing a song after queue creation")
@@ -276,7 +277,9 @@ client.on("messageCreate", async message => {
                     requestedBy: currentAudioRes.metadata.requestedBy,
                     data: currentAudioRes.metadata.data, //used for the seek option
                     is_seeked:true,
-                    seekVal: seekValFinal
+                    seekVal: seekValFinal,
+                    channel:currentAudioRes.channel
+
                 }
              })
             player.play(resource)
@@ -392,12 +395,10 @@ client.on("messageCreate", async message => {
                         rawDuration: selected.durationRaw,
                         requestedBy: message.author.username,
                         data: data ,//used for the seek option
-                        is_seeked:false
+                        is_seeked:false,
+                        channel:selected.channel
                     }
                 })
-
-  
-
 
                 queueFunc(queue , message , connection, playSong , audioResource)
 

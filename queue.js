@@ -27,6 +27,7 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
             { name: '**Estimated time until playing**', value: secToMinSec(estimated).toString() , inline:true },
             { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
         )
+        .setFooter("By ``" + audioResource.metadata.channel.name + "``" , audioResource.metadata.channel.icon.url)
         message.channel.send({embeds:[embed]})
     }else if(guild_queue.resources.length == 0){
         console.log("playing a song after queue creation")
