@@ -126,8 +126,8 @@ client.on("messageCreate", async message => {
 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
             var result = await play.search(query , { limit : 1 })
-            console.log(result[0].channel)
             if(result.length == 0) return message.channel.send("Couldn't find any result")
+            console.log(result[0].channel)
             if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
 
             try{
@@ -279,7 +279,6 @@ client.on("messageCreate", async message => {
                     is_seeked:true,
                     seekVal: seekValFinal,
                     channel:currentAudioRes.channel
-
                 }
              })
             player.play(resource)
