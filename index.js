@@ -23,7 +23,10 @@ client.once('ready', () => {
 
         console.log("creating a queue system map for " + guild.name)
 
+        let timeOut = null
+
         player.on(AudioPlayerStatus.Playing, () => {
+            clearTimeout(timeOut)
             console.log("playing")
             var messageChannel = player.state.resource.metadata.messageChannel
             queue.get(guild.id).messageChannel = messageChannel
@@ -44,9 +47,12 @@ client.once('ready', () => {
         player.on(AudioPlayerStatus.Idle , () => {
             var messageChannel = queue.get(guild.id).messageChannel
             console.log("idle")
-            var connection = getVoiceConnection(guild.id)
+            var connection = getVoiceConnection(guild.id)            
+            timeOut = setTimeout(function(){connection.destroy;messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")} , 3000)
             if(!connection){
                 queue.get(guild.id).resources = []
+            }else{
+                timeOut
             }
             if(queue.get(guild.id).resources){
                 queue.get(guild.id).resources.shift()
@@ -104,12 +110,6 @@ client.on("messageCreate", async message => {
             if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(!query) return message.channel.send("Search for an actuall song")
             
-            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
-            var result = await play.search(query , { limit : 1 })
-            console.log(result)
-            if(result.length == 0) return message.channel.send("Couldn't find any result")
-            if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
-
             var connection
             if(!getVoiceConnection(message.guildId)){
                 connection = joinVoiceChannel({
@@ -124,6 +124,12 @@ client.on("messageCreate", async message => {
                 connection = getVoiceConnection(message.guildId)
                 console.log('exists')
             }
+
+            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
+            var result = await play.search(query , { limit : 1 })
+            console.log(result)
+            if(result.length == 0) return message.channel.send("Couldn't find any result")
+            if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
 
             try{
                 var data = await play.video_info(result[0].url)
