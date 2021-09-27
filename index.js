@@ -280,7 +280,20 @@ client.on("messageCreate", async message => {
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
             if(!query) return message.channel.send("Search for an actuall song")
-
+            
+            if(!getVoiceConnection(message.guildId)){
+                connection = joinVoiceChannel({
+                    channelId: channel.id,
+                    guildId: channel.guild.id,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
+                }).on(VoiceConnectionStatus.Disconnected , ()=>{
+                    connection.destroy()
+                })
+                console.log('doesnt exists')
+            }else{
+                connection = getVoiceConnection(message.guildId)
+                console.log('exists')
+            }
             const row = new MessageActionRow()
             .addComponents(
 				new MessageButton()
@@ -341,19 +354,6 @@ client.on("messageCreate", async message => {
             mcollector.on('collect', async m => {
                 if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 1 to " + resultsRaw.length.toString())
                 var connection
-                if(!getVoiceConnection(message.guildId)){
-                    connection = joinVoiceChannel({
-                        channelId: channel.id,
-                        guildId: channel.guild.id,
-                        adapterCreator: channel.guild.voiceAdapterCreator,
-                    }).on(VoiceConnectionStatus.Disconnected , ()=>{
-                        connection.destroy()
-                    })
-                    console.log('doesnt exists')
-                }else{
-                    connection = getVoiceConnection(message.guildId)
-                    console.log('exists')
-                }
                 console.log(`Collected ${m.content}`);
                 is_collected = true
                 mcollector.stop()
