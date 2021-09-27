@@ -51,7 +51,7 @@ client.once('ready', () => {
             if(!connection){
                 queue.get(guild.id).resources = []
             }else{
-                timeOut = setTimeout(function(){connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")} , 30000)
+                timeOut = setTimeout(function(){connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")} , 500000)
             }
             if(queue.get(guild.id).resources){
                 queue.get(guild.id).resources.shift()
@@ -118,7 +118,7 @@ client.on("messageCreate", async message => {
                 }).on(VoiceConnectionStatus.Disconnected , ()=>{
                     connection.destroy()
                 })
-                console.log('doesnt exists')
+                console.log('doesnt exist')
             }else{
                 connection = getVoiceConnection(message.guildId)
                 console.log('exists')
@@ -356,6 +356,14 @@ client.on("messageCreate", async message => {
 
             const componnentFilter = i => i.user.id == message.author.id
             const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 30000 });
+
+            connection.on(VoiceConnectionStatus.Destroyed , ()=>{
+                if(!collector.ended || !mcollector.ended){
+                    collector.stop()
+                    mcollector.stop()
+                    message.channel.send("I got disconnected from the voice channel please try again")
+                }
+            })
 
             mcollector.on('collect', async m => {
                 if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 1 to " + resultsRaw.length.toString())
