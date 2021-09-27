@@ -102,7 +102,7 @@ client.on("messageCreate", async message => {
             })
 
             break;
-        case "p":case "play":
+        case "test":case "play":
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel")
@@ -126,7 +126,7 @@ client.on("messageCreate", async message => {
 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
             var result = await play.search(query , { limit : 1 })
-            console.log(result)
+            console.log(result[0].channel)
             if(result.length == 0) return message.channel.send("Couldn't find any result")
             if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
 
@@ -181,6 +181,7 @@ client.on("messageCreate", async message => {
                     { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
                     { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
                 )
+                .setFooter("By " + result[0].channel.name , result[0].channel.icon.url)
                 message.channel.send({embeds:[embed]})
             }else if(guild_queue.resources.length == 0){
                 console.log("playing a song after queue creation")
