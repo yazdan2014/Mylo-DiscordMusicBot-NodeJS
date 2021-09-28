@@ -20,7 +20,6 @@ client.once('ready', () => {
                 noSubscriber: NoSubscriberBehavior.Stop
             }
         })
-        guild.members
         console.log("creating a queue system map for " + guild.name)
 
         let timeOut = null
