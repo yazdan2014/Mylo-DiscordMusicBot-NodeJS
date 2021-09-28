@@ -117,7 +117,7 @@ client.on("messageCreate", async message => {
                     rawConnection.destroy()
                 })
 
-                var connection = entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(() =>{
+                var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(() =>{
                     return message.channel.send("Something went wrong please try again")
                 })
 
@@ -300,11 +300,12 @@ client.on("messageCreate", async message => {
                     channelId: channel.id,
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
-                }).on(VoiceConnectionStatus.Disconnected , ()=>{
+                    
+                }).on(VoiceConnectionStatus.Disconnected , connection=>{
                     connection.destroy()
                 })
 
-                var connection = entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
+                var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
                     return message.channel.send("Something went wrong please try again")
                 })
                 console.log('doesnt exists')
