@@ -4,6 +4,8 @@ const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_S
 const play = require("play-dl")
 const arraySplitter = require("split-array")
 
+console.log(-512%41)
+
 const changeSeek = require("./ffmpeg")
 const queueFunc = require("./queue")
 
@@ -100,6 +102,7 @@ client.on("messageCreate", async message => {
             }).on(VoiceConnectionStatus.Disconnected , ()=>{
                 connection.destroy()
             })
+            console.log(connection)
 
             break;
         case "p":case "play":
@@ -188,7 +191,9 @@ client.on("messageCreate", async message => {
             }else if(guild_queue.resources.length == 0){
                 console.log("playing a song after queue creation")
                 queue.get(message.guildId).resources.push(audioResource)
-                playSong(message , connection)
+                connection.once(VoiceConnectionStatus.Ready , ()=>{
+                    playSong(message , connection)
+                })
             }
             break
         case 'np':
@@ -292,20 +297,7 @@ client.on("messageCreate", async message => {
             if(!channel) return message.channel.send("Join a channel")
             if(!query) return message.channel.send("Search for an actuall song")
 
-            var connection
-            if(!getVoiceConnection(message.guildId)){
-                connection = joinVoiceChannel({
-                    channelId: channel.id,
-                    guildId: channel.guild.id,
-                    adapterCreator: channel.guild.voiceAdapterCreator,
-                }).on(VoiceConnectionStatus.Disconnected , ()=>{
-                    connection.destroy()
-                })
-                console.log('doesnt exists')
-            }else{
-                connection = getVoiceConnection(message.guildId)
-                console.log('exists')
-            }
+
             const row = new MessageActionRow()
             .addComponents(
 				new MessageButton()
@@ -385,6 +377,21 @@ client.on("messageCreate", async message => {
                     return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
                 }
 
+                var connection
+                if(!getVoiceConnection(message.guildId)){
+                    connection = joinVoiceChannel({
+                        channelId: channel.id,
+                        guildId: channel.guild.id,
+                        adapterCreator: channel.guild.voiceAdapterCreator,
+                    }).on(VoiceConnectionStatus.Disconnected , ()=>{
+                        connection.destroy()
+                    })
+                    console.log('doesnt exists')
+                }else{
+                    connection = getVoiceConnection(message.guildId)
+                    console.log('exists')
+                }
+
                 var audioResource = createAudioResource(stream.stream,{
                     inputType : stream.type,
                     metadata:{
@@ -402,7 +409,9 @@ client.on("messageCreate", async message => {
                     }
                 })
 
-                queueFunc(queue , message , connection, playSong , audioResource)
+                connection.once(VoiceConnectionStatus.Ready, () =>{
+                    queueFunc(queue , message , connection, playSong , audioResource)
+                })
 
             });
 
