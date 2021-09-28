@@ -1,9 +1,8 @@
 const { Client , MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection } = require('@discordjs/voice');
+const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
-
 
 const changeSeek = require("./ffmpeg")
 const queueFunc = require("./queue")
@@ -21,7 +20,7 @@ client.once('ready', () => {
                 noSubscriber: NoSubscriberBehavior.Stop
             }
         })
-
+        guild.members
         console.log("creating a queue system map for " + guild.name)
 
         let timeOut = null
@@ -110,18 +109,19 @@ client.on("messageCreate", async message => {
             if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(!query) return message.channel.send("Search for an actuall song")
             
-            var connection
             if(!getVoiceConnection(message.guildId)){
-                connection = joinVoiceChannel({
+                let rawConnection = joinVoiceChannel({
                     channelId: channel.id,
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
-                }).on(VoiceConnectionStatus.Disconnected , ()=>{
-                    connection.destroy()
+                }).on(VoiceConnectionStatus.Disconnected , () =>{
+                    rawConnection.destroy()
                 })
+
+                var connection = entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000)
                 console.log('doesnt exist')
             }else{
-                connection = getVoiceConnection(message.guildId)
+                var connection = getVoiceConnection(message.guildId)
                 console.log('exists')
             }
 
@@ -293,18 +293,19 @@ client.on("messageCreate", async message => {
             if(!channel) return message.channel.send("Join a channel")
             if(!query) return message.channel.send("Search for an actuall song")
 
-            var connection
             if(!getVoiceConnection(message.guildId)){
-                connection = joinVoiceChannel({
+                let rawConnection = joinVoiceChannel({
                     channelId: channel.id,
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
                 }).on(VoiceConnectionStatus.Disconnected , ()=>{
                     connection.destroy()
                 })
+
+                var connection = rawConnection
                 console.log('doesnt exists')
             }else{
-                connection = getVoiceConnection(message.guildId)
+                var connection = getVoiceConnection(message.guildId)
                 console.log('exists')
             }
             const row = new MessageActionRow()
@@ -402,7 +403,7 @@ client.on("messageCreate", async message => {
                         channel:selected.channel
                     }
                 })
-                
+
                 queueFunc(queue , message , connection, playSong , audioResource)
 
             });
