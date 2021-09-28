@@ -108,6 +108,7 @@ client.on("messageCreate", async message => {
             if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel")
             if(!query) return message.channel.send("Search for an actuall song")
             
+            var connection
             if(!getVoiceConnection(message.guildId)){
                 let rawConnection = joinVoiceChannel({
                     channelId: channel.id,
@@ -117,10 +118,10 @@ client.on("messageCreate", async message => {
                     rawConnection.destroy()
                 })
 
-                var connection = entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000)
+                connection = entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000)
                 console.log('doesnt exist')
             }else{
-                var connection = getVoiceConnection(message.guildId)
+                connection = getVoiceConnection(message.guildId)
                 console.log('exists')
             }
 
