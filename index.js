@@ -229,6 +229,7 @@ client.on("messageCreate", async message => {
         message.channel.send({embeds:[embed]})
         break
         case "skip":case "s":
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
             var connection = getVoiceConnection(message.guildId)
             if(queue.get(message.guildId).resources.length > 1){
                 queue.get(message.guildId).resources.shift()
@@ -458,12 +459,12 @@ client.on("messageCreate", async message => {
                 outPut += resource.metadata.title + "\n"
             })
             message.channel.send(outPut + ".")
-
+ 
             
             break
         }
         
-});
+})
 
 function secToMinSec(sec){
     let durationInSec = sec
