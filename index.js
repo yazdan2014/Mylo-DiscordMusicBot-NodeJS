@@ -316,6 +316,7 @@ client.on("messageCreate", async message => {
                     await interaction.update({ embeds:[newEmbed] });
 
                     if((votes/(message.member.voice.channel.members.size - 1)) >= 0.5 ){
+                        skipcollector.stop()
                         return playNextSong()
                     }
                 }
