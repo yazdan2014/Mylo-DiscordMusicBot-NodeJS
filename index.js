@@ -1,13 +1,15 @@
-const { Client , MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction } = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
 
+const table = require('text-table');
+
 const changeSeek = require("./ffmpeg")
 const queueFunc = require("./queue")
 
-const {toEmoji} = require("number-to-emoji")
+const {toEmoji} = require("number-to-emoji");
 
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id, queue_constructor{resources{} ,nowplayingdate } }
@@ -50,7 +52,7 @@ client.once('ready', () => {
             if(!connection){
                 queue.get(guild.id).resources = []
             }else{
-                timeOut = setTimeout(function(){connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")} , 500000)
+                timeOut = setTimeout(function(){connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")} , 120000)
             }
             if(queue.get(guild.id).resources){
                 queue.get(guild.id).resources.shift()
@@ -59,6 +61,7 @@ client.once('ready', () => {
                 playSong(messageChannel , connection)
             }
         })
+        
 
         const queue_constructor = {
             messageChannel:null,
@@ -91,6 +94,7 @@ client.on("messageCreate", async message => {
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Youre not in a channel")
             if(!channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing && queue.get(message.guildId).resources.length !== 0) return message.channel.send("Mylo is currently being used in another voice channel")
             if(message.guild.me.voice.channelId == message.member.voice.channelId) return message.channel.send("Im already in your vc")
             var connection = joinVoiceChannel({
                 channelId: channel.id,
@@ -232,7 +236,101 @@ client.on("messageCreate", async message => {
         message.channel.send({embeds:[embed]})
         break
         case "skip":case "s":
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing && queue.get(message.guildId).resources.length !== 0) return message.channel.send("Mylo is currently being used in another voice channel")
+            
+            let membersCurrentlyVC = message.member.voice.channel.members.filter(member => !member.user.bot && message.author.id != member.id)
+            function playNextSong(){
+                var connection = getVoiceConnection(message.guildId)
+                if(queue.get(message.guildId).resources.length > 1){
+                    queue.get(message.guildId).resources.shift()
+                    playSong(message , connection)
+                }else if(queue.get(message.guildId).resources.length == 1 ){
+                    connection.state.subscription.player.stop()
+                    message.react("✅")
+                }
+                else{
+                    message.channel.send("Nothing is being played")
+                }
+            }
+
+            if(membersCurrentlyVC.size == 0 || membersCurrentlyVC.size == 1 ) return ()=> {
+                playNextSong()
+            }
+
+            let userIdsAndVals = new Map()
+            let votes = 1
+            membersCurrentlyVC.forEach(member => userIdsAndVals.set(member.user.id ,{"state":false,"member":member,"clicks":0}))
+
+
+            function newDescTable(){
+                let tableArray = [[`${message.author.username}` , `✅`]] 
+                userIdsAndVals.forEach(member => {
+                    if (member.state){
+                        tableArray.push([`${member.member.user.username}` ,`✅`])
+                    }else{
+                        tableArray.push([`${member.member.user.username}` , `⚪`])
+                    }
+                })
+                return table(tableArray).toString()
+            }  
+
+            var row = new MessageActionRow()
+			.addComponents(
+				new MessageButton()
+					.setCustomId('skip')
+					.setLabel('Skip')
+					.setStyle('SUCCESS')
+			);
+
+            var embedMessage = new MessageEmbed()
+                .setAuthor(`${message.author.username} has started a music skip poll!` ,message.author.avatarURL())
+                .setTitle(`If you want the music to be skipped click on the \"Skip\" button`+ "\n")
+                .setDescription("```\n" + newDescTable() + "```")
+                .setColor("#3BA55C")
+                .setFooter("Members with dj role can use \"fs\" to force skip")
+
+            var sentMessageSkip= await message.channel.send({components:[row],embeds:[embedMessage]})
+
+            const skipComponnentFilter = i => userIdsAndVals.has(i.user.id)
+            const skipcollector = message.channel.createMessageComponentCollector({ filter:skipComponnentFilter, time: 30000 })
+
+            skipcollector.on("collect" ,async interaction =>{
+                if(interaction.customId == "skip"){
+                    userIdsAndVals.get(interaction.user.id).clicks ++
+                    if(userIdsAndVals.get(interaction.user.id).clicks > 3) return interaction.deferUpdate()
+                    if(userIdsAndVals.get(interaction.user.id).clicks > 2) {interaction.deferUpdate();return message.channel.send("KOS KOSH ENGHAD NAZAN ROOSH DIGE KHOB");}
+                    if(userIdsAndVals.get(interaction.user.id).state){interaction.deferUpdate();return message.channel.send(`<@${interaction.user.id}> Youve already voted`);}
+                    votes++                    
+                    console.log((votes/(message.member.voice.channel.members.size - 1)))
+
+                    userIdsAndVals.get(interaction.user.id).state = true
+
+                    let newEmbed =  new MessageEmbed()
+                        .setAuthor(`${message.author.username} has started a music skip poll!` ,message.author.avatarURL())
+                        .setTitle(`If you want the music to be skipped click on the \"Skip\" button`+ "\n")
+                        .setDescription("```\n" + newDescTable() + "```")
+                        .setColor("#3BA55C")
+                        .setFooter("Members with dj role can use \"fs\" to force skip")
+                    await interaction.update({ embeds:[newEmbed] });
+
+                    if((votes/(message.member.voice.channel.members.size - 1)) >= 1 ){
+                        return playNextSong()
+                    }
+                }
+            })
+            skipcollector.on("end" ,collected =>{
+                if(collected.size == 0){
+                    sentMessageSkip.edit({content: 'You ran out of time!', components: [], embeds:[]})
+                }
+            })              
+
+        break
+        case "fs":
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj")) return message.channel.send("koonkesh to ke dj nisti")
             var connection = getVoiceConnection(message.guildId)
             if(queue.get(message.guildId).resources.length > 1){
                 queue.get(message.guildId).resources.shift()
@@ -244,7 +342,7 @@ client.on("messageCreate", async message => {
             else{
                 message.channel.send("Nothing is being played")
             }
-        break
+            break
         case "seek":
             var connection = getVoiceConnection(message.guildId)
 
@@ -313,26 +411,21 @@ client.on("messageCreate", async message => {
                 var connection = getVoiceConnection(message.guildId)
                 console.log('exists')
             }
-            const row = new MessageActionRow()
+            var row = new MessageActionRow()
             .addComponents(
 				new MessageButton()
                     .setCustomId('previous')
 					.setLabel('ᐊ')
 					.setStyle('SECONDARY'),
-			)
-			.addComponents(
-				new MessageButton()
+                new MessageButton()
+                    .setCustomId('cancel')
+					.setLabel('cancel')
+					.setStyle('DANGER'),
+                new MessageButton()
                     .setCustomId('next')
 					.setLabel('ᐅ')
 					.setStyle('SECONDARY'),
 			)
-            .addComponents(
-				new MessageButton()
-                    .setCustomId('cancel')
-					.setLabel('cancel')
-					.setStyle('DANGER'),
-			)
-
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
             var currentPage = 1
             var resultsRaw = await play.search(query , { limit : 20 })
@@ -369,8 +462,9 @@ client.on("messageCreate", async message => {
 
             const componnentFilter = i => i.user.id == message.author.id
             const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 30000 });
+            
 
-            connection.on(VoiceConnectionStatus.Destroyed , ()=>{
+            connection.once(VoiceConnectionStatus.Destroyed , ()=>{
                 if(!collector.ended || !mcollector.ended){
                     collector.stop()
                     mcollector.stop()
@@ -380,11 +474,13 @@ client.on("messageCreate", async message => {
 
             mcollector.on('collect', async m => {
                 if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 1 to " + resultsRaw.length.toString())
-                console.log(`Collected ${m.content}`);
                 is_collected = true
                 mcollector.stop()
                 collector.stop()
+
+                
                 let selected = resultsRaw[parseInt(m.content) - 1 ]
+                sentMessage.edit({embeds:[] ,components: [],content:`Selected: \`${selected.title}\``})
                 try{
                     var data = await play.video_info(selected.url)
                     var stream = await play.stream(selected.url)
@@ -448,7 +544,7 @@ client.on("messageCreate", async message => {
             var player = queue.get(message.guildId).audioPlayer
             player.pause()
             break
-        case "unpause":
+        case "unpause":case "resume":
             var player = queue.get(message.guildId).audioPlayer
             player.unpause()
             break
