@@ -83,7 +83,7 @@ client.on("messageCreate", async message => {
     if (!message.content.startsWith(prefix)) return;
 
     switch (command) {
-        case "dc":
+        case "dc": case"sik":
             var connection = getVoiceConnection(message.guildId)
             if(!connection) return message.channel.send("Im not in a channel")
             if(!message.member.voice.channel) return message.channel.send("Youre not in a voice channel")
@@ -238,7 +238,7 @@ client.on("messageCreate", async message => {
         case "skip":case "s":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing && queue.get(message.guildId).resources.length !== 0) return message.channel.send("Mylo is currently being used in another voice channel")
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing && message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send("Mylo is currently being used in another voice channel")
             
             let membersCurrentlyVC = message.member.voice.channel.members.filter(member => !member.user.bot && message.author.id != member.id)
             function playNextSong(){
