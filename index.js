@@ -52,7 +52,7 @@ client.once('ready', () => {
             if(!connection){
                 queue.get(guild.id).resources = []
             }else{
-                timeOut = setTimeout(function(){connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")} , 120000)
+                timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 120000)
             }
             if(queue.get(guild.id).resources){
                 queue.get(guild.id).resources.shift()
