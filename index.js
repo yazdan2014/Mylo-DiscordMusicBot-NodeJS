@@ -417,14 +417,15 @@ client.on("messageCreate", async message => {
                     .setCustomId('previous')
 					.setLabel('ᐊ')
 					.setStyle('SECONDARY'),
-                new MessageButton()
-                    .setCustomId('cancel')
-					.setLabel('cancel')
-					.setStyle('DANGER'),
+
                 new MessageButton()
                     .setCustomId('next')
 					.setLabel('ᐅ')
 					.setStyle('SECONDARY'),
+                new MessageButton()
+                    .setCustomId('cancel')
+					.setLabel('cancel')
+					.setStyle('DANGER'),
 			)
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
             var currentPage = 1
@@ -561,9 +562,7 @@ client.on("messageCreate", async message => {
             guildQueue.forEach(resource =>{
                 outPut += resource.metadata.title + "\n"
             })
-            message.channel.send(outPut + ".")
- 
-            
+            message.channel.send(outPut + ".")            
             break
         }
         
@@ -583,4 +582,4 @@ function playSong(messageOrChannel , connection){
     connection.subscribe(player)
 }
 
-client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.8qfgeCwsVVFf9DsNe0MqKMnwEhQ");
+client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.l0xCbShFiIEddYiaKlbxs3xpYME");
