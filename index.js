@@ -255,9 +255,9 @@ client.on("messageCreate", async message => {
                 }
             }
 
-            if(membersCurrentlyVC.size == 0 || membersCurrentlyVC.size == 1 ) return ()=> {
-                playNextSong()
-            }
+            if(membersCurrentlyVC.size == 0 || membersCurrentlyVC.size == 1 ) return playNextSong()
+
+            
 
             let userIdsAndVals = new Map()
             let votes = 1
