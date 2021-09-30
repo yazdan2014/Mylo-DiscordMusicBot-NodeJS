@@ -315,7 +315,7 @@ client.on("messageCreate", async message => {
                         .setFooter("Members with dj role can use \"fs\" to force skip")
                     await interaction.update({ embeds:[newEmbed] });
 
-                    if((votes/(message.member.voice.channel.members.size - 1)) >= 1 ){
+                    if((votes/(message.member.voice.channel.members.size - 1)) >= 0.5 ){
                         return playNextSong()
                     }
                 }
