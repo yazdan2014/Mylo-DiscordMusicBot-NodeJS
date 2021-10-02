@@ -58,7 +58,7 @@ client.once('ready', () => {
             if(queue.get(guild.id).loopStatue){
                 let currentAudioRes = queue.get(guild.id).resources[0]
                 let newAduioStream =  currentAudioRes.metadata.streamData
-                var newAudioResource = createAudioResource(newAduioStream, {
+                var newAudioResource = createAudioResource(newAduioStream.stream, {
                     inputType : StreamType.OggOpus,
                     metadata:{
                         messageChannel: currentAudioRes.messageChannel,
