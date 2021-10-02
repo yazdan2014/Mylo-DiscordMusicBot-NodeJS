@@ -32,7 +32,7 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
     }else if(guild_queue.resources.length == 0){
         console.log("playing a song after queue creation")
         queue.get(message.guildId).resources.push(audioResource)
-        playSong(message , connection)
+        playSong(message , connection , audioResource)
     }
 }
 

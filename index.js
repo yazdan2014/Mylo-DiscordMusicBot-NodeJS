@@ -57,13 +57,32 @@ client.once('ready', () => {
 
             
             if(queue.get(guild.id).loopStatue){
-                playSong(messageChannel , connection)
+                let newAduioStream =  queue.get(message.guildId).resources[0].metadata.streamData
+                var newAudioResource = createAudioResource(newAduioStream, {
+                    inputType : StreamType.OggOpus,
+                    metadata:{
+                        messageChannel: message.channel,
+                        title: currentAudioRes.metadata.title,
+                        url: currentAudioRes.metadata.url,
+                        thumbnail: currentAudioRes.metadata.thumbnail,
+                        guildId: currentAudioRes.metadata.guildId,
+                        secDuration: currentAudioRes.metadata.secDuration,
+                        rawDuration: currentAudioRes.metadata.rawDuration,
+                        requestedBy: currentAudioRes.metadata.requestedBy,
+                        data: currentAudioRes.metadata.data, //used for the seek option
+                        is_seeked:true,
+                        seekVal: seekValFinal,
+                        channel:currentAudioRes.metadata.channel,
+                        streamData:stream
+                    }
+                 })
+                playSong(messageChannel , connection, newAudioResource)
             }
             else if(queue.get(guild.id).resources.length == 0){
                 queue.get(guild.id).resources.shift()
             }
             else if(queue.get(guild.id).resources.length !== 0){
-                playSong(messageChannel , connection)
+                playSong(messageChannel , connection , queue.get(message.guildId).resources[0])
             }
         })
 
@@ -164,7 +183,8 @@ client.on("messageCreate", async message => {
                     requestedBy: message.author.username,
                     data: data ,//used for the seek option
                     is_seeked:false,
-                    channel:result[0].channel
+                    channel:result[0].channel,
+                    streamData:stream
                 }
             })
 
@@ -200,7 +220,7 @@ client.on("messageCreate", async message => {
             }else if(guild_queue.resources.length == 0){
                 console.log("playing a song after queue creation")
                 queue.get(message.guildId).resources.push(audioResource)
-                playSong(message , connection)
+                playSong(message , connection, audioResource)
             }
             break
         case 'np':
@@ -249,7 +269,7 @@ client.on("messageCreate", async message => {
                 var connection = getVoiceConnection(message.guildId)
                 if(queue.get(message.guildId).resources.length > 1){
                     queue.get(message.guildId).resources.shift()
-                    playSong(message , connection)
+                    playSong(message , connection ,queue.get(message.guildId).resources[0])
                 }else if(queue.get(message.guildId).resources.length == 1 ){
                     connection.state.subscription.player.stop()
                     message.react("✅")
@@ -339,7 +359,7 @@ client.on("messageCreate", async message => {
             var connection = getVoiceConnection(message.guildId)
             if(queue.get(message.guildId).resources.length > 1){
                 queue.get(message.guildId).resources.shift()
-                playSong(message , connection)
+                playSong(message , connection , queue.get(message.guildId).resources[0])
             }else if(queue.get(message.guildId).resources.length == 1 ){
                 connection.state.subscription.player.stop()
                 message.react("✅")
@@ -387,7 +407,8 @@ client.on("messageCreate", async message => {
                     data: currentAudioRes.metadata.data, //used for the seek option
                     is_seeked:true,
                     seekVal: seekValFinal,
-                    channel:currentAudioRes.channel
+                    channel:currentAudioRes.metadata.channel,
+                    streamData:stream
                 }
              })
             player.play(resource)
@@ -505,7 +526,8 @@ client.on("messageCreate", async message => {
                         requestedBy: message.author.username,
                         data: data ,//used for the seek option
                         is_seeked:false,
-                        channel:selected.channel
+                        channel:selected.channel,
+                        streamData:stream
                     }
                 })
 
@@ -625,9 +647,9 @@ function secToMinSec(sec){
     return output
 }
 
-function playSong(messageOrChannel , connection){    
+function playSong(messageOrChannel , connection , audioResource){    
     var player = queue.get(messageOrChannel.guildId).audioPlayer
-    player.play(queue.get(messageOrChannel.guildId).resources[0])
+    player.play(audioResource)
     connection.subscribe(player)
 }
 
