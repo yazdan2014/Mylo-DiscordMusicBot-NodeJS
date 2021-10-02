@@ -80,6 +80,7 @@ client.once('ready', () => {
                 queue.get(guild.id).resources.shift()
             }
             else if(queue.get(guild.id).resources.length !== 0){
+                queue.get(guild.id).resources.shift()
                 playSong(messageChannel , connection , queue.get(guild.id).resources[0])
             }
         })
