@@ -54,14 +54,14 @@ client.once('ready', () => {
             }else{
                 timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 120000)
             }
-
-            
+                        
             if(queue.get(guild.id).loopStatue){
-                let newAduioStream =  queue.get(message.guildId).resources[0].metadata.streamData
+                let currentAudioRes = queue.get(guild.id).resources[0]
+                let newAduioStream =  currentAudioRes.metadata.streamData
                 var newAudioResource = createAudioResource(newAduioStream, {
                     inputType : StreamType.OggOpus,
                     metadata:{
-                        messageChannel: message.channel,
+                        messageChannel: currentAudioRes.message.channel,
                         title: currentAudioRes.metadata.title,
                         url: currentAudioRes.metadata.url,
                         thumbnail: currentAudioRes.metadata.thumbnail,
@@ -70,10 +70,8 @@ client.once('ready', () => {
                         rawDuration: currentAudioRes.metadata.rawDuration,
                         requestedBy: currentAudioRes.metadata.requestedBy,
                         data: currentAudioRes.metadata.data, //used for the seek option
-                        is_seeked:true,
-                        seekVal: seekValFinal,
                         channel:currentAudioRes.metadata.channel,
-                        streamData:stream
+                        streamData:newAduioStream
                     }
                  })
                 playSong(messageChannel , connection, newAudioResource)
@@ -626,7 +624,7 @@ client.on("messageCreate", async message => {
                         break
                 }
             }else{
-                if(queue.get(message.guildId).loopStatue){
+                if(!queue.get(message.guildId).loopStatue){
                     queue.get(message.guildId).loopStatue = true
                     message.channel.send('Loop is now on')
                 }else{
