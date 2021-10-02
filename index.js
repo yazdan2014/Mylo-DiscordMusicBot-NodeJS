@@ -399,8 +399,8 @@ client.on("messageCreate", async message => {
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
                     
-                }).on(VoiceConnectionStatus.Disconnected , connection=>{
-                    connection.destroy()
+                }).on(VoiceConnectionStatus.Disconnected , ()=>{
+                    rawConnection.destroy()
                 })
 
                 var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
@@ -464,7 +464,6 @@ client.on("messageCreate", async message => {
             const componnentFilter = i => i.user.id == message.author.id
             const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 30000 });
             
-
             connection.once(VoiceConnectionStatus.Destroyed , ()=>{
                 if(!collector.ended || !mcollector.ended){
                     collector.stop()
@@ -478,7 +477,6 @@ client.on("messageCreate", async message => {
                 is_collected = true
                 mcollector.stop()
                 collector.stop()
-
                 
                 let selected = resultsRaw[parseInt(m.content) - 1 ]
                 sentMessage.edit({embeds:[] ,components: [],content:`Selected: \`${selected.title}\``})
@@ -514,7 +512,7 @@ client.on("messageCreate", async message => {
                 if(collected.size == 0 && !is_canceled){
                     message.channel.send("Didn't recive any number")
                 }
-            });   
+            });
 
             collector.on("collect" , async collected =>{
                 if(collected.customId == "cancel"){
