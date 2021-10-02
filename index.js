@@ -74,7 +74,7 @@ client.once('ready', () => {
                         streamData:newAduioStream
                     }
                  })
-                playSong(messageChannel , connection, newAudioResource)
+                player.play(messageChannel , connection, newAudioResource)
             }else{
                 queue.get(guild.id).resources.shift()
                 if(queue.get(guild.id).resources.length !== 0){
