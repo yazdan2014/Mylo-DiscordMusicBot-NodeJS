@@ -75,14 +75,13 @@ client.once('ready', () => {
                     }
                  })
                 playSong(messageChannel , connection, newAudioResource)
-            }
-            else if(queue.get(guild.id).resources.length == 0){
+            }else{
                 queue.get(guild.id).resources.shift()
+                if(queue.get(guild.id).resources.length !== 0){
+                    playSong(messageChannel , connection , queue.get(guild.id).resources[0])
+                }
             }
-            else if(queue.get(guild.id).resources.length !== 0){
-                queue.get(guild.id).resources.shift()
-                playSong(messageChannel , connection , queue.get(guild.id).resources[0])
-            }
+            
         })
 
         const queue_constructor = {
