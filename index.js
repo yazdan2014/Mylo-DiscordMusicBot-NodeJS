@@ -54,20 +54,25 @@ client.once('ready', () => {
             }else{
                 timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 120000)
             }
-            if(queue.get(guild.id).resources){
+
+            
+            if(queue.get(guild.id).loopStatue){
+                playSong(messageChannel , connection)
+            }
+            else if(queue.get(guild.id).resources.length == 0){
                 queue.get(guild.id).resources.shift()
             }
-            if(queue.get(guild.id).resources.length !== 0){
+            else if(queue.get(guild.id).resources.length !== 0){
                 playSong(messageChannel , connection)
             }
         })
-        
 
         const queue_constructor = {
             messageChannel:null,
             resources: [],
             timeMusicStarted: null,
-            audioPlayer: player
+            audioPlayer: player,
+            loopStatue:false
         }
         queue.set(guild.id , queue_constructor)
         
@@ -540,10 +545,19 @@ client.on("messageCreate", async message => {
 
             break
         case "pause":
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
             var player = queue.get(message.guildId).audioPlayer
             player.pause()
             break
         case "unpause":case "resume":
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
+
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing ) return message.channel.send("Not paused")
+
             var player = queue.get(message.guildId).audioPlayer
             player.unpause()
             break
@@ -561,6 +575,43 @@ client.on("messageCreate", async message => {
                 outPut += resource.metadata.title + "\n"
             })
             message.channel.send(outPut + ".")            
+            break
+        case "loop":case "repeat":
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
+
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused) return message.channel.send("Already paused")
+
+            var statue = message.content.slice(commandWithPrefix.length +1 , message.content.length)
+            if(statue){
+                switch(statue){
+                    case "on":
+                        if(queue.get(message.guildId).loopStatue){  
+                            message.channel.send("Already on")
+                        }else{
+                            message.channel.send("Loop is now on")
+                            queue.get(message.guildId).loopStatue = true
+                        }
+                        break
+                    case "off":
+                        if(queue.get(message.guildId).loopStatue){  
+                            message.channel.send("Already off")
+                        }else{
+                            message.channel.send("Loop is now off")
+                            queue.get(message.guildId).loopStatue = false
+                        }
+                        break
+                }
+            }else{
+                if(queue.get(message.guildId).loopStatue){
+                    queue.get(message.guildId).loopStatue = true
+                    message.channel.send('Loop is now on')
+                }else{
+                    queue.get(message.guildId).loopStatue = false
+                    message.channel.send('Loop is now off')
+                }
+            }
             break
         }
         
