@@ -59,7 +59,7 @@ client.once('ready', () => {
                 let currentAudioRes = queue.get(guild.id).resources[0]
                 let newAduioStream =  currentAudioRes.metadata.streamData
                 var newAudioResource = createAudioResource(newAduioStream.stream, {
-                    inputType : StreamType.OggOpus,
+                    inputType : newAduioStream.type,
                     metadata:{
                         messageChannel: currentAudioRes.messageChannel,
                         title: currentAudioRes.metadata.title,
