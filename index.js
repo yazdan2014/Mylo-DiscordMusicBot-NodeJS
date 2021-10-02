@@ -54,14 +54,14 @@ client.once('ready', () => {
             }else{
                 timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 120000)
             }
-                        
+
             if(queue.get(guild.id).loopStatue){
                 let currentAudioRes = queue.get(guild.id).resources[0]
                 let newAduioStream =  currentAudioRes.metadata.streamData
                 var newAudioResource = createAudioResource(newAduioStream, {
                     inputType : StreamType.OggOpus,
                     metadata:{
-                        messageChannel: currentAudioRes.message.channel,
+                        messageChannel: currentAudioRes.messageChannel,
                         title: currentAudioRes.metadata.title,
                         url: currentAudioRes.metadata.url,
                         thumbnail: currentAudioRes.metadata.thumbnail,
