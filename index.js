@@ -41,6 +41,7 @@ client.once('ready', () => {
         });
 
         player.on('error', error => {
+            var messageChannel = queue.get(guild.id).messageChannel
             console.log(`Error: ${error} with resource`);
             messageChannel.send("Something went wrong");
         })
@@ -48,7 +49,9 @@ client.once('ready', () => {
         player.on(AudioPlayerStatus.Idle , () => {
             var messageChannel = queue.get(guild.id).messageChannel
             console.log("idle")
-            var connection = getVoiceConnection(guild.id)            
+            var connection = getVoiceConnection(guild.id)        
+            
+            
             if(!connection){
                 queue.get(guild.id).resources = []
             }else{
@@ -56,8 +59,14 @@ client.once('ready', () => {
             }
             if(queue.get(guild.id).loopStatue){
                 let currentAudioRes = queue.get(guild.id).resources[0]
-                var newAudioStream = currentAudioRes.metadata.streamData
-                var newAudioResource = createAudioResource(newAudioStream.stream, {
+                try{
+                    var stream = await play.stream(result[0].url)
+                }catch(error){
+                    console.log("error"+error)
+                    return message.channel.send("Something went wrong")
+                }
+
+                var newAudioResource = createAudioResource(stream.stream, {
                     inputType : newAudioStream.type,
                     metadata:{
                         messageChannel: currentAudioRes.messageChannel,
@@ -69,8 +78,7 @@ client.once('ready', () => {
                         rawDuration: currentAudioRes.metadata.rawDuration,
                         requestedBy: currentAudioRes.metadata.requestedBy,
                         data: currentAudioRes.metadata.data, //used for the seek option
-                        channel:currentAudioRes.metadata.channel,
-                        streamData:newAudioStream
+                        channel: currentAudioRes.metadata.channel
                     }
                  })
                 playSong(messageChannel , connection, newAudioResource)
@@ -423,7 +431,6 @@ client.on("messageCreate", async message => {
                     channelId: channel.id,
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
-                    
                 }).on(VoiceConnectionStatus.Disconnected , ()=>{
                     rawConnection.destroy()
                 })
