@@ -62,7 +62,6 @@ client.once('ready', () => {
                 timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 120000)
             }
             if(queue.get(guild.id).loopStatue){
-                let currentAudioRes = queue.get(guild.id).resources[0]
                 try{
                     var stream = await play.stream(currentAudioRes.metadata.url)
                 }catch(error){
@@ -72,7 +71,7 @@ client.once('ready', () => {
                 var newAudioResource = createAudioResource(stream.stream, {
                     inputType : stream.type,
                     metadata:{
-                        messageChannel: currentAudioRes.messageChannel,
+                        messageChannel: messageChannel,
                         title: currentAudioRes.metadata.title,
                         url: currentAudioRes.metadata.url,
                         thumbnail: currentAudioRes.metadata.thumbnail,
