@@ -27,9 +27,12 @@ client.once('ready', () => {
         let timeOut = null
 
         player.on(AudioPlayerStatus.Playing, () => {
+            
             clearTimeout(timeOut)
             console.log("playing")
             var messageChannel = player.state.resource.metadata.messageChannel
+            
+            console.log(messageChannel)
             queue.get(guild.id).messageChannel = messageChannel
             if(!player.state.resource.metadata.is_seeked){
                 messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
@@ -66,7 +69,6 @@ client.once('ready', () => {
                     console.log("error"+error)
                     return message.channel.send("Something went wrong")
                 }
-
                 var newAudioResource = createAudioResource(stream.stream, {
                     inputType : stream.type,
                     metadata:{
