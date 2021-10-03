@@ -67,7 +67,7 @@ client.once('ready', () => {
                 }
 
                 var newAudioResource = createAudioResource(stream.stream, {
-                    inputType : newAudioStream.type,
+                    inputType : stream.type,
                     metadata:{
                         messageChannel: currentAudioRes.messageChannel,
                         title: currentAudioRes.metadata.title,
