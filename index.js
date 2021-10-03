@@ -46,7 +46,7 @@ client.once('ready', () => {
             messageChannel.send("Something went wrong");
         })
 
-        player.on(AudioPlayerStatus.Idle , () => {
+        player.on(AudioPlayerStatus.Idle , async () => {
             var messageChannel = queue.get(guild.id).messageChannel
             console.log("idle")
             var connection = getVoiceConnection(guild.id)        
