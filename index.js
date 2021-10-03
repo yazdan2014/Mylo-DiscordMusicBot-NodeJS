@@ -60,7 +60,7 @@ client.once('ready', () => {
             if(queue.get(guild.id).loopStatue){
                 let currentAudioRes = queue.get(guild.id).resources[0]
                 try{
-                    var stream = await play.stream(result[0].url)
+                    var stream = await play.stream(currentAudioRes.metadata.url)
                 }catch(error){
                     console.log("error"+error)
                     return message.channel.send("Something went wrong")
