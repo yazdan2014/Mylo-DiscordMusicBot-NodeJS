@@ -57,9 +57,8 @@ client.once('ready', () => {
 
             if(queue.get(guild.id).loopStatue){
                 let currentAudioRes = queue.get(guild.id).resources[0]
-                
-                console.log(newAduioStream)
-                var newAudioResource = createAudioResource(newAduioStream.stream, {
+                var newAudioStream = currentAudioRes.metadata.streamData
+                var newAudioResource = createAudioResource(newAudioStream.stream, {
                     inputType : newAduioStream.type,
                     metadata:{
                         messageChannel: currentAudioRes.messageChannel,
@@ -72,7 +71,7 @@ client.once('ready', () => {
                         requestedBy: currentAudioRes.metadata.requestedBy,
                         data: currentAudioRes.metadata.data, //used for the seek option
                         channel:currentAudioRes.metadata.channel,
-                        streamData:newAduioStream
+                        streamData:newAudioStream
                     }
                  })
                 playSong(messageChannel , connection, newAudioResource)
