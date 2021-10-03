@@ -47,10 +47,11 @@ client.once('ready', () => {
         })
 
         player.on(AudioPlayerStatus.Idle , async () => {
-            var messageChannel = queue.get(guild.id).messageChannel
+            let currentAudioRes = queue.get(guild.id).resources[0]
+            var messageChannel = currentAudioRes.metadata.messageChannel
             console.log("idle")
-            var connection = getVoiceConnection(guild.id)        
             
+            var connection = getVoiceConnection(guild.id)        
             
             if(!connection){
                 queue.get(guild.id).resources = []
