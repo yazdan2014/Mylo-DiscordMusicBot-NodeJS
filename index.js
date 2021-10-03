@@ -57,7 +57,8 @@ client.once('ready', () => {
 
             if(queue.get(guild.id).loopStatue){
                 let currentAudioRes = queue.get(guild.id).resources[0]
-                let newAduioStream =  currentAudioRes.metadata.streamData
+                
+                console.log(newAduioStream)
                 var newAudioResource = createAudioResource(newAduioStream.stream, {
                     inputType : newAduioStream.type,
                     metadata:{
@@ -74,7 +75,7 @@ client.once('ready', () => {
                         streamData:newAduioStream
                     }
                  })
-                player.play(messageChannel , connection, newAudioResource)
+                playSong(messageChannel , connection, newAudioResource)
             }else{
                 queue.get(guild.id).resources.shift()
                 if(queue.get(guild.id).resources.length !== 0){
@@ -269,6 +270,7 @@ client.on("messageCreate", async message => {
                     queue.get(message.guildId).resources.shift()
                     playSong(message , connection ,queue.get(message.guildId).resources[0])
                 }else if(queue.get(message.guildId).resources.length == 1 ){
+                    queue.get(message.guildId).loopStatue = false
                     connection.state.subscription.player.stop()
                     message.react("✅")
                 }
@@ -335,7 +337,7 @@ client.on("messageCreate", async message => {
                         .setDescription("```\n" + newDescTable() + "```")
                         .setColor("#3BA55C")
                         .setFooter("Members with dj role can use \"fs\" to force skip")
-                    await interaction.update({ embeds:[newEmbed] });
+                    await interaction.update({ embeds:[newEmbed] })
 
                     if((votes/(message.member.voice.channel.members.size - 1)) >= 0.5 ){
                         skipcollector.stop()
@@ -359,6 +361,7 @@ client.on("messageCreate", async message => {
                 queue.get(message.guildId).resources.shift()
                 playSong(message , connection , queue.get(message.guildId).resources[0])
             }else if(queue.get(message.guildId).resources.length == 1 ){
+                queue.get(message.guildId).loopStatue = false
                 connection.state.subscription.player.stop()
                 message.react("✅")
             }
@@ -371,7 +374,7 @@ client.on("messageCreate", async message => {
 
             if(!connection ) return message.channel.send("Im not in a voice channel")
             if(!connection.state.subscription) return message.channel.send("Nothing is being played")
-            
+
             var currentAudioRes = connection.state.subscription.player.state.resource
     
             if(!currentAudioRes) return message.channel.send("Nothing is being played")
@@ -600,8 +603,6 @@ client.on("messageCreate", async message => {
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
-
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused) return message.channel.send("Already paused")
 
             var statue = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             if(statue){
