@@ -607,7 +607,7 @@ client.on("messageCreate", async message => {
             guildQueue.forEach(resource =>{
                 outPut += resource.metadata.title + "\n"
             })
-            message.channel.send(outPut + ".")            
+            message.channel.send(outPut)            
             break
         case "loop":case "repeat":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
@@ -648,12 +648,12 @@ client.on("messageCreate", async message => {
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
             if(queue.get(message.guildId).resources.length <= 2)return message.channel.send("There's not enough song in your queue , add more")
-
+            
+            var currentAudioRes = queue.get(message.guildId).resources[0]
             var audioRes = queue.get(message.guildId).resources
             audioRes.shift()
             console.log(audioRes)
             var currentAudioResourcesArray = shuffle(audioRes)
-            var currentAudioRes = queue.get(message.guildId).resources[0]
             
             currentAudioResourcesArray.unshift(currentAudioRes)
 
