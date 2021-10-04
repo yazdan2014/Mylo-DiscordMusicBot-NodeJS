@@ -650,9 +650,9 @@ client.on("messageCreate", async message => {
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
             if(queue.get(message.guildId).audioResource.length <= 2)return message.channel.send("There's not enough song in your queue , add more")
 
-            let audioRes = queue.get(message.guildId).audioResource
-            let currentAudioResourcesArray = arrayShuffle(audioRes.shift())
-            let currentAudioRes = queue.get(message.guildId).audioResource[0]
+            var audioRes = queue.get(message.guildId).audioResource
+            var currentAudioResourcesArray = arrayShuffle(audioRes.shift())
+            var currentAudioRes = queue.get(message.guildId).audioResource[0]
             
             currentAudioResourcesArray.unshift(currentAudioRes)
 
