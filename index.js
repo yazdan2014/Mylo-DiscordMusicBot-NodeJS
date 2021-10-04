@@ -647,17 +647,16 @@ client.on("messageCreate", async message => {
         case "shuffle":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
-            if(queue.get(message.guildId).audioResource.length <= 2)return message.channel.send("There's not enough song in your queue , add more")
+            if(queue.get(message.guildId).resources.length <= 2)return message.channel.send("There's not enough song in your queue , add more")
 
-            var audioRes = queue.get(message.guildId).audioResource
+            var audioRes = queue.get(message.guildId).resources
             var currentAudioResourcesArray = shuffle(audioRes.shift())
-            var currentAudioRes = queue.get(message.guildId).audioResource[0]
+            var currentAudioRes = queue.get(message.guildId).resources[0]
             
             currentAudioResourcesArray.unshift(currentAudioRes)
 
-            queue.get(message.guildId).audioResource = currentAudioResourcesArray
+            queue.get(message.guildId).resources = currentAudioResourcesArray
             message.channel.send("Done✅ \n Check out current queue list using 'q'")
-            
             
             break
         }
