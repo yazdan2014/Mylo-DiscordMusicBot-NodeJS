@@ -650,6 +650,7 @@ client.on("messageCreate", async message => {
             if(queue.get(message.guildId).resources.length <= 2)return message.channel.send("There's not enough song in your queue , add more")
 
             var audioRes = queue.get(message.guildId).resources.shift()
+            audioRes.shift()
             console.log(audioRes)
             var currentAudioResourcesArray = shuffle(audioRes)
             var currentAudioRes = queue.get(message.guildId).resources[0]
@@ -658,7 +659,6 @@ client.on("messageCreate", async message => {
 
             queue.get(message.guildId).resources = currentAudioResourcesArray
             message.channel.send("Done✅ \n Check out current queue list using 'q'")
-            
             break
         }
         
