@@ -3,10 +3,10 @@ const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource 
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
-import arrayShuffle from 'array-shuffle';
+
 
 const table = require('text-table');
-
+const shuffle = require('shuffle-array'),
 const changeSeek = require("./ffmpeg")
 const queueFunc = require("./queue")
 
@@ -651,7 +651,7 @@ client.on("messageCreate", async message => {
             if(queue.get(message.guildId).audioResource.length <= 2)return message.channel.send("There's not enough song in your queue , add more")
 
             var audioRes = queue.get(message.guildId).audioResource
-            var currentAudioResourcesArray = arrayShuffle(audioRes.shift())
+            var currentAudioResourcesArray = shuffle(audioRes.shift())
             var currentAudioRes = queue.get(message.guildId).audioResource[0]
             
             currentAudioResourcesArray.unshift(currentAudioRes)
