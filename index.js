@@ -657,6 +657,7 @@ client.on("messageCreate", async message => {
             currentAudioResourcesArray.unshift(currentAudioRes)
 
             queue.get(message.guildId).audioResource = currentAudioResourcesArray
+            message.channel.send("Done✅ \n Check out current queue list using 'q'")
             
             
             break
