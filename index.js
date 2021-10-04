@@ -3,7 +3,7 @@ const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource 
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
-const arrayShuffle = require("array-shuffle")
+import arrayShuffle from 'array-shuffle';
 
 const table = require('text-table');
 
