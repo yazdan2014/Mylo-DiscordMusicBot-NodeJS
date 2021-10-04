@@ -3,6 +3,7 @@ const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource 
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
+const arrayShuffle = require("array-shuffle")
 
 const table = require('text-table');
 
@@ -34,9 +35,8 @@ client.once('ready', () => {
             
             console.log(messageChannel)
             queue.get(guild.id).messageChannel = messageChannel
-            if(!player.state.resource.metadata.is_seeked){
+            if(!player.state.resource.metadata.is_seeked ){
                 messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
-                
             }else{
                 messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
             }
@@ -62,6 +62,7 @@ client.once('ready', () => {
                 timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 120000)
             }
             if(queue.get(guild.id).loopStatue){
+                if(!connection) return
                 try{
                     var stream = await play.stream(currentAudioRes.metadata.url)
                 }catch(error){
@@ -163,7 +164,9 @@ client.on("messageCreate", async message => {
             }
 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
-            var result = await play.search(query , { limit : 1 })
+
+            if(isValidHttpUrl(query))
+                var result = await play.search(query , { limit : 1 })
             if(result.length == 0) return message.channel.send("Couldn't find any result")
             console.log(result[0].channel)
             if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
@@ -578,6 +581,8 @@ client.on("messageCreate", async message => {
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused ) return message.channel.send("Already paused")
+
             var player = queue.get(message.guildId).audioPlayer
             player.pause()
             break
@@ -585,7 +590,6 @@ client.on("messageCreate", async message => {
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
-
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing ) return message.channel.send("Not paused")
 
             var player = queue.get(message.guildId).audioPlayer
@@ -616,14 +620,14 @@ client.on("messageCreate", async message => {
                 switch(statue){
                     case "on":
                         if(queue.get(message.guildId).loopStatue){  
-                            message.channel.send("Already on")
+                            message.channel.send("Already on🔁")
                         }else{
-                            message.channel.send("Loop is now on")
+                            message.channel.send("Loop is now on🔁")
                             queue.get(message.guildId).loopStatue = true
                         }
                         break
                     case "off":
-                        if(queue.get(message.guildId).loopStatue){  
+                        if(!queue.get(message.guildId).loopStatue){  
                             message.channel.send("Already off")
                         }else{
                             message.channel.send("Loop is now off")
@@ -634,12 +638,27 @@ client.on("messageCreate", async message => {
             }else{
                 if(!queue.get(message.guildId).loopStatue){
                     queue.get(message.guildId).loopStatue = true
-                    message.channel.send('Loop is now on')
+                    message.channel.send('Loop is now on 🔁')
                 }else{
                     queue.get(message.guildId).loopStatue = false
                     message.channel.send('Loop is now off')
                 }
             }
+            break
+        case "shuffle":
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
+            if(queue.get(message.guildId).audioResource.length <= 2)return message.channel.send("There's not enough song in your queue , add more")
+
+            let audioRes = queue.get(message.guildId).audioResource
+            let currentAudioResourcesArray = arrayShuffle(audioRes.shift())
+            let currentAudioRes = queue.get(message.guildId).audioResource[0]
+            
+            currentAudioResourcesArray.unshift(currentAudioRes)
+
+            queue.get(message.guildId).audioResource = currentAudioResourcesArray
+            
+            
             break
         }
         
@@ -658,5 +677,17 @@ function playSong(messageOrChannel , connection , audioResource){
     player.play(audioResource)
     connection.subscribe(player)
 }
+
+function isValidHttpUrl(string) {
+    let url;
+    
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;  
+    }
+  
+    return url.protocol === "http:" || url.protocol === "https:";
+  } 
 
 client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.l0xCbShFiIEddYiaKlbxs3xpYME");
