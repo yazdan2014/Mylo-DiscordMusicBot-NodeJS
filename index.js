@@ -1,4 +1,4 @@
-const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction } = require('discord.js');
+const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 const play = require("play-dl")
@@ -8,8 +8,16 @@ const table = require('text-table');
 const shuffle = require('shuffle-array')
 const changeSeek = require("./ffmpeg")
 const queueFunc = require("./queue")
-
 const {toEmoji} = require("number-to-emoji");
+
+
+client.commands = new Collection()
+const fs = require('fs')
+const commandFiles = fs.readdirSync('./Commands/Current/').filter(file => file.endsWith(".js"))
+for(const file of commandFiles){
+    const command = require(`./Commands/Current/${file}`)
+    client.commands.set(command.name, command)
+}
 
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
@@ -104,34 +112,34 @@ client.once('ready', () => {
 client.on("messageCreate", async message => {
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
-    let command = commandWithPrefix.slice(1 , commandWithPrefix.length)
+    let command = commandWithPrefix.slice(1 , commandWithPrefix.length).toLowerCase()
+    var arg = message.content.slice(commandWithPrefix.length +1 , message.content.length)
 
     if (message.author.equals(client.user)) return;
     if (!message.content.startsWith(prefix)) return;
 
-    switch (command) {
-        case "dc": case"sik":
-            var connection = getVoiceConnection(message.guildId)
-            if(!connection) return message.channel.send("Im not in a channel")
-            if(!message.member.voice.channel) return message.channel.send("Youre not in a voice channel")
-            if(message.guild.me.voice.channelId != message.member.voice.channelId) return message.channel.send("Youre not in the same channel as bot is")
-            connection.disconnect()
-            break
-        case "join":
-            var channel = message.member.voice.channel
-            if(!channel) return message.channel.send("Youre not in a channel")
-            if(!channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing && queue.get(message.guildId).resources.length !== 0) return message.channel.send("Mylo is currently being used in another voice channel")
-            if(message.guild.me.voice.channelId == message.member.voice.channelId) return message.channel.send("Im already in your vc")
-            var connection = joinVoiceChannel({
-                channelId: channel.id,
-                guildId: channel.guild.id,
-                adapterCreator: channel.guild.voiceAdapterCreator,
-            }).on(VoiceConnectionStatus.Disconnected , ()=>{
-                connection.destroy()
-            })
+    const commandExe = client.commands.get(command) || client.commands.find(c => c.aliases && c.aliases.includes(command))
+    if(commandExe) commandExe.execute(message , client, queue, arg)
 
-            break;
+    switch (command) {
+        // case "dc": case"sik":
+        //     var connection = getVoiceConnection(message.guildId)
+        //     commands.get("dc").execute(message , connection)
+        //     break
+        // case "join":
+        //     var channel = message.member.voice.channel
+        //     if(!channel) return message.channel.send("Youre not in a channel")
+        //     if(!channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
+        //     if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing && queue.get(message.guildId).resources.length !== 0) return message.channel.send("Mylo is currently being used in another voice channel")
+        //     if(message.guild.me.voice.channelId == message.member.voice.channelId) return message.channel.send("Im already in your vc")
+        //     var connection = joinVoiceChannel({
+        //         channelId: channel.id,
+        //         guildId: channel.guild.id,
+        //         adapterCreator: channel.guild.voiceAdapterCreator,
+        //     }).on(VoiceConnectionStatus.Disconnected , ()=>{
+        //         connection.destroy()
+        //     })
+            // break;
         case "p":case "play":
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel

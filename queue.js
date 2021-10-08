@@ -1,7 +1,6 @@
 const {MessageEmbed } = require("discord.js")
 const {AudioPlayerStatus} = require("@discordjs/voice")
 
-
 function createQueueAndPlaySong(queue , message , connection , playSong , audioResource){
     var guild_queue = queue.get(message.guildId)
     if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing|| queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
