@@ -24,6 +24,7 @@ const queue = new Map()
 
 client.once('ready', () => {
 	console.log('Ready!')
+    let mame= ""
     client.guilds.cache.forEach(guild => {
         var player = createAudioPlayer({
             behaviors:{
@@ -31,7 +32,7 @@ client.once('ready', () => {
             }
         })
         console.log("creating a queue system map for " + guild.name)
-        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("creating a queue system map for " + guild.name)
+        mame += "creating a queue system map for " + guild.name + "\n"
 
         let timeOut = null
 
@@ -110,6 +111,9 @@ client.once('ready', () => {
         queue.set(guild.id , queue_constructor)
         
     })
+
+    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(mame)
+
 })
 client.on("messageCreate", async message => {
     let prefix = "-"
@@ -678,8 +682,8 @@ client.on("messageCreate", async message => {
 client.on("guildCreate", guild =>{
     console.log("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
-    if(queue.has(guild.id)) return guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("Koonkesha mano kick karde boodin??")
-    guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("salam sexia man umadam")
+
+    guild.channels.cache.find(c => c.type == "GUILD_TEXT" && guild.me.permissionsIn(c).has('VIEW_CHANNEL') && guild.me.permissionsIn(c).has('SEND_MESSAGES'))
 
     var player = createAudioPlayer({
         behaviors:{
