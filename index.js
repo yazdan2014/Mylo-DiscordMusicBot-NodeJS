@@ -1,9 +1,8 @@
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction } = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
-const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES"] });
+const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
-
 
 const table = require('text-table');
 const shuffle = require('shuffle-array')
@@ -28,7 +27,6 @@ client.once('ready', () => {
         let timeOut = null
 
         player.on(AudioPlayerStatus.Playing, () => {
-            
             clearTimeout(timeOut)
             console.log("playing")
             var messageChannel = player.state.resource.metadata.messageChannel
@@ -53,13 +51,13 @@ client.once('ready', () => {
             let currentAudioRes = queue.get(guild.id).resources[0]
             var messageChannel = currentAudioRes.metadata.messageChannel
             console.log("idle")
-            
+
             var connection = getVoiceConnection(guild.id)        
-            
+
             if(!connection){
                 queue.get(guild.id).resources = []
             }else{
-                timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 120000)
+                timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 600000)
             }
             if(queue.get(guild.id).loopStatue){
                 if(!connection) return
@@ -658,10 +656,101 @@ client.on("messageCreate", async message => {
             currentAudioResourcesArray.unshift(currentAudioRes)
 
             queue.get(message.guildId).resources = currentAudioResourcesArray
-            message.channel.send("Done✅ \n Check out current queue list using 'q'")
+            message.channel.send("Done✅ \nCheck out current queue list using 'q'")
+            break
+        case "help":
+            
             break
         }
+})
+
+client.on("guildCreate", guild =>{
+    if(queue.has(guild.id)) return guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("Koonkesha mano kick karde boodin??")
+     guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("salam sexia man umadam")
+
+    var player = createAudioPlayer({
+        behaviors:{
+            noSubscriber: NoSubscriberBehavior.Stop
+        }
+    })
+    console.log("creating a queue system map for " + guild.name)
+
+    let timeOut = null
+
+    player.on(AudioPlayerStatus.Playing, () => {
+        clearTimeout(timeOut)
+        console.log("playing")
+        var messageChannel = player.state.resource.metadata.messageChannel
         
+        console.log(messageChannel)
+        queue.get(guild.id).messageChannel = messageChannel
+        if(!player.state.resource.metadata.is_seeked ){
+            messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
+        }else{
+            messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
+        }
+        queue.get(guild.id).timeMusicStarted = new Date()
+    });
+
+    player.on('error', error => {
+        var messageChannel = queue.get(guild.id).messageChannel
+        console.log(`Error: ${error} with resource`);
+        messageChannel.send("Something went wrong");
+    })
+
+    player.on(AudioPlayerStatus.Idle , async () => {
+        let currentAudioRes = queue.get(guild.id).resources[0]
+        var messageChannel = currentAudioRes.metadata.messageChannel
+        console.log("idle")
+
+        var connection = getVoiceConnection(guild.id)        
+
+        if(!connection){
+            queue.get(guild.id).resources = []
+        }else{
+            timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 600000)
+        }
+        if(queue.get(guild.id).loopStatue){
+            if(!connection) return
+            try{
+                var stream = await play.stream(currentAudioRes.metadata.url)
+            }catch(error){
+                console.log("error"+error)
+                return message.channel.send("Something went wrong")
+            }
+            var newAudioResource = createAudioResource(stream.stream, {
+                inputType : stream.type,
+                metadata:{
+                    messageChannel: messageChannel,
+                    title: currentAudioRes.metadata.title,
+                    url: currentAudioRes.metadata.url,
+                    thumbnail: currentAudioRes.metadata.thumbnail,
+                    guildId: currentAudioRes.metadata.guildId,
+                    secDuration: currentAudioRes.metadata.secDuration,
+                    rawDuration: currentAudioRes.metadata.rawDuration,
+                    requestedBy: currentAudioRes.metadata.requestedBy,
+                    data: currentAudioRes.metadata.data, //used for the seek option
+                    channel: currentAudioRes.metadata.channel
+                }
+             })
+            playSong(messageChannel , connection, newAudioResource)
+        }else{
+            queue.get(guild.id).resources.shift()
+            if(queue.get(guild.id).resources.length !== 0){
+                playSong(messageChannel , connection , queue.get(guild.id).resources[0])
+            }
+        }
+        
+    })
+
+    const queue_constructor = {
+        messageChannel:null,
+        resources: [],
+        timeMusicStarted: null,
+        audioPlayer: player,
+        loopStatue:false
+    }
+    queue.set(guild.id , queue_constructor)
 })
 
 function secToMinSec(sec){
