@@ -28,10 +28,8 @@ client.once('ready', () => {
 
         player.on(AudioPlayerStatus.Playing, () => {
             clearTimeout(timeOut)
-            console.log("playing")
             var messageChannel = player.state.resource.metadata.messageChannel
-            
-            console.log(messageChannel)
+
             queue.get(guild.id).messageChannel = messageChannel
             if(!player.state.resource.metadata.is_seeked ){
                 messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
@@ -50,7 +48,6 @@ client.once('ready', () => {
         player.on(AudioPlayerStatus.Idle , async () => {
             let currentAudioRes = queue.get(guild.id).resources[0]
             var messageChannel = currentAudioRes.metadata.messageChannel
-            console.log("idle")
 
             var connection = getVoiceConnection(guild.id)        
 
@@ -155,10 +152,8 @@ client.on("messageCreate", async message => {
                     return message.channel.send("Something went wrong please try again")
                 })
 
-                console.log('doesnt exist')
             }else{
                 var connection = getVoiceConnection(message.guildId)
-                console.log('exists')
             }
 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
@@ -170,7 +165,6 @@ client.on("messageCreate", async message => {
 
             try{
                 var data = await play.video_info(result[0].url)
-                console.log("avali anjam mishe")
                 var stream = await play.stream(result[0].url)
             }catch(error){
                 console.log("error"+error)
@@ -208,7 +202,6 @@ client.on("messageCreate", async message => {
                 if(currentAudioRes.metadata.is_seeked){
                     estimated += currentAudioRes.metadata.seekVal
                 }
-                console.log("queuing a song")
                 queue.get(message.guildId).resources.push(audioResource)
                 
                 var embed = new MessageEmbed()
@@ -225,7 +218,6 @@ client.on("messageCreate", async message => {
                 .setFooter("By: **" + result[0].channel.name+ "**" , result[0].channel.icon.url)
                 message.channel.send({embeds:[embed]})
             }else if(guild_queue.resources.length == 0){
-                console.log("playing a song after queue creation")
                 queue.get(message.guildId).resources.push(audioResource)
                 playSong(message , connection, audioResource)
             }
@@ -247,7 +239,6 @@ client.on("messageCreate", async message => {
         var outPut = '▬'.repeat(30)
         let duration = currentAudioRes.metadata.secDuration
         let current = Math.floor(((currentTime.getTime() - queue.get(message.guildId).timeMusicStarted.getTime() )/1000))
-        console.log("gets here")
         if(currentAudioRes.metadata.is_seeked){
             current += currentAudioRes.metadata.seekVal
         }
@@ -334,8 +325,7 @@ client.on("messageCreate", async message => {
                     if(userIdsAndVals.get(interaction.user.id).clicks > 3) return interaction.deferUpdate()
                     if(userIdsAndVals.get(interaction.user.id).clicks > 2) {interaction.deferUpdate();return message.channel.send("KOS KOSH ENGHAD NAZAN ROOSH DIGE KHOB");}
                     if(userIdsAndVals.get(interaction.user.id).state){interaction.deferUpdate();return message.channel.send(`<@${interaction.user.id}> Youve already voted`);}
-                    votes++                    
-                    console.log((votes/(message.member.voice.channel.members.size - 1)))
+                    votes++
 
                     userIdsAndVals.get(interaction.user.id).state = true
 
@@ -440,10 +430,8 @@ client.on("messageCreate", async message => {
                 var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
                     return message.channel.send("Something went wrong please try again")
                 })
-                console.log('doesnt exists')
             }else{
                 var connection = getVoiceConnection(message.guildId)
-                console.log('exists')
             }
             var row = new MessageActionRow()
             .addComponents(
@@ -557,12 +545,12 @@ client.on("messageCreate", async message => {
                     mcollector.stop()
                 }
                 else if(collected.customId == "next"){
-                    if (currentPage == results.length) return console.log("bruh")
+                    if (currentPage == results.length) return 
                     currentPage++
                     await collected.update({embeds:[createEmbbed()]})
                 }
                 else if(collected.customId == "previous"){
-                    if (currentPage == 1) return console.log("bruh")
+                    if (currentPage == 1) return
                     currentPage--
                     await collected.update({embeds:[createEmbbed()]})
                 }
@@ -650,7 +638,6 @@ client.on("messageCreate", async message => {
             var currentAudioRes = queue.get(message.guildId).resources[0]
             var audioRes = queue.get(message.guildId).resources
             audioRes.shift()
-            console.log(audioRes)
             var currentAudioResourcesArray = shuffle(audioRes)
             
             currentAudioResourcesArray.unshift(currentAudioRes)
@@ -680,10 +667,8 @@ client.on("guildCreate", guild =>{
 
     player.on(AudioPlayerStatus.Playing, () => {
         clearTimeout(timeOut)
-        console.log("playing")
         var messageChannel = player.state.resource.metadata.messageChannel
         
-        console.log(messageChannel)
         queue.get(guild.id).messageChannel = messageChannel
         if(!player.state.resource.metadata.is_seeked ){
             messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
@@ -702,7 +687,6 @@ client.on("guildCreate", guild =>{
     player.on(AudioPlayerStatus.Idle , async () => {
         let currentAudioRes = queue.get(guild.id).resources[0]
         var messageChannel = currentAudioRes.metadata.messageChannel
-        console.log("idle")
 
         var connection = getVoiceConnection(guild.id)        
 
