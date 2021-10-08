@@ -608,8 +608,8 @@ client.on("messageCreate", async message => {
             var outPut = ""
 
             guildQueue.forEach(function(resource,index) {
-                if(index == 0)return outPut += "Now playing" + resource.metadata.title + "\n"
-                outPut +=  index + resource.metadata.title + "\n"
+                if(index == 0)return outPut += ":arrow_forward: Now playing " + resource.metadata.title + "\n"
+                outPut +=  index + ". " + resource.metadata.title + "\n"
             })
 
             var embed = new MessageEmbed()
@@ -618,7 +618,7 @@ client.on("messageCreate", async message => {
             .setFooter("requested by:" + message.author.username, message.author.avatarURL())
             
 
-            message.channel.send(outPut)            
+            message.channel.send(embed)            
             break
         case "loop":case "repeat":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
