@@ -608,15 +608,15 @@ client.on("messageCreate", async message => {
             var outPut = ""
 
             guildQueue.forEach(function(resource,index) {
-                if(index == 0)return outPut += "▶ Now playing `" + resource.metadata.title + "`\n"
+                if(index == 0)return outPut += "<:music:896110571206869042> Now playing **" + resource.metadata.title + "**\n"
                 outPut +=  index + ". `" + resource.metadata.title + "`\n"
             })
 
             var embed = new MessageEmbed()
-            .setTitle("<:music:896110571206869042> Queue Review")
-            .setDescription( outPut)
+            .setTitle("Queue Review")
+            .setDescription(outPut)
+            .setColor('#DFFF00')
             .setFooter("requested by:" + message.author.username, message.author.avatarURL())
-            
 
             message.channel.send({embeds:[embed]})            
             break
