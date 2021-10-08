@@ -785,5 +785,4 @@ function isValidHttpUrl(string) {
   
     return url.protocol === "http:" || url.protocol === "https:";
   }
-const token = process.env.TOKEN
-client.login(token);
+client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.l0xCbShFiIEddYiaKlbxs3xpYME");
