@@ -1,7 +1,10 @@
-const {MessageEmbed} = require("discord.js")
+const {MessageEmbed } = require("discord.js")
+const {AudioPlayerStatus} = require("@discordjs/voice")
+
+
 function createQueueAndPlaySong(queue , message , connection , playSong , audioResource){
     var guild_queue = queue.get(message.guildId)
-    if(guild_queue.resources.length!== 0){
+    if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing|| queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
         var currentAudioRes = connection.state.subscription.player.state.resource
         var currentTime = new Date().getTime()
         var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
@@ -13,7 +16,6 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         if(currentAudioRes.metadata.is_seeked){
             estimated += currentAudioRes.metadata.seekVal
         }
-        console.log("queuing a song")
         queue.get(message.guildId).resources.push(audioResource)
         
         var embed = new MessageEmbed()
@@ -29,10 +31,12 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         )
         .setFooter("By: **" + audioResource.metadata.channel.name + "**" , audioResource.metadata.channel.icon.url)
         message.channel.send({embeds:[embed]})
-    }else if(guild_queue.resources.length == 0){
-        console.log("playing a song after queue creation")
+    }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
         queue.get(message.guildId).resources.push(audioResource)
         playSong(message , connection , audioResource)
+    }else{
+        message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support")
+        queue.get(message.guildId).resources = []
     }
 }
 
