@@ -170,7 +170,7 @@ client.on("messageCreate", async message => {
                 console.log("error"+error)
                 return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
             }
-            
+
             var audioResource = createAudioResource(stream.stream,{
                 inputType : stream.type,
                 metadata:{
@@ -190,7 +190,7 @@ client.on("messageCreate", async message => {
             })
 
             var guild_queue = queue.get(message.guildId)
-            if(guild_queue.resources.length!== 0){
+            if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing|| queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
                 var currentAudioRes = connection.state.subscription.player.state.resource
                 var currentTime = new Date().getTime()
                 var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
@@ -217,9 +217,12 @@ client.on("messageCreate", async message => {
                 )
                 .setFooter("By: **" + result[0].channel.name+ "**" , result[0].channel.icon.url)
                 message.channel.send({embeds:[embed]})
-            }else if(guild_queue.resources.length == 0){
+            }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
                 queue.get(message.guildId).resources.push(audioResource)
                 playSong(message , connection, audioResource)
+            }else{
+                message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support")
+                queue.get(message.guildId).resources = []
             }
             break
         case 'np':
