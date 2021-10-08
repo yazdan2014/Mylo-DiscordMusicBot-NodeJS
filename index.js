@@ -618,7 +618,7 @@ client.on("messageCreate", async message => {
             .setFooter("requested by:" + message.author.username, message.author.avatarURL())
             
 
-            message.channel.send(embed)            
+            message.channel.send({embeds:[embed]})            
             break
         case "loop":case "repeat":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
