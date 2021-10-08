@@ -50,6 +50,7 @@ client.once('ready', () => {
         player.on('error', error => {
             var messageChannel = queue.get(guild.id).messageChannel
             console.log(`Error: ${error} with resource`);
+            client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727279").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
             messageChannel.send("Something went wrong");
         })
 
@@ -70,6 +71,7 @@ client.once('ready', () => {
                     var stream = await play.stream(currentAudioRes.metadata.url)
                 }catch(error){
                     console.log("error"+error)
+                    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727279").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
                     return message.channel.send("Something went wrong")
                 }
                 var newAudioResource = createAudioResource(stream.stream, {
@@ -176,6 +178,7 @@ client.on("messageCreate", async message => {
                 var stream = await play.stream(result[0].url)
             }catch(error){
                 console.log("error"+error)
+                client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727279").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
                 return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
             }
 
@@ -692,6 +695,7 @@ client.on("guildCreate", guild =>{
     player.on('error', error => {
         var messageChannel = queue.get(guild.id).messageChannel
         console.log(`Error: ${error} with resource`);
+        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727279").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
         messageChannel.send("Something went wrong");
     })
 
@@ -712,6 +716,7 @@ client.on("guildCreate", guild =>{
                 var stream = await play.stream(currentAudioRes.metadata.url)
             }catch(error){
                 console.log("error"+error)
+                client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727279").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
                 return message.channel.send("Something went wrong")
             }
             var newAudioResource = createAudioResource(stream.stream, {
