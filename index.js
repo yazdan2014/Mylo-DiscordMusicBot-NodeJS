@@ -12,7 +12,7 @@ const queueFunc = require("./queue")
 const {toEmoji} = require("number-to-emoji");
 
 const queue = new Map()
-//Global queue for your bot. Every server will have a key and value pair in this map. { guild.id, queue_constructor{resources{} ,nowplayingdate } }
+//Global queue for your bot. Every server will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
 
 client.once('ready', () => {
 	console.log('Ready!')
@@ -751,6 +751,10 @@ client.on("guildCreate", guild =>{
         loopStatue:false
     }
     queue.set(guild.id , queue_constructor)
+})
+
+client.on('guildDelete', guild =>{
+    queue.get(guild.id) = {}
 })
 
 function secToMinSec(sec){
