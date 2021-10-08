@@ -608,7 +608,7 @@ client.on("messageCreate", async message => {
             var outPut = ""
 
             guildQueue.forEach(function(resource,index) {
-                if(index == 0)return outPut += "<:music:896110571206869042> Now playing **" + resource.metadata.title + "**\n"
+                if(index == 0)return outPut += "▶️Now playing **" + resource.metadata.title + "**\n"
                 outPut +=  index + ". `" + resource.metadata.title + "`\n"
             })
 
