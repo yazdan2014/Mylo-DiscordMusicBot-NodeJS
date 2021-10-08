@@ -31,6 +31,7 @@ client.once('ready', () => {
             }
         })
         console.log("creating a queue system map for " + guild.name)
+        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("creating a queue system map for " + guild.name)
 
         let timeOut = null
 
@@ -292,7 +293,6 @@ client.on("messageCreate", async message => {
             }
 
             if(membersCurrentlyVC.size == 0 || membersCurrentlyVC.size == 1 ) return playNextSong()
-
             
 
             let userIdsAndVals = new Map()
@@ -400,7 +400,7 @@ client.on("messageCreate", async message => {
                 seekValFinal = parseInt(seekVal)
             }
 
-            if(seekValFinal <= 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" )
+            if(seekValFinal < 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" )
 
             var data = currentAudioRes.metadata.data
             var player = connection.state.subscription.player
@@ -603,9 +603,17 @@ client.on("messageCreate", async message => {
 
             var outPut = ""
 
-            guildQueue.forEach(resource =>{
-                outPut += resource.metadata.title + "\n"
+            guildQueue.forEach(function(resource,index) {
+                if(index == 0)return outPut += "Now playing" + resource.metadata.title + "\n"
+                outPut +=  index + resource.metadata.title + "\n"
             })
+
+            var embed = new MessageEmbed()
+            .setTitle(":music:Queue Review")
+            .setDescription("```"+ outPut +"```")
+            .setFooter("requested by:" + message.author.username, message.author.avatarURL())
+            
+
             message.channel.send(outPut)            
             break
         case "loop":case "repeat":
@@ -669,6 +677,7 @@ client.on("messageCreate", async message => {
 
 client.on("guildCreate", guild =>{
     console.log("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
+    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
     if(queue.has(guild.id)) return guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("Koonkesha mano kick karde boodin??")
     guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("salam sexia man umadam")
 
@@ -758,6 +767,7 @@ client.on("guildCreate", guild =>{
 
 client.on('guildDelete', guild =>{
     queue.get(guild.id) = {}
+    
 })
 
 function secToMinSec(sec){
