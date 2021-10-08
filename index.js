@@ -784,6 +784,5 @@ function isValidHttpUrl(string) {
     }
   
     return url.protocol === "http:" || url.protocol === "https:";
-  } 
-console.log(process.env.TOKEN)
-client.login(process.env.TOKEN);
+  }
+client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.l0xCbShFiIEddYiaKlbxs3xpYME");
