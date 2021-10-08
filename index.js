@@ -683,7 +683,10 @@ client.on("guildCreate", guild =>{
     console.log("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
 
-    guild.channels.cache.find(c => c.type == "GUILD_TEXT" && guild.me.permissionsIn(c).has('VIEW_CHANNEL') && guild.me.permissionsIn(c).has('SEND_MESSAGES'))
+    try{
+        guild.channels.cache.find(c => c.type == "GUILD_TEXT" && guild.me.permissionsIn(c).has('VIEW_CHANNEL') && guild.me.permissionsIn(c).has('SEND_MESSAGES')).send("Thx for adding me!! the bot is currently on BETA demo version.\nIf you've found any bugs please contact the staff in our server.\nFeel free to join our server link is pasted down below:\nhttps://discord.gg/k3EB2MCC")
+    }
+    catch{}
 
     var player = createAudioPlayer({
         behaviors:{
@@ -770,8 +773,8 @@ client.on("guildCreate", guild =>{
 })
 
 client.on('guildDelete', guild =>{
-    queue.get(guild.id) = {}
-    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("just left"+ guild.name +`kose nanat` + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
+    queue.get(guild.id) = null
+    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("just left"+ guild.name +`fuck you.` + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
 })
 
 function secToMinSec(sec){
