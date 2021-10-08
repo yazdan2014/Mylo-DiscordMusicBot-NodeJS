@@ -767,7 +767,7 @@ client.on("guildCreate", guild =>{
 
 client.on('guildDelete', guild =>{
     queue.get(guild.id) = {}
-    
+    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("just left"+ guild.name +`kose nanat` + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
 })
 
 function secToMinSec(sec){
