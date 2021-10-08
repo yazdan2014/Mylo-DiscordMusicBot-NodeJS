@@ -665,8 +665,9 @@ client.on("messageCreate", async message => {
 })
 
 client.on("guildCreate", guild =>{
+    console.log("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
     if(queue.has(guild.id)) return guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("Koonkesha mano kick karde boodin??")
-     guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("salam sexia man umadam")
+    guild.channels.cache.find(c => c.type == "GUILD_TEXT" && c.permissionsLocked).send("salam sexia man umadam")
 
     var player = createAudioPlayer({
         behaviors:{
