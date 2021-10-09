@@ -116,7 +116,6 @@ client.once('ready', () => {
 
 })
 client.on("messageCreate", async message => {
-    if(message.guildId == "877035736057151539")return message.channel.send("AAB KOONE DASTE KHAYE MAAL NEMIDAM").catch(()=>{})
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length).toLowerCase()
