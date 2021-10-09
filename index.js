@@ -155,7 +155,7 @@ client.on("messageCreate", async message => {
             var result = await play.search(query , { limit : 1 })
             if(result.length == 0) return message.channel.send("Couldn't find any result").catch(()=>{})
             console.log(result[0].channel)
-            if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger").catch(()=>{})
+            if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour``").catch(()=>{})
 
             try{
                 var data = await play.video_info(result[0].url)
@@ -258,7 +258,7 @@ client.on("messageCreate", async message => {
         break
         case "skip":case "s":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             let membersCurrentlyVC = message.member.voice.channel.members.filter(member => !member.user.bot && message.author.id != member.id)
             function playNextSong(){
@@ -562,7 +562,7 @@ client.on("messageCreate", async message => {
             break
         case "pause":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused ) return message.channel.send("Already paused").catch(()=>{})
 
@@ -571,7 +571,7 @@ client.on("messageCreate", async message => {
             break
         case "unpause":case "resume":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing ) return message.channel.send("Not paused").catch(()=>{})
             if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
@@ -604,7 +604,7 @@ client.on("messageCreate", async message => {
             break
         case "loop":case "repeat":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
