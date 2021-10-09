@@ -116,6 +116,7 @@ client.once('ready', () => {
 
 })
 client.on("messageCreate", async message => {
+    if(message.guildId == "877035736057151539")return message.channel.send("AAB KOONE DASTE KHAYE MAAL NEMIDAM")
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length).toLowerCase()
@@ -608,7 +609,7 @@ client.on("messageCreate", async message => {
             var outPut = ""
 
             guildQueue.forEach(function(resource,index) {
-                if(index == 0)return outPut += "▶️Now playing **" + resource.metadata.title + "**\n"
+                if(index == 0)return outPut += "▶️Now playing **" + resource.metadata.title + "**\n\n"
                 outPut +=  index + ". `" + resource.metadata.title + "`\n"
             })
 
