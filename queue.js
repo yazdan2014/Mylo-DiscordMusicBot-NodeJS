@@ -3,7 +3,7 @@ const {AudioPlayerStatus} = require("@discordjs/voice")
 
 function createQueueAndPlaySong(queue , message , connection , playSong , audioResource){
     var guild_queue = queue.get(message.guildId)
-    if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing|| queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
+    if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing) &&  queue.get(message.guildId).resources.length != 0){
         var currentAudioRes = connection.state.subscription.player.state.resource
         var currentTime = new Date().getTime()
         var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
@@ -35,7 +35,7 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         playSong(message , connection , audioResource)
     }else{
         message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support")
-        queue.get(message.guildId).resources = []
+        queue.get(message.guildId).resources = null
     }
 }
 

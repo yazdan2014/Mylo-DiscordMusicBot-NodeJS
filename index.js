@@ -36,6 +36,7 @@ client.once('ready', () => {
 
         let timeOut = null
 
+
         player.on(AudioPlayerStatus.Playing, () => {
             clearTimeout(timeOut)
             var messageChannel = player.state.resource.metadata.messageChannel
@@ -110,7 +111,9 @@ client.once('ready', () => {
         queue.set(guild.id , queue_constructor)
         
     })
-
+    queue.get('865338199433412609').audioPlayer.on('stateChange', p=>{
+        console.log(p.status)
+    })
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(mame).catch(()=>{})
 
 })
@@ -149,6 +152,8 @@ client.on("messageCreate", async message => {
             }else{
                 var connection = getVoiceConnection(message.guildId)
             }
+            
+
 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
 
@@ -185,7 +190,7 @@ client.on("messageCreate", async message => {
             })
 
             var guild_queue = queue.get(message.guildId)
-            if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing|| queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
+            if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing) &&  queue.get(message.guildId).resources.length != 0){
                 var currentAudioRes = connection.state.subscription.player.state.resource
                 var currentTime = new Date().getTime()
                 var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
@@ -217,7 +222,7 @@ client.on("messageCreate", async message => {
                 playSong(message , connection, audioResource)
             }else{
                 message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
-                queue.get(message.guildId).resources = []
+                queue.get(message.guildId).resources = null
             }
             break
         case "nowplaying" :case 'np':
@@ -234,6 +239,7 @@ client.on("messageCreate", async message => {
         function setCharAt(str,index,chr) {
             return str.substring(0,index) + chr + str.substring(index+1);
         }
+
         var outPut = '▬'.repeat(30)
         let duration = currentAudioRes.metadata.secDuration
         let current = Math.floor(((currentTime.getTime() - queue.get(message.guildId).timeMusicStarted.getTime() )/1000))
@@ -452,7 +458,6 @@ client.on("messageCreate", async message => {
             var resultsRaw = await play.search(query , { limit : 20 })
             var results = arraySplitter(resultsRaw,5)
 
-
             function createEmbbed(){
                 var embedSearch = new MessageEmbed()
                 .setColor('#1202F7')
@@ -493,7 +498,7 @@ client.on("messageCreate", async message => {
             })
 
             mcollector.on('collect', async m => {
-                if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 1 to " + resultsRaw.length.toString()).catch(()=>{})
+                if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 0 to " + resultsRaw.length.toString()).catch(()=>{})
                 is_collected = true
                 mcollector.stop()
                 collector.stop()
