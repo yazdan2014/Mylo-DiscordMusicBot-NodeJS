@@ -350,7 +350,7 @@ client.on("messageCreate", async message => {
         case "fs":case "forceskip":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
             var connection = getVoiceConnection(message.guildId)
             if(queue.get(message.guildId).resources.length > 1){
                 queue.get(message.guildId).resources.shift()
@@ -369,7 +369,7 @@ client.on("messageCreate", async message => {
 
             if(!connection ) return message.channel.send("Im not in a voice channel").catch(()=>{})
             if(!connection.state.subscription) return message.channel.send("Nothing is being played").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
             var currentAudioRes = connection.state.subscription.player.state.resource
     
@@ -574,7 +574,7 @@ client.on("messageCreate", async message => {
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing ) return message.channel.send("Not paused").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
             var player = queue.get(message.guildId).audioPlayer
             player.unpause()
@@ -606,7 +606,7 @@ client.on("messageCreate", async message => {
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
             var statue = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             if(statue){
