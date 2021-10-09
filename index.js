@@ -98,7 +98,6 @@ client.once('ready', () => {
                     playSong(messageChannel , connection , queue.get(guild.id).resources[0])
                 }
             }
-            
         })
 
         const queue_constructor = {
@@ -120,7 +119,6 @@ client.on("messageCreate", async message => {
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length).toLowerCase()
     var arg = message.content.slice(commandWithPrefix.length +1 , message.content.length)
-
     if (message.author.equals(client.user)) return;
     if (!message.content.startsWith(prefix)) return;
 
@@ -128,26 +126,8 @@ client.on("messageCreate", async message => {
     if(commandExe) commandExe.execute(message , client, queue, arg)
     try{
     switch (command) {
-        // case "dc": case"sik":
-        //     var connection = getVoiceConnection(message.guildId)
-        //     commands.get("dc").execute(message , connection)
-        //     break
-        // case "join":
-        //     var channel = message.member.voice.channel
-        //     if(!channel) return message.channel.send("Youre not in a channel")
-        //     if(!channel.joinable)return message.channel.send("Bot doesn't have permission to join your voice channel")
-        //     if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing && queue.get(message.guildId).resources.length !== 0) return message.channel.send("Mylo is currently being used in another voice channel")
-        //     if(message.guild.me.voice.channelId == message.member.voice.channelId) return message.channel.send("Im already in your vc")
-        //     var connection = joinVoiceChannel({
-        //         channelId: channel.id,
-        //         guildId: channel.guild.id,
-        //         adapterCreator: channel.guild.voiceAdapterCreator,
-        //     }).on(VoiceConnectionStatus.Disconnected , ()=>{
-        //         connection.destroy()
-        //     })
-            // break;
-        case "p":case "play":
-            var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
+        case "p": case "play":
+            var query = message.content.slice(commandWithPrefix.length +1 , message.content.length).replaceAll("#", "sharp")
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel").catch(()=>{})
             if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel").catch(()=>{})
@@ -240,7 +220,7 @@ client.on("messageCreate", async message => {
                 queue.get(message.guildId).resources = []
             }
             break
-        case 'np':
+        case "nowplaying" :case 'np':
         var currentTime = new Date()
         var connection = getVoiceConnection(message.guildId)
 
@@ -367,10 +347,10 @@ client.on("messageCreate", async message => {
             })              
 
         break
-        case "fs":
+        case "fs":case "forceskip":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj")) return message.channel.send("koonkesh to ke dj nisti").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
             var connection = getVoiceConnection(message.guildId)
             if(queue.get(message.guildId).resources.length > 1){
                 queue.get(message.guildId).resources.shift()
@@ -389,6 +369,7 @@ client.on("messageCreate", async message => {
 
             if(!connection ) return message.channel.send("Im not in a voice channel").catch(()=>{})
             if(!connection.state.subscription) return message.channel.send("Nothing is being played").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
             var currentAudioRes = connection.state.subscription.player.state.resource
     
@@ -430,7 +411,7 @@ client.on("messageCreate", async message => {
             player.play(resource)
             break
         case "search":
-            var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
+            var query = message.content.slice(commandWithPrefix.length +1 , message.content.length).replaceAll("#", "sharp")
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel").catch(()=>{})
             if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
@@ -593,6 +574,7 @@ client.on("messageCreate", async message => {
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing ) return message.channel.send("Not paused").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
             var player = queue.get(message.guildId).audioPlayer
             player.unpause()
@@ -624,6 +606,7 @@ client.on("messageCreate", async message => {
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
             var statue = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             if(statue){
@@ -659,7 +642,8 @@ client.on("messageCreate", async message => {
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             if(queue.get(message.guildId).resources.length <= 2)return message.channel.send("There's not enough song in your queue , add more").catch(()=>{})
-            
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") || !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
+
             var currentAudioRes = queue.get(message.guildId).resources[0]
             var audioRes = queue.get(message.guildId).resources
             audioRes.shift()
