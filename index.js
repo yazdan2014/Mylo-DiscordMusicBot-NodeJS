@@ -42,9 +42,9 @@ client.once('ready', () => {
 
             queue.get(guild.id).messageChannel = messageChannel
             if(!player.state.resource.metadata.is_seeked ){
-                messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
+                messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{})
             }else{
-                messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
+                messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`).catch(()=>{})
             }
             queue.get(guild.id).timeMusicStarted = new Date()
         });
@@ -52,8 +52,8 @@ client.once('ready', () => {
         player.on('error', error => {
             var messageChannel = queue.get(guild.id).messageChannel
             console.log(`Error: ${error} with resource`);
-            client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
-            messageChannel.send("Something went wrong");
+            client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+            messageChannel.send("Something went wrong").catch(()=>{})
         })
 
         player.on(AudioPlayerStatus.Idle , async () => {
@@ -73,8 +73,8 @@ client.once('ready', () => {
                     var stream = await play.stream(currentAudioRes.metadata.url)
                 }catch(error){
                     console.log("error"+error)
-                    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
-                    return message.channel.send("Something went wrong")
+                    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+                    return message.channel.send("Something went wrong").catch(()=>{})
                 }
                 var newAudioResource = createAudioResource(stream.stream, {
                     inputType : stream.type,
@@ -112,11 +112,11 @@ client.once('ready', () => {
         
     })
 
-    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(mame)
+    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(mame).catch(()=>{})
 
 })
 client.on("messageCreate", async message => {
-    if(message.guildId == "877035736057151539")return message.channel.send("AAB KOONE DASTE KHAYE MAAL NEMIDAM")
+    if(message.guildId == "877035736057151539")return message.channel.send("AAB KOONE DASTE KHAYE MAAL NEMIDAM").catch(()=>{})
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length).toLowerCase()
@@ -150,9 +150,9 @@ client.on("messageCreate", async message => {
         case "p":case "play":
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
-            if(!channel) return message.channel.send("Join a channel")
-            if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel")
-            if(!query) return message.channel.send("Search for an actuall song")
+            if(!channel) return message.channel.send("Join a channel").catch(()=>{})
+            if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel").catch(()=>{})
+            if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
 
             if(!getVoiceConnection(message.guildId)){
                 let rawConnection = joinVoiceChannel({
@@ -164,27 +164,27 @@ client.on("messageCreate", async message => {
                 })
 
                 var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(() =>{
-                    return message.channel.send("Something went wrong please try again")
+                    return message.channel.send("Something went wrong please try again").catch(()=>{})
                 })
 
             }else{
                 var connection = getVoiceConnection(message.guildId)
             }
 
-            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
+            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
 
             var result = await play.search(query , { limit : 1 })
-            if(result.length == 0) return message.channel.send("Couldn't find any result")
+            if(result.length == 0) return message.channel.send("Couldn't find any result").catch(()=>{})
             console.log(result[0].channel)
-            if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger")
+            if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour`` buy premium nigger").catch(()=>{})
 
             try{
                 var data = await play.video_info(result[0].url)
                 var stream = await play.stream(result[0].url)
             }catch(error){
                 console.log("error"+error)
-                client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
-                return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
+                client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+                return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
             }
 
             var audioResource = createAudioResource(stream.stream,{
@@ -237,7 +237,7 @@ client.on("messageCreate", async message => {
                 queue.get(message.guildId).resources.push(audioResource)
                 playSong(message , connection, audioResource)
             }else{
-                message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support")
+                message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
                 queue.get(message.guildId).resources = []
             }
             break
@@ -245,12 +245,12 @@ client.on("messageCreate", async message => {
         var currentTime = new Date()
         var connection = getVoiceConnection(message.guildId)
 
-        if(!connection ) return message.channel.send("Im not in a voice channel")
-        if(!connection.state.subscription) return message.channel.send("Nothing is being played")
+        if(!connection ) return message.channel.send("Im not in a voice channel").catch(()=>{})
+        if(!connection.state.subscription) return message.channel.send("Nothing is being played").catch(()=>{})
         
         var currentAudioRes = connection.state.subscription.player.state.resource
 
-        if(!currentAudioRes) return message.channel.send("Nothing is being played")
+        if(!currentAudioRes) return message.channel.send("Nothing is being played").catch(()=>{})
 
         function setCharAt(str,index,chr) {
             return str.substring(0,index) + chr + str.substring(index+1);
@@ -275,12 +275,12 @@ client.on("messageCreate", async message => {
                 { name: '`Requested by:`', value: currentAudioRes.metadata.requestedBy ,inline:true},    
             )
             // .setFooter("By: **" + currentAudioRes.metadata.channel.name + "**" , currentAudioRes.metadata.channel.icon.url)
-        message.channel.send({embeds:[embed]})
+        message.channel.send({embeds:[embed]}).catch(()=>{})
         break
         case "skip":case "s":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             let membersCurrentlyVC = message.member.voice.channel.members.filter(member => !member.user.bot && message.author.id != member.id)
             function playNextSong(){
                 var connection = getVoiceConnection(message.guildId)
@@ -293,7 +293,7 @@ client.on("messageCreate", async message => {
                     message.react("✅")
                 }
                 else{
-                    message.channel.send("Nothing is being played")
+                    message.channel.send("Nothing is being played").catch(()=>{})
                 }
             }
 
@@ -332,7 +332,7 @@ client.on("messageCreate", async message => {
                 .setColor("#3BA55C")
                 .setFooter("Members with dj role can use \"fs\" to force skip")
 
-            var sentMessageSkip= await message.channel.send({components:[row],embeds:[embedMessage]})
+            var sentMessageSkip= await message.channel.send({components:[row],embeds:[embedMessage]}).catch(()=>{})
 
             const skipComponnentFilter = i => userIdsAndVals.has(i.user.id)
             const skipcollector = message.channel.createMessageComponentCollector({ filter:skipComponnentFilter, time: 30000 })
@@ -341,8 +341,8 @@ client.on("messageCreate", async message => {
                 if(interaction.customId == "skip"){
                     userIdsAndVals.get(interaction.user.id).clicks ++
                     if(userIdsAndVals.get(interaction.user.id).clicks > 3) return interaction.deferUpdate()
-                    if(userIdsAndVals.get(interaction.user.id).clicks > 2) {interaction.deferUpdate();return message.channel.send("KOS KOSH ENGHAD NAZAN ROOSH DIGE KHOB");}
-                    if(userIdsAndVals.get(interaction.user.id).state){interaction.deferUpdate();return message.channel.send(`<@${interaction.user.id}> Youve already voted`);}
+                    if(userIdsAndVals.get(interaction.user.id).clicks > 2) {interaction.deferUpdate();return message.channel.send("KOS KOSH ENGHAD NAZAN ROOSH DIGE KHOB").catch(()=>{})}
+                    if(userIdsAndVals.get(interaction.user.id).state){interaction.deferUpdate();return message.channel.send(`<@${interaction.user.id}> Youve already voted`).catch(()=>{})}
                     votes++
 
                     userIdsAndVals.get(interaction.user.id).state = true
@@ -369,9 +369,9 @@ client.on("messageCreate", async message => {
 
         break
         case "fs":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj")) return message.channel.send("koonkesh to ke dj nisti")
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj")) return message.channel.send("koonkesh to ke dj nisti").catch(()=>{})
             var connection = getVoiceConnection(message.guildId)
             if(queue.get(message.guildId).resources.length > 1){
                 queue.get(message.guildId).resources.shift()
@@ -379,24 +379,24 @@ client.on("messageCreate", async message => {
             }else if(queue.get(message.guildId).resources.length == 1 ){
                 queue.get(message.guildId).loopStatue = false
                 connection.state.subscription.player.stop()
-                message.react("✅")
+                message.react("✅").catch(()=>{})
             }
             else{
-                message.channel.send("Nothing is being played")
+                message.channel.send("Nothing is being played").catch(()=>{})
             }
             break
         case "seek":
             var connection = getVoiceConnection(message.guildId)
 
-            if(!connection ) return message.channel.send("Im not in a voice channel")
-            if(!connection.state.subscription) return message.channel.send("Nothing is being played")
+            if(!connection ) return message.channel.send("Im not in a voice channel").catch(()=>{})
+            if(!connection.state.subscription) return message.channel.send("Nothing is being played").catch(()=>{})
 
             var currentAudioRes = connection.state.subscription.player.state.resource
     
-            if(!currentAudioRes) return message.channel.send("Nothing is being played")
+            if(!currentAudioRes) return message.channel.send("Nothing is being played").catch(()=>{})
 
             var seekVal = message.content.slice(commandWithPrefix.length +1 , message.content.length)
-            if(!(seekVal && (/^\d+$/.test(seekVal) || /^[0-5]?[0-9]:[0-5]?[0-9]$/.test(seekVal)))) return message.channel.send("Please choose a correct NATURAL NUMERIC seek value")
+            if(!(seekVal && (/^\d+$/.test(seekVal) || /^[0-5]?[0-9]:[0-5]?[0-9]$/.test(seekVal)))) return message.channel.send("Please choose a correct NATURAL NUMERIC seek value").catch(()=>{})
             var seekValFinal = 0
 
             if(seekVal.includes(":")){
@@ -405,7 +405,7 @@ client.on("messageCreate", async message => {
                 seekValFinal = parseInt(seekVal)
             }
 
-            if(seekValFinal < 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" )
+            if(seekValFinal < 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" ).catch(()=>{})
 
             var data = currentAudioRes.metadata.data
             var player = connection.state.subscription.player
@@ -433,8 +433,8 @@ client.on("messageCreate", async message => {
         case "search":
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             var channel = message.member.voice.channel
-            if(!channel) return message.channel.send("Join a channel")
-            if(!query) return message.channel.send("Search for an actuall song")
+            if(!channel) return message.channel.send("Join a channel").catch(()=>{})
+            if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
 
             if(!getVoiceConnection(message.guildId)){
                 let rawConnection = joinVoiceChannel({
@@ -446,7 +446,7 @@ client.on("messageCreate", async message => {
                 })
 
                 var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
-                    return message.channel.send("Something went wrong please try again")
+                    return message.channel.send("Something went wrong please try again").catch(()=>{})
                 })
             }else{
                 var connection = getVoiceConnection(message.guildId)
@@ -467,7 +467,7 @@ client.on("messageCreate", async message => {
 					.setLabel('cancel')
 					.setStyle('DANGER'),
 			)
-            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``)
+            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
             var currentPage = 1
             var resultsRaw = await play.search(query , { limit : 20 })
             var results = arraySplitter(resultsRaw,5)
@@ -493,7 +493,7 @@ client.on("messageCreate", async message => {
                 embedSearch.setDescription(outPut)
                 return embedSearch
             }
-            var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]})
+            var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
 
             var is_canceled = false
             var is_collected = false
@@ -508,12 +508,12 @@ client.on("messageCreate", async message => {
                 if(!collector.ended || !mcollector.ended){
                     collector.stop()
                     mcollector.stop()
-                    message.channel.send("I got disconnected from the voice channel please try again")
+                    message.channel.send("I got disconnected from the voice channel please try again").catch(()=>{})
                 }
             })
 
             mcollector.on('collect', async m => {
-                if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 1 to " + resultsRaw.length.toString())
+                if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 1 to " + resultsRaw.length.toString()).catch(()=>{})
                 is_collected = true
                 mcollector.stop()
                 collector.stop()
@@ -524,7 +524,7 @@ client.on("messageCreate", async message => {
                     var data = await play.video_info(selected.url)
                     var stream = await play.stream(selected.url)
                 }catch(error){
-                    return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification")
+                    return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
                 }
 
                 var audioResource = createAudioResource(stream.stream,{
@@ -551,7 +551,7 @@ client.on("messageCreate", async message => {
 
             mcollector.on('end', collected => {
                 if(collected.size == 0 && !is_canceled){
-                    message.channel.send("Didn't recive any number")
+                    message.channel.send("Didn't recive any number").catch(()=>{})
                 }
             });
 
@@ -581,30 +581,30 @@ client.on("messageCreate", async message => {
 
             break
         case "pause":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused ) return message.channel.send("Already paused")
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused ) return message.channel.send("Already paused").catch(()=>{})
 
             var player = queue.get(message.guildId).audioPlayer
             player.pause()
             break
         case "unpause":case "resume":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing ) return message.channel.send("Not paused")
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing ) return message.channel.send("Not paused").catch(()=>{})
 
             var player = queue.get(message.guildId).audioPlayer
             player.unpause()
             break
         case "q":case "queue":
-            if(!message.member.voice.channel) return message.channel.send("Youre not in a voice channel")
-            if(message.guild.me.voice.channelId != message.member.voice.channelId) return message.channel.send("Youre not in the same channel as bot is")
+            if(!message.member.voice.channel) return message.channel.send("Youre not in a voice channel").catch(()=>{})
+            if(message.guild.me.voice.channelId != message.member.voice.channelId) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
 
             var guildQueue = queue.get(message.guildId).resources
-            if(guildQueue.length == 0) return  message.channel.send("No song is being played")
-            if(guildQueue.length == 1) return  message.channel.send("There's no song in queue if you want to check")
+            if(guildQueue.length == 0) return  message.channel.send("No song is being played").catch(()=>{})
+            if(guildQueue.length == 1) return  message.channel.send("There's no song in queue if you want to check").catch(()=>{})
 
             var outPut = ""
 
@@ -622,26 +622,26 @@ client.on("messageCreate", async message => {
             message.channel.send({embeds:[embed]})            
             break
         case "loop":case "repeat":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("koskesh mikhay kerm berizi?").catch(()=>{})
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
 
             var statue = message.content.slice(commandWithPrefix.length +1 , message.content.length)
             if(statue){
                 switch(statue){
                     case "on":
                         if(queue.get(message.guildId).loopStatue){  
-                            message.channel.send("Already on🔁")
+                            message.channel.send("Already on🔁").catch(()=>{})
                         }else{
-                            message.channel.send("Loop is now on🔁")
+                            message.channel.send("Loop is now on🔁").catch(()=>{})
                             queue.get(message.guildId).loopStatue = true
                         }
                         break
                     case "off":
                         if(!queue.get(message.guildId).loopStatue){  
-                            message.channel.send("Already off")
+                            message.channel.send("Already off").catch(()=>{})
                         }else{
-                            message.channel.send("Loop is now off")
+                            message.channel.send("Loop is now off").catch(()=>{})
                             queue.get(message.guildId).loopStatue = false
                         }
                         break
@@ -657,9 +657,9 @@ client.on("messageCreate", async message => {
             }
             break
         case "shuffle":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc")
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played")
-            if(queue.get(message.guildId).resources.length <= 2)return message.channel.send("There's not enough song in your queue , add more")
+            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
+            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
+            if(queue.get(message.guildId).resources.length <= 2)return message.channel.send("There's not enough song in your queue , add more").catch(()=>{})
             
             var currentAudioRes = queue.get(message.guildId).resources[0]
             var audioRes = queue.get(message.guildId).resources
@@ -669,23 +669,23 @@ client.on("messageCreate", async message => {
             currentAudioResourcesArray.unshift(currentAudioRes)
 
             queue.get(message.guildId).resources = currentAudioResourcesArray
-            message.channel.send("Done✅ \nCheck out current queue list using 'q'")
+            message.channel.send("Done✅ \nCheck out current queue list using 'q'").catch(()=>{})
             break
         case "help":
             
             break
         }
     }catch(error){
-        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm. Error:\n" +`\`\`\`js\n${error} \`\`\` `)
+        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm. Error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
     }
 })
 
 client.on("guildCreate", guild =>{
     console.log("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
-    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
+    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever').catch(()=>{})
 
     try{
-        guild.channels.cache.find(c => c.type == "GUILD_TEXT" && guild.me.permissionsIn(c).has('VIEW_CHANNEL') && guild.me.permissionsIn(c).has('SEND_MESSAGES')).send("Thx for adding me!! the bot is currently on BETA demo version.\nIf you've found any bugs please contact the staff in our server.\nFeel free to join our server link is pasted down below:\nhttps://discord.gg/k3EB2MCC")
+        guild.channels.cache.find(c => c.type == "GUILD_TEXT" && guild.me.permissionsIn(c).has('VIEW_CHANNEL') && guild.me.permissionsIn(c).has('SEND_MESSAGES')).send("Thx for adding me!! the bot is currently on BETA demo version.\nIf you've found any bugs please contact the staff in our server.\nFeel free to join our server link is pasted down below:\nhttps://discord.gg/k3EB2MCC").catch(()=>{})
     }
     catch{}
 
@@ -704,9 +704,9 @@ client.on("guildCreate", guild =>{
         
         queue.get(guild.id).messageChannel = messageChannel
         if(!player.state.resource.metadata.is_seeked ){
-            messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`")
+            messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{})
         }else{
-            messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`)
+            messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`).catch(()=>{})
         }
         queue.get(guild.id).timeMusicStarted = new Date()
     });
@@ -714,8 +714,8 @@ client.on("guildCreate", guild =>{
     player.on('error', error => {
         var messageChannel = queue.get(guild.id).messageChannel
         console.log(`Error: ${error} with resource`);
-        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
-        messageChannel.send("Something went wrong");
+        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+        messageChannel.send("Something went wrong").catch(()=>{})
     })
 
     player.on(AudioPlayerStatus.Idle , async () => {
@@ -735,8 +735,8 @@ client.on("guildCreate", guild =>{
                 var stream = await play.stream(currentAudioRes.metadata.url)
             }catch(error){
                 console.log("error"+error)
-                client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `)
-                return message.channel.send("Something went wrong")
+                client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+                return message.channel.send("Something went wrong").catch(()=>{})
             }
             var newAudioResource = createAudioResource(stream.stream, {
                 inputType : stream.type,
@@ -775,7 +775,7 @@ client.on("guildCreate", guild =>{
 
 client.on('guildDelete', guild =>{
     queue.set(guild.id , null)
-    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("just left"+ guild.name +`fuck you.` + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever')
+    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("just left"+ guild.name +`fuck you.` + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever').catch(()=>{})
 })
 
 function secToMinSec(sec){
@@ -803,4 +803,5 @@ function isValidHttpUrl(string) {
   
     return url.protocol === "http:" || url.protocol === "https:";
   }
+
 client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.YUSmxA.l0xCbShFiIEddYiaKlbxs3xpYME");
