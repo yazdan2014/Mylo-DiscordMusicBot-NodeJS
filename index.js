@@ -36,10 +36,15 @@ client.once('ready', () => {
 
         let timeOut = null
 
-
         player.on(AudioPlayerStatus.Playing, () => {
             clearTimeout(timeOut)
             var messageChannel = player.state.resource.metadata.messageChannel
+            var playinAudioRes = player.state.resource
+            setTimeout(function(){
+                if(!playinAudioRes.ended){
+                    player.stop()
+                }
+            },parseInt(playinAudioRes.metadata.secDuration)*1000)
 
             queue.get(guild.id).messageChannel = messageChannel
             if(!player.state.resource.metadata.is_seeked ){
@@ -152,8 +157,6 @@ client.on("messageCreate", async message => {
             }else{
                 var connection = getVoiceConnection(message.guildId)
             }
-            
-
 
             message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
 
@@ -223,6 +226,7 @@ client.on("messageCreate", async message => {
             }else{
                 message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
                 queue.get(message.guildId).resources = null
+                queue.get(message.guildId).audioPlayer.stop().catch(()=>{})
             }
             break
         case "nowplaying" :case 'np':
