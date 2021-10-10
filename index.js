@@ -138,6 +138,7 @@ client.on("messageCreate", async message => {
             var query = message.content.slice(commandWithPrefix.length +1 , message.content.length).replaceAll("#", "sharp")
             var channel = message.member.voice.channel
             if(!channel) return message.channel.send("Join a channel").catch(()=>{})
+            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
             if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel").catch(()=>{})
             if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
 
