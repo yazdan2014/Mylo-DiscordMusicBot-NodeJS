@@ -234,7 +234,7 @@ client.on("messageCreate", async message => {
         var connection = getVoiceConnection(message.guildId)
 
         if(!connection ) return message.channel.send("Im not in a voice channel").catch(()=>{})
-        if(!connection.state.subscription) return message.channel.send("Nothing is being played").catch(()=>{})
+        if(queue.get(message.guildId).audioPlayer.state.status != AudioPlayerStatus.Playing) return message.channel.send("Nothing is being played").catch(()=>{})
         
         var currentAudioRes = connection.state.subscription.player.state.resource
 
