@@ -226,7 +226,7 @@ client.on("messageCreate", async message => {
             }else{
                 message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
                 queue.get(message.guildId).resources = null
-                queue.get(message.guildId).audioPlayer.stop().catch(()=>{})
+                connection.state.subscription.player.stop().catch(()=>{})
             }
             break
         case "nowplaying" :case 'np':
