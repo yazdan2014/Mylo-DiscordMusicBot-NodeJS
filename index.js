@@ -1,6 +1,6 @@
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
-const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
+    const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
 
@@ -35,7 +35,6 @@ client.once('ready', () => {
         mame += "creating a queue system map for " + guild.name + "\n"
 
         let timeOut = null
-
         player.on(AudioPlayerStatus.Playing, () => {
             clearTimeout(timeOut)
             var messageChannel = player.state.resource.metadata.messageChannel
@@ -230,7 +229,10 @@ client.on("messageCreate", async message => {
             }else{
                 message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
                 queue.get(message.guildId).resources = null
-                connection.state.subscription.player.stop().catch(()=>{})
+                queue.get(message.guildId).resources.splice(0,queue.get(message.guildId).resources.length)
+
+                console.log(queue.get(message.guildId).audioPlayer)
+                console.log(queue.get(message.guildId).audioPlayer.state.status)
             }
             break
         case "nowplaying" :case 'np':
@@ -782,7 +784,7 @@ function secToMinSec(sec){
     return output
 }
 
-function playSong(messageOrChannel , connection , audioResource){    
+function playSong(messageOrChannel , connection , audioResource){
     var player = queue.get(messageOrChannel.guildId).audioPlayer
     player.play(audioResource)
     connection.subscribe(player)
@@ -798,6 +800,6 @@ function isValidHttpUrl(string) {
     }
   
     return url.protocol === "http:" || url.protocol === "https:";
-  }
+}
 
 client.login(process.env.TOKEN);

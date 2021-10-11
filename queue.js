@@ -34,9 +34,12 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         queue.get(message.guildId).resources.push(audioResource)
         playSong(message , connection , audioResource)
     }else{
-        message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support")
+        message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
         queue.get(message.guildId).resources = null
-        queue.get(message.guildId).audioPlayer.stop().catch(()=>{})
+        queue.get(message.guildId).resources.splice(0,queue.get(message.guildId).resources.length)
+
+        console.log(queue.get(message.guildId).audioPlayer)
+        console.log(queue.get(message.guildId).audioPlayer.state.status)
     }
 }
 
