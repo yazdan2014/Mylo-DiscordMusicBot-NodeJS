@@ -53,6 +53,14 @@ client.once('ready', () => {
             messageChannel.send("Something went wrong").catch(()=>{})
         })
 
+        player.on(AudioPlayerStatus.Buffering ,async ()=>{
+            var messageChannel = queue.get(guild.id).messageChannel
+            await entersState(player , AudioPlayerStatus.Playing , 5_000).catch(()=>{
+                messageChannel.send("Something went wrong heading to the next song...").catch(()=>{})
+                player.stop(true)
+            })      
+        })
+
         player.on(AudioPlayerStatus.Idle , async () => {
             let currentAudioRes = queue.get(guild.id).resources[0]
             var messageChannel = currentAudioRes.metadata.messageChannel
