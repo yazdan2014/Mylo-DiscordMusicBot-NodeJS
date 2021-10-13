@@ -13,11 +13,52 @@ const {toEmoji} = require("number-to-emoji");
 
 client.commands = new Collection()
 const fs = require('fs')
-const commandFiles = fs.readdirSync('./Commands/Current/').filter(file => file.endsWith(".js"))
-for(const file of commandFiles){
-    const command = require(`./Commands/Current/${file}`)
-    client.commands.set(command.name, command)
-}
+
+// const commandFiles = fs.readdirSync('./Commands/Current/').filter(file => file.endsWith(".js"))
+// for(const file of commandFiles){
+//     const command = require(`./Commands/Current/${file}`)
+//     client.commands.set(command.name, command)
+// }
+
+fs.readdirSync('./Commands').forEach(dir =>{
+    let currentDir = fs.readdirSync(`./Commands/${dir}/`)
+    if(currentDir.filter(file => file.endsWith(".js")).length == 0){
+        for(let newDir of currentDir){
+            let newCurrentDir = fs.readdirSync(`./Commands/${dir}/${newDir}`)
+            if(newCurrentDir.filter(file => file.endsWith(".js")).length == 0){
+                for(let finalDir of newCurrentDir){
+                    let currentFinalDir = fs.readdirSync(`./Commands/${dir}/${newDir}/${finalDir}`)
+                    console.log("---------------"+finalDir+"---------------")
+                    for(let file of currentFinalDir){
+                        let command = require(`./Commands/${dir}/${newDir}/${finalDir}/${file}`)
+                        if(Object.keys(command).length != 0){
+                            client.commands.set(command.name, command)
+                            console.log(command)
+                        }
+                    }
+                }
+            }else{
+                console.log("---------------"+newDir+"---------------")
+                for(let file of newCurrentDir){
+                    let command = require(`./Commands/${dir}/${newDir}/${file}`)
+                    if(Object.keys(command).length != 0){
+                        client.commands.set(command.name, command)
+                        console.log(command)
+                    }
+                }
+            }
+        }
+    }else{
+        console.log("---------------"+dir+"---------------")
+        for(let file of currentDir){
+            let command = require(`./Commands/${dir}/${file}`)
+            if(Object.keys(command).length != 0){
+                client.commands.set(command.name, command)
+                console.log(command)
+            }
+        }
+    }
+})
 
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
