@@ -826,7 +826,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     let connection = getVoiceConnection(oldState.guild.id)
     let player = queue.get(oldState.guild.id).audioPlayer
     if(oldState.channel != null && newState.channel != null) return connection.subscribe(player)
-    else if(oldState.channel != null && newState.channel == null ) return connection.destroy()
+    else if(oldState.channel != null && newState.channel == null ) return function(){try{connection.destroy()}catch{}}
     else if(!(oldState.channel == null && newState.channel != null)) return
 
     connection.subscribe(player)
