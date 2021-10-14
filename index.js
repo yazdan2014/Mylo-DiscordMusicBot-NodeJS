@@ -723,7 +723,7 @@ client.on("guildCreate", guild =>{
 
     var player = createAudioPlayer({
         behaviors:{
-            noSubscriber: NoSubscriberBehavior.Stop
+            noSubscriber: NoSubscriberBehavior.Play
         }
     })
     console.log("creating a queue system map for " + guild.name)
@@ -826,13 +826,15 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     let connection = getVoiceConnection(oldState.guild.id)
     let player = queue.get(oldState.guild.id).audioPlayer
     if(oldState.channel != null && newState.channel != null) return connection.subscribe(player)
-    else if(oldState.channel != null && newState.channel == null ) return function(){try{connection.destroy()}catch{}}
+    else if(oldState.channel != null && newState.channel == null ) return function(){try{connection.destroy();queue.get(oldState.guild.id).audioPlayer.stop(true);queue.get(oldState.guild.id).resources = []}catch{}}
     else if(!(oldState.channel == null && newState.channel != null)) return
 
     connection.subscribe(player)
     let timeOut = setTimeout(function(){
         try{
             getVoiceConnection(oldState.guild.id).destroy()
+            queue.get(oldState.guild.id).audioPlayer.stop(true);
+            queue.get(oldState.guild.id).resources = []
         }catch{}
     } , 10_000)
 
