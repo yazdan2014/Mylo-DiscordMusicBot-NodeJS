@@ -836,7 +836,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
             queue.get(oldState.guild.id).audioPlayer.stop(true);
             queue.get(oldState.guild.id).resources = []
         }catch{}
-    } , 10_000)
+    } , 40_000)
 
     let interval = setInterval(function(){
         if(player.state.status == AudioPlayerStatus.Idle){
