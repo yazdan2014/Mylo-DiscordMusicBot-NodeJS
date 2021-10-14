@@ -826,8 +826,8 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     let timeOut = setTimeout(function(){
         try{
             getVoiceConnection(oldState.guild.id).destroy()
+            queue.get(oldState.guild.id).resources = [queue.get(oldState.guild.id).resources[0]]
             queue.get(oldState.guild.id).audioPlayer.stop(true);
-            queue.get(oldState.guild.id).resources = []
         }catch{}
     } , 600_000)
 
