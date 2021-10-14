@@ -826,7 +826,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     let connection = getVoiceConnection(oldState.guild.id)
     let player = queue.get(oldState.guild.id).audioPlayer
     if(oldState.channel != null && newState.channel != null) return connection.subscribe(player)
-    else if(oldState.channel != null && newState.channel == null ) return connection.destroy()
+    else if(oldState.channel != null && newState.channel == null ) return connection.destroy().catch(()=>{})
     else if(!(oldState.channel == null && newState.channel != null)) return
 
     connection.subscribe(player)
@@ -836,7 +836,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
 
     let interval = setInterval(function(){
         if(player.state.status == AudioPlayerStatus.Idle){
-            if(!getVoiceConnection(oldState.guild.id)) return
+            if(getVoiceConnection(oldState.guild.id)) return
             try{
                 clearTimeout(timeOut)
                 clearInterval(interval)
@@ -846,7 +846,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
                 timeOut.refresh()
             }catch{}
         }
-    } , 15_000)
+    } , 5_000)
 })
 
 function playSong(messageOrChannel , connection , audioResource){
