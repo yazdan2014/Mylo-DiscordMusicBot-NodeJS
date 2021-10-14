@@ -43,3 +43,11 @@ module.exports = {
         message.channel.send({embeds:[embed]}).catch(()=>{})
     }
 }
+
+function secToMinSec(sec){
+    let durationInSec = sec
+    let minutes= (Math.floor(durationInSec/60)).toString()
+    let seconds= ((durationInSec%60 < 10) ? "0" + (durationInSec%60).toString() : (durationInSec%60).toString() )
+    let output = minutes + ":"+ seconds
+    return output
+}
