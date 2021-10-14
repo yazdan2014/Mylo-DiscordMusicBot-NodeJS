@@ -1,6 +1,6 @@
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
-    const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
+const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
 
@@ -12,7 +12,8 @@ const {toEmoji} = require("number-to-emoji");
 
 
 client.commands = new Collection()
-const fs = require('fs')
+const fs = require('fs');
+const { time } = require('console');
 
 // const commandFiles = fs.readdirSync('./Commands/Current/').filter(file => file.endsWith(".js"))
 // for(const file of commandFiles){
@@ -91,6 +92,7 @@ client.once('ready', () => {
             var messageChannel = queue.get(guild.id).messageChannel
             console.log(`Error: ${error} with resource`);
             client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+            
             messageChannel.send("Something went wrong").catch(()=>{})
         })
 
@@ -146,7 +148,8 @@ client.once('ready', () => {
             resources: [],
             timeMusicStarted: null,
             audioPlayer: player,
-            loopStatue:false
+            loopStatue:false,
+            leaveTimeOut:null
         }
         queue.set(guild.id , queue_constructor)
         
@@ -162,11 +165,13 @@ client.on("messageCreate", async message => {
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length).toLowerCase()
     var arg = message.content.slice(commandWithPrefix.length +1 , message.content.length)
+
     if (message.author.equals(client.user)) return;
     if (!message.content.startsWith(prefix)) return;
 
     const commandExe = client.commands.get(command) || client.commands.find(c => c.aliases && c.aliases.includes(command))
     if(commandExe) commandExe.execute(message , client, queue, arg)
+
     try{
     switch (command) {
         case "p": case "play":
@@ -185,8 +190,6 @@ client.on("messageCreate", async message => {
                     channelId: channel.id,
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
-                }).on(VoiceConnectionStatus.Disconnected , () =>{
-                    rawConnection.destroy()
                 })
 
                 var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(() =>{
@@ -470,8 +473,6 @@ client.on("messageCreate", async message => {
                     channelId: channel.id,
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
-                }).on(VoiceConnectionStatus.Disconnected , ()=>{
-                    rawConnection.destroy()
                 })
 
                 var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
@@ -784,11 +785,13 @@ client.on("guildCreate", guild =>{
                     channel: currentAudioRes.metadata.channel
                 }
              })
-            playSong(messageChannel , connection, newAudioResource)
+            var player = queue.get(guild.id).audioPlayer
+            player.play(queue.get(guild.id).resources[0])
         }else{
             queue.get(guild.id).resources.shift()
             if(queue.get(guild.id).resources.length !== 0){
-                playSong(messageChannel , connection , queue.get(guild.id).resources[0])
+                var player = queue.get(guild.id).audioPlayer
+                player.play(queue.get(guild.id).resources[0])
             }
         }
         
@@ -817,10 +820,38 @@ function secToMinSec(sec){
     return output
 }
 
+client.on("voiceStateUpdate" , (oldState , newState)=>{
+    if(!oldState.member.user.equals(client.user))return
+
+    let connection = getVoiceConnection(oldState.guild.id)
+    let player = queue.get(oldState.guild.id).audioPlayer
+    if(oldState.channel != null && newState.channel != null) return connection.subscribe(player)
+    else if(oldState.channel != null && newState.channel == null ) return connection.destroy()
+    else if(!(oldState.channel == null && newState.channel != null)) return
+
+    connection.subscribe(player)
+    let timeOut = setTimeout(function(){
+        getVoiceConnection(oldState.guild.id).destroy()
+    } , 600_000)
+
+    let interval = setInterval(function(){
+        if(player.state.status == AudioPlayerStatus.Idle){
+            if(!getVoiceConnection(oldState.guild.id)) return
+            try{
+                clearTimeout(timeOut)
+                clearInterval(interval)
+            }catch{}
+        }else if(player.state.status == AudioPlayerStatus.Playing){
+            try{
+                timeOut.refresh()
+            }catch{}
+        }
+    } , 15_000)
+})
+
 function playSong(messageOrChannel , connection , audioResource){
     var player = queue.get(messageOrChannel.guildId).audioPlayer
     player.play(audioResource)
-    connection.subscribe(player)
 }
 
 function isValidHttpUrl(string) {
