@@ -160,6 +160,7 @@ client.once('ready', () => {
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(mame).catch(()=>{})
 
 })
+
 client.on("messageCreate", async message => {
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
@@ -292,7 +293,7 @@ client.on("messageCreate", async message => {
         if(currentAudioRes.metadata.is_seeked){
             current += currentAudioRes.metadata.seekVal
         }
-        y = ((current/duration)*30).toFixed(0)-1
+        let y = ((current/duration)*30).toFixed(0)-1
         outPut = setCharAt(outPut , y , "🔘")
         var embed = new MessageEmbed()
             .setColor('#1202F7')
@@ -405,8 +406,7 @@ client.on("messageCreate", async message => {
             if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
             var connection = getVoiceConnection(message.guildId)
             if(queue.get(message.guildId).resources.length > 1){
-                queue.get(message.guildId).resources.shift()
-                playSong(message , connection , queue.get(message.guildId).resources[0])
+                connection.state.subscription.player.stop()
             }else if(queue.get(message.guildId).resources.length == 1 ){
                 queue.get(message.guildId).loopStatue = false
                 connection.state.subscription.player.stop()

@@ -16,4 +16,4 @@ module.exports = {
             adapterCreator: channel.guild.voiceAdapterCreator,
         })
     }
-}   
+}
