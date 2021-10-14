@@ -70,7 +70,7 @@ client.once('ready', () => {
     client.guilds.cache.forEach(guild => {
         var player = createAudioPlayer({
             behaviors:{
-                noSubscriber: NoSubscriberBehavior.Stop
+                noSubscriber: NoSubscriberBehavior.Play
             }
         })
         console.log("creating a queue system map for " + guild.name)
