@@ -37,7 +37,7 @@ module.exports = {
             .setThumbnail(currentAudioRes.metadata.thumbnail)
             .addFields(
                 { name: 'time:', value: '`'+ secToMinSec(current) +'/'+ currentAudioRes.metadata.rawDuration + '`' },
-                { name: '`Requested by:`', value: currentAudioRes.metadata.requestedBy ,inline:true},    
+                { name: 'Requested by:', value: "`"+currentAudioRes.metadata.requestedBy+"`" ,inline:true},    
             )
             // .setFooter("By: **" + currentAudioRes.metadata.channel.name + "**" , currentAudioRes.metadata.channel.icon.url)
         message.channel.send({embeds:[embed]}).catch(()=>{})
