@@ -728,10 +728,8 @@ client.on("guildCreate", guild =>{
     })
     console.log("creating a queue system map for " + guild.name)
 
-    let timeOut = null
 
     player.on(AudioPlayerStatus.Playing, () => {
-        clearTimeout(timeOut)
         var messageChannel = player.state.resource.metadata.messageChannel
         
         queue.get(guild.id).messageChannel = messageChannel
@@ -756,11 +754,6 @@ client.on("guildCreate", guild =>{
 
         var connection = getVoiceConnection(guild.id)        
 
-        if(!connection){
-            queue.get(guild.id).resources = []
-        }else{
-            timeOut = setTimeout(function(){try{connection.destroy();messageChannel.send("BUY PREMIUM TO KEEP THE BOT IN VC 24/7")}catch{}} , 600000)
-        }
         if(queue.get(guild.id).loopStatue){
             if(!connection) return
             try{
