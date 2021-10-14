@@ -832,7 +832,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     connection.subscribe(player)
     let timeOut = setTimeout(function(){
         getVoiceConnection(oldState.guild.id).destroy()
-    } , 600_000)
+    } , 10_000)
 
     let interval = setInterval(function(){
         if(player.state.status == AudioPlayerStatus.Idle){
