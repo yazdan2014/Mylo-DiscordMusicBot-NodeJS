@@ -831,7 +831,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
 
     connection.subscribe(player)
     let timeOut = setTimeout(function(){
-        getVoiceConnection(oldState.guild.id).destroy()
+        getVoiceConnection(oldState.guild.id).destroy().catch(()=>{})
     } , 10_000)
 
     let interval = setInterval(function(){
