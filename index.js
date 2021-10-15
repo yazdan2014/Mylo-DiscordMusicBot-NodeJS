@@ -134,11 +134,13 @@ client.once('ready', () => {
                         channel: currentAudioRes.metadata.channel
                     }
                  })
-                playSong(messageChannel , connection, newAudioResource)
+                 var player = queue.get(guild.id).audioPlayer
+                 player.play(newAudioResource)
             }else{
                 queue.get(guild.id).resources.shift()
                 if(queue.get(guild.id).resources.length !== 0){
-                    playSong(messageChannel , connection , queue.get(guild.id).resources[0])
+                    var player = queue.get(guild.id).audioPlayer
+                    player.play( queue.get(guild.id).resources[0])
                 }
             }
         })
@@ -265,7 +267,8 @@ client.on("messageCreate", async message => {
                 message.channel.send({embeds:[embed]})
             }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
                 queue.get(message.guildId).resources.push(audioResource)
-                playSong(message , connection, audioResource)
+                var player = queue.get(message.guildId).audioPlayer
+                player.play(audioResource)
             }else{
                 message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
                 console.log(queue.get(message.guildId).audioPlayer)
@@ -317,8 +320,7 @@ client.on("messageCreate", async message => {
             function playNextSong(){
                 var connection = getVoiceConnection(message.guildId)
                 if(queue.get(message.guildId).resources.length > 1){
-                    queue.get(message.guildId).resources.shift()
-                    playSong(message , connection ,queue.get(message.guildId).resources[0])
+                    connection.state.subscription.player.stop()
                 }else if(queue.get(message.guildId).resources.length == 1 ){
                     queue.get(message.guildId).loopStatue = false
                     connection.state.subscription.player.stop()
@@ -826,8 +828,6 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     let timeOut = setTimeout(function(){
         try{
             getVoiceConnection(oldState.guild.id).destroy()
-            queue.get(oldState.guild.id).resources = [queue.get(oldState.guild.id).resources[0]]
-            queue.get(oldState.guild.id).audioPlayer.stop(true);
         }catch{}
     } , 600_000)
 
