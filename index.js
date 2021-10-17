@@ -10,7 +10,6 @@ const changeSeek = require("./ffmpeg")
 const queueFunc = require("./queue")
 const {toEmoji} = require("number-to-emoji");
 
-
 client.commands = new Collection()
 const fs = require('fs');
 const { time } = require('console');
@@ -60,6 +59,9 @@ fs.readdirSync('./Commands').forEach(dir =>{
         }
     }
 })
+
+const cooldowns = new Map()
+//("mcserver" , "new discord collection")
 
 const queue = new Map()
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
@@ -150,8 +152,7 @@ client.once('ready', () => {
             resources: [],
             timeMusicStarted: null,
             audioPlayer: player,
-            loopStatue:false,
-            leaveTimeOut:null
+            loopStatue:false
         }
         queue.set(guild.id , queue_constructor)
         
@@ -172,8 +173,40 @@ client.on("messageCreate", async message => {
     if (message.author.equals(client.user)) return;
     if (!message.content.startsWith(prefix)) return;
 
-    const commandExe = client.commands.get(command) || client.commands.find(c => c.aliases && c.aliases.includes(command))
-    if(commandExe) commandExe.execute(message , client, queue, arg)
+    const commandExe = client.commands.get(command) || 
+                       client.commands.find(c => c.aliases && c.aliases.includes(command))
+
+    if(!cooldowns.has(commandExe.name)){
+        cooldowns.set(commandExe.name, new Collection())
+    }
+
+    const current_time = Date.now()
+    const cooldown_constructor = {last_try: current_time, already_sent:false}
+    const time_stamps = cooldowns.get(commandExe.name)
+    const cooldown_amount = (commandExe.cooldown) * 1000
+
+    if(time_stamps.has(message.guildId)){
+        const expiratoin_time = time_stamps.get(message.guildId).last_try + cooldown_amount
+        const sent_statue = time_stamps.get(message.guildId).already_sent
+        if(current_time < expiratoin_time ){
+            const time_left = (expiratoin_time - current_time)
+
+            if(!sent_statue){
+                return message.reply(`Please ${time_left.toFixed(0)} more seconds before using the command again`)
+            }else{
+                return
+            }
+        }
+    }
+
+    time_stamps.set(message.guildId, cooldown_constructor)
+    setTimeout(()=> time_stamps.delete(message.guildId) , cooldown_amount)
+
+    try{
+        if(commandExe) commandExe.execute(message , client, queue, arg)
+    }catch{
+        message.channel.send("Something went wrong!").catch(()=>{})
+    }
 
     try{
     switch (command) {
@@ -264,7 +297,7 @@ client.on("messageCreate", async message => {
                     { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
                 )
                 .setFooter("By: **" + result[0].channel.name+ "**" , result[0].channel.icon.url)
-                message.channel.send({embeds:[embed]})
+                message.channel.send({embeds:[embed]}).catch(()=>{})
             }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
                 queue.get(message.guildId).resources.push(audioResource)
                 var player = queue.get(message.guildId).audioPlayer
