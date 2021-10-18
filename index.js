@@ -64,6 +64,7 @@ const cooldowns = new Map()
 //("mcserver" , "new discord collection")
 
 const queue = new Map()
+// @param
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
 
 client.once('ready', () => {
@@ -306,6 +307,13 @@ client.on("messageCreate", async message => {
                 message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
                 console.log(queue.get(message.guildId).audioPlayer)
                 console.log(queue.get(message.guildId).audioPlayer.state.status)
+                console.log(queue.get(message.guildId).resources)
+                try{
+                    if(queue.get(oldState.guild.id).resources.length > 0){
+                        queue.get(oldState.guild.id).resources = []
+                    }
+                    queue.get(oldState.guild.id).audioPlayer.stop(true);
+                }catch{}
             }
             break
         case "nowplaying" :case 'np':
@@ -347,6 +355,7 @@ client.on("messageCreate", async message => {
         break
         case "skip":case "s":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
+            if(!message.member.voice.channel)return message.channel.send("Youre not in a vc")
             if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
             if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
             let membersCurrentlyVC = message.member.voice.channel.members.filter(member => !member.user.bot && message.author.id != member.id)
@@ -854,7 +863,19 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     let connection = getVoiceConnection(oldState.guild.id)
     let player = queue.get(oldState.guild.id).audioPlayer
     if(oldState.channel != null && newState.channel != null){ connection.subscribe(player);console.log("move");return }
-    else if(oldState.channel != null && newState.channel == null ) { try{connection.destroy(); queue.get(oldState.guild.id).resources = [queue.get(oldState.guild.id).resources[0]]; queue.get(oldState.guild.id).audioPlayer.stop(true); console.log("move")}catch{} ; return}
+    else if(oldState.channel != null && newState.channel == null ) { 
+        try{
+            connection.destroy();
+            if(queue.get(oldState.guild.id).resources.length > 0 ){
+                queue.get(oldState.guild.id).resources = [queue.get(oldState.guild.id).resources[0]]
+            }else{
+                queue.get(oldState.guild.id).resources = []
+            }
+            queue.get(oldState.guild.id).audioPlayer.stop(true);
+            console.log("DC")}
+        catch{} ; 
+        return
+    }
     else if(!(oldState.channel == null && newState.channel != null)) return
 
     connection.subscribe(player)
