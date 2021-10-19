@@ -1,0 +1,8 @@
+{
+    "client_id": "b71a8b6cc5434eca83054f4e10dde59d",
+    "client_secret": "cf17a83378b54cdc98d0364748671b0c",
+    "redirect_url": "http://127.0.0.1/index.html",
+    "expires_in": null,
+    "expiry": null,
+    "market": "GB"
+}
