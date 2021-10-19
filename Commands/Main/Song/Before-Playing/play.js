@@ -1,6 +1,6 @@
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const play = require("play-dl")
-const queueFunc = require("./Commands/Main/Song/Before-Playing/Imports/queue")
+const queueFunc = require("../../../../Imports/queue")
 
 const {MessageEmbed} = require("discord.js")
 
@@ -9,7 +9,7 @@ module.exports = {
     aliases:["p"],
     cooldown: 2,
     description: 'Plays the track with the given name as a query using YouTube search engine or using the given link \*Spotify , SoundCloud links work as well\*',
-    execute(message , client, queue, arg){
+    async execute(message , client, queue, arg){
         var query = arg
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})
