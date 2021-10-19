@@ -19,7 +19,7 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         
         var embed = new MessageEmbed()
         .setColor('#00FFFF')
-        .setAuthor(message.member.username , message.author.avatarURL())
+        .setAuthor(message.author.username , message.author.avatarURL())
         .setTitle(audioResource.metadata.title)
         .setURL(audioResource.metadata.url)
         .setThumbnail(audioResource.metadata.thumbnail)

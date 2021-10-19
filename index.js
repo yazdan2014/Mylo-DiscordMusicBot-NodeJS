@@ -64,8 +64,10 @@ const cooldowns = new Map()
 //("mcserver" , "new discord collection")
 
 const queue = new Map()
-// @param
+
+
 //Global queue for your bot. Every server will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
+
 
 client.once('ready', () => {
 	console.log('Ready!')
