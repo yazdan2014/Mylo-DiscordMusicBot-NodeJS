@@ -465,8 +465,7 @@ client.on("messageCreate", async message => {
                     data: currentAudioRes.metadata.data, //used for the seek option
                     is_seeked:true,
                     seekVal: seekValFinal,
-                    channel:currentAudioRes.metadata.channel,
-                    streamData:stream
+                    channel:currentAudioRes.metadata.channel
                 }
              })
             player.play(resource)
@@ -578,8 +577,7 @@ client.on("messageCreate", async message => {
                         requestedBy: message.author.username,
                         data: data ,//used for the seek option
                         is_seeked:false,
-                        channel:selected.channel,
-                        streamData:stream
+                        channel:selected.channel
                     }
                 })
 
