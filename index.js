@@ -12,13 +12,6 @@ const {toEmoji} = require("number-to-emoji");
 
 client.commands = new Collection()
 const fs = require('fs');
-const { time, error } = require('console');
-
-// const commandFiles = fs.readdirSync('./Commands/Current/').filter(file => file.endsWith(".js"))
-// for(const file of commandFiles){
-//     const command = require(`./Commands/Current/${file}`)
-//     client.commands.set(command.name, command)
-// }
 
 fs.readdirSync('./Commands').forEach(dir =>{
     let currentDir = fs.readdirSync(`./Commands/${dir}/`)
@@ -61,12 +54,10 @@ fs.readdirSync('./Commands').forEach(dir =>{
 })
 
 const cooldowns = new Map()
-//("mcserver" , "new discord collection")
+//{"guild" , "new discord collection"}
 
 const queue = new Map()
-
-
-//Global queue for your bot. Every server will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
+//Global queue for the bot. Every guild will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
 
 
 client.once('ready', () => {
@@ -85,12 +76,14 @@ client.once('ready', () => {
             var messageChannel = player.state.resource.metadata.messageChannel
 
             queue.get(guild.id).messageChannel = messageChannel
+            queue.get(guild.id).timeMusicStarted = new Date()
+
+            if(!messageChannel) return
             if(!player.state.resource.metadata.is_seeked ){
                 messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{})
             }else{
                 messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`).catch(()=>{})
             }
-            queue.get(guild.id).timeMusicStarted = new Date()
         });
 
         player.on('error', error => {
@@ -111,8 +104,10 @@ client.once('ready', () => {
 
         player.on(AudioPlayerStatus.Idle , async () => {
             let currentAudioRes = queue.get(guild.id).resources[0]
-            var messageChannel = currentAudioRes.metadata.messageChannel
-
+            if(currentAudioRes.metadata){
+                var messageChannel = currentAudioRes.metadata?.messageChannel
+            }
+            else var messageChannel = null
             var connection = getVoiceConnection(guild.id)        
             
             if(queue.get(guild.id).loopStatue){
@@ -214,7 +209,7 @@ client.on("messageCreate", async message => {
     try{
     switch (command) {
         // case "p": case "play":
-        //     var query = message.content.slice(commandWithPrefix.length +1 , message.content.length).replaceAll("#", "sharp")
+        //     var query = x
         //     var channel = message.member.voice.channel
         //     if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         //     try{
