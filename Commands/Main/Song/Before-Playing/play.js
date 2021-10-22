@@ -74,7 +74,8 @@ module.exports = {
                         requestedBy: message.author.username,
                         data: data ,//used for the seek option
                         is_seeked:false,
-                        channel: data.video_details.channel
+                        channel: data.video_details.channel,
+                        type: "sp"                        
                     }
                 })
 
@@ -116,7 +117,8 @@ module.exports = {
                         requestedBy: message.author.username,
                         data: data ,//used for the seek option
                         is_seeked:false,
-                        channel: data.video_details.channel
+                        channel: data.video_details.channel,
+                        type:"yt"
                     }
                 })
         

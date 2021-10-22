@@ -80,7 +80,13 @@ client.once('ready', () => {
 
             if(!messageChannel) return
             if(!player.state.resource.metadata.is_seeked ){
-                messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{})
+                switch(player.state.resource.metadata){
+                    case "yt": messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
+                        break
+
+                    case "sp": messageChannel.send("<:SP:901160685264855070> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
+                        break
+                }
             }else{
                 messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`).catch(()=>{})
             }
@@ -131,7 +137,8 @@ client.once('ready', () => {
                         rawDuration: currentAudioRes.metadata.rawDuration,
                         requestedBy: currentAudioRes.metadata.requestedBy,
                         data: currentAudioRes.metadata.data, //used for the seek option
-                        channel: currentAudioRes.metadata.channel
+                        channel: currentAudioRes.metadata.channel,
+                        type:currentAudioRes.metadata.type
                     }
                  })
                  var player = queue.get(guild.id).audioPlayer
@@ -460,7 +467,8 @@ client.on("messageCreate", async message => {
                     data: currentAudioRes.metadata.data, //used for the seek option
                     is_seeked:true,
                     seekVal: seekValFinal,
-                    channel:currentAudioRes.metadata.channel
+                    channel:currentAudioRes.metadata.channel,
+                    type:currentAudioRes.metadata.type
                 }
              })
             player.play(resource)
@@ -572,7 +580,8 @@ client.on("messageCreate", async message => {
                         requestedBy: message.author.username,
                         data: data ,//used for the seek option
                         is_seeked:false,
-                        channel:selected.channel
+                        channel:selected.channel,
+                        type:"yt"
                     }
                 })
 
@@ -777,7 +786,8 @@ client.on("guildCreate", guild =>{
                     rawDuration: currentAudioRes.metadata.rawDuration,
                     requestedBy: currentAudioRes.metadata.requestedBy,
                     data: currentAudioRes.metadata.data, //used for the seek option
-                    channel: currentAudioRes.metadata.channel
+                    channel: currentAudioRes.metadata.channel,
+                    type: currentAudioRes.metadata.type
                 }
              })
             var player = queue.get(guild.id).audioPlayer
