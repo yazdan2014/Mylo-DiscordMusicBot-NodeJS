@@ -1,9 +1,9 @@
 const {MessageEmbed } = require("discord.js")
 const {AudioPlayerStatus} = require("@discordjs/voice")
 
-function createQueueAndPlaySong(queue , message , connection , playSong , audioResource){
+function queueSystem(queue , message , connection  , audioResource){
     var guild_queue = queue.get(message.guildId)
-    if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing) &&  queue.get(message.guildId).resources.length != 0){
+    if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
         var currentAudioRes = connection.state.subscription.player.state.resource
         var currentTime = new Date().getTime()
         var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
@@ -20,30 +20,35 @@ function createQueueAndPlaySong(queue , message , connection , playSong , audioR
         var embed = new MessageEmbed()
         .setColor('#00FFFF')
         .setAuthor(message.author.username , message.author.avatarURL())
-        .setTitle(audioResource.metadata.title)
-        .setURL(audioResource.metadata.url)
-        .setThumbnail(audioResource.metadata.thumbnail)
+        .setTitle(currentAudioRes.metadata.data.video_details.title)
+        .setURL(currentAudioRes.metadata.data.video_details.url)
+        .setThumbnail(currentAudioRes.metadata.data.video_details.thumbnail.url)
         .addFields(
-            { name: '**Duration**', value: audioResource.metadata.rawDuration  , inline :true},
-            { name: '**Estimated time until playing**', value: secToMinSec(estimated).toString() , inline:true },
+            { name: '**Duration**', value: currentAudioRes.metadata.data.video_details.durationRaw  , inline :true},
+            { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
             { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
         )
-        .setFooter("By: **" + audioResource.metadata.channel.name + "**" , audioResource.metadata.channel.icon.url)
-        message.channel.send({embeds:[embed]})
+        // .setFooter("By: **" + data.video_details.channel.name+ "**" , data.video_details.channel.iconURL())
+        message.channel.send({embeds:[embed]}).catch(()=>{})
     }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
         queue.get(message.guildId).resources.push(audioResource)
-        playSong(message , connection , audioResource)
+        var player = queue.get(message.guildId).audioPlayer
+        player.play(audioResource)
     }else{
         message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
-        queue.get(message.guildId).resources = null
-        queue.get(message.guildId).resources.splice(0,queue.get(message.guildId).resources.length)
-
         console.log(queue.get(message.guildId).audioPlayer)
         console.log(queue.get(message.guildId).audioPlayer.state.status)
+        console.log(queue.get(message.guildId).resources)
+        try{
+            if(queue.get(message.guildId).resources.length > 0){
+                queue.get(message.guildId).resources = []
+            }
+            queue.get(message.guildId).audioPlayer.stop(true);
+        }catch{}
     }
 }
 
-module.exports = createQueueAndPlaySong
+module.exports = queueSystem
 
 function secToMinSec(sec){
     let durationInSec = sec

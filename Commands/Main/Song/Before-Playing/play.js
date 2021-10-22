@@ -1,5 +1,9 @@
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const play = require("play-dl")
+
+/**
+ * @param queue @param message @param connection @param audioResource
+ */
 const queueFunc = require("../../../../Imports/queue")
 
 play.authorization()
@@ -40,10 +44,41 @@ module.exports = {
 
         let check = await play.validate(query)
         switch(check){
-            case "so_track":
+            
+            case "sp_track":
                 if(play.is_expired()){
                     await play.RefreshToken() // This will check if access token has expired or not. If yes, then refresh the token.
                 }
+                var sp_data = await play.spotify(args) // This will get spotify data from the url [ I used track url, make sure to make a logic for playlist, album ]
+                var result = await play.search(`${sp_data.name}`, { limit : 1 }) // This will search the found track on youtube.
+
+                try{
+                    var data = await play.video_info(result[0].url)
+                    var stream = await play.stream(result[0].url)
+                }catch(error){
+                    console.log("error" + error)
+                    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+                    return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
+                }
+
+                var audioResource = createAudioResource(stream.stream,{
+                    inputType : stream.type,
+                    metadata:{
+                        messageChannel:message.channel,
+                        title: data.video_details.title,
+                        url: data.video_details.url,
+                        thumbnail: data.video_details.thumbnail.url,
+                        guildId: message.guildId,
+                        secDuration: data.video_details.durationInSec,
+                        rawDuration: data.video_details.durationRaw,
+                        requestedBy: message.author.username,
+                        data: data ,//used for the seek option
+                        is_seeked:false,
+                        channel: data.video_details.channel
+                    }
+                })
+
+                queueFunc(queue , message, connection , audioResource)
                 break
             case "search":case "yt_video":
                 if(check == "search"){
@@ -54,7 +89,7 @@ module.exports = {
                 }else{
                     var data = await play.video_info(query , { limit : 1 })
                 }
-        
+                
                 try{
                     if(!data){
                         var data = await play.video_info(result[0].url)

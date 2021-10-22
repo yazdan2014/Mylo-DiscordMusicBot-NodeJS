@@ -576,7 +576,7 @@ client.on("messageCreate", async message => {
                     }
                 })
 
-                queueFunc(queue , message , connection, playSong , audioResource)
+                queueFunc(queue , message , connection , audioResource)
 
             });
 
