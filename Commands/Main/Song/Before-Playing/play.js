@@ -47,36 +47,42 @@ module.exports = {
                     await play.RefreshToken() // This will check if access token has expired or not. If yes, then refresh the token.
                 }
                 break
-            case "search":
-                var result = await play.search(query , { limit : 1 })
+            case "search":case "yt_video":
+                if(check == "search"){
+                    var result = await play.search(query , { limit : 1 })
+                }else{
+                    var data = await play.video_info(query , { limit : 1 })
+                }
                 if(result.length == 0) return message.channel.send("Couldn't find any result").catch(()=>{})
                 console.log(result[0].channel)
                 if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour``").catch(()=>{})
         
                 try{
-                    var data = await play.video_info(result[0].url)
+                    if(!data){
+                        var data = await play.video_info(result[0].url)
+                        
+                    }
                     var stream = await play.stream(result[0].url)
                 }catch(error){
-                    console.log("error"+error)
+                    console.log("error" + error)
                     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
                     return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
                 }
-        
+                
                 var audioResource = createAudioResource(stream.stream,{
                     inputType : stream.type,
                     metadata:{
                         messageChannel:message.channel,
-                        title: result[0].title,
-                        url: result[0].url,
-                        thumbnail: result[0].thumbnail.url,
+                        title: data.video_details.title,
+                        url: data.video_details.url,
+                        thumbnail: data.video_details.thumbnail.url,
                         guildId: message.guildId,
-                        secDuration: result[0].durationInSec,
-                        rawDuration: result[0].durationRaw,
+                        secDuration: data.video_details.durationInSec,
+                        rawDuration: data.video_details.durationRaw,
                         requestedBy: message.author.username,
                         data: data ,//used for the seek option
                         is_seeked:false,
-                        channel:result[0].channel,
-                        streamData:stream
+                        channel: data.video_details.channel
                     }
                 })
         
