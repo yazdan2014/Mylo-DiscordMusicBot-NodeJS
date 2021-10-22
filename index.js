@@ -103,7 +103,9 @@ client.once('ready', () => {
         player.on(AudioPlayerStatus.Buffering ,async (oldState)=>{
             var messageChannel = queue.get(guild.id).messageChannel
             await entersState(player , AudioPlayerStatus.Playing , 10_000).catch(()=>{
-                messageChannel.send("Something went wrong heading to the next song...").catch(()=>{})
+                try{
+                    messageChannel.send("Something went wrong heading to the next song...").catch(()=>{})
+                }catch{}
                 player.stop(true)
             })      
         })
