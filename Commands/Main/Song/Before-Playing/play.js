@@ -112,7 +112,7 @@ module.exports = {
                         { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
                         { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
                     )
-                    console.log(data.video_details + "\n.\n.\n." + data.video_details.channel)
+                    console.log("\n.\n.\n." + data.video_details.channel)
                     // .setFooter("By: **" + data.video_details.channel.name+ "**" , data.video_details.channel.iconURL())
                     message.channel.send({embeds:[embed]}).catch(()=>{})
                 }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
