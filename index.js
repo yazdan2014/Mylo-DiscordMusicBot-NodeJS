@@ -80,7 +80,7 @@ client.once('ready', () => {
 
             if(!messageChannel) return
             if(!player.state.resource.metadata.is_seeked ){
-                switch(player.state.resource.metadata){
+                switch(player.state.resource.metadata.type){
                     case "yt": messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
                         break
 
