@@ -37,10 +37,8 @@ module.exports = {
             var connection = getVoiceConnection(message.guildId)
         }
 
-        message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
 
         let check = await play.validate(query)
-
         switch(check){
             case "so_track":
                 if(play.is_expired()){
@@ -49,9 +47,10 @@ module.exports = {
                 break
             case "search":case "yt_video":
                 if(check == "search"){
+                    message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
                     var result = await play.search(query , { limit : 1 })
                     if(result.length == 0) return message.channel.send("Couldn't find any result").catch(()=>{})
-                    if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour``").catch(()=>{})
+                    if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than `1 hour`").catch(()=>{})
                 }else{
                     var data = await play.video_info(query , { limit : 1 })
                 }
