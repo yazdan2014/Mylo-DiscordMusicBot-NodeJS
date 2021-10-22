@@ -65,9 +65,9 @@ module.exports = {
                     inputType : stream.type,
                     metadata:{
                         messageChannel:message.channel,
-                        title: data.video_details.title,
-                        url: data.video_details.url,
-                        thumbnail: data.video_details.thumbnail.url,
+                        title: sp_data.name,
+                        url: sp_data.url,
+                        thumbnail: sp_data.thumbnail.url,
                         guildId: message.guildId,
                         secDuration: data.video_details.durationInSec,
                         rawDuration: data.video_details.durationRaw,
