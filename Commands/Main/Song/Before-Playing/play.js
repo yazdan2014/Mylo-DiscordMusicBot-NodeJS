@@ -50,7 +50,7 @@ module.exports = {
                     await play.RefreshToken() // This will check if access token has expired or not. If yes, then refresh the token.
                 }
                 var sp_data = await play.spotify(arg) // This will get spotify data from the url [ I used track url, make sure to make a logic for playlist, album ]
-                var result = await play.search(`${sp_data.name}`, { limit : 1 }) // This will search the found track on youtube.
+                var result = await play.search(`${sp_data.name} `, { limit : 1 }) // This will search the found track on youtube.
 
                 try{
                     var data = await play.video_info(result[0].url)
