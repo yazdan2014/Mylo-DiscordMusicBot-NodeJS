@@ -20,11 +20,11 @@ function queueSystem(queue , message , connection , audioResource){
         var embed = new MessageEmbed()
         .setColor('#00FFFF')
         .setAuthor(message.author.username , message.author.avatarURL())
-        .setTitle(audioResource.metadata.video_details.title)
-        .setURL(audioResource.metadata.video_details.url)
-        .setThumbnail(audioResource.metadata.video_details.thumbnail.url)
+        .setTitle(audioResource.metadata.title)
+        .setURL(audioResource.metadata.url)
+        .setThumbnail(audioResource.metadata.thumbnail)
         .addFields(
-            { name: '**Duration**', value: audioResource.metadata.video_details.durationRaw  , inline :true},
+            { name: '**Duration**', value: audioResource.metadata.durationRaw  , inline :true},
             { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
             { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
         )
