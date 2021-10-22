@@ -50,19 +50,19 @@ module.exports = {
             case "search":case "yt_video":
                 if(check == "search"){
                     var result = await play.search(query , { limit : 1 })
+                    if(result.length == 0) return message.channel.send("Couldn't find any result").catch(()=>{})
+                    if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour``").catch(()=>{})
                 }else{
                     var data = await play.video_info(query , { limit : 1 })
                 }
-                if(result.length == 0) return message.channel.send("Couldn't find any result").catch(()=>{})
-                console.log(result[0].channel)
-                if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour``").catch(()=>{})
         
                 try{
                     if(!data){
                         var data = await play.video_info(result[0].url)
-                        
+                        var stream = await play.stream(result[0].url)
+                    }else{
+                        var stream = await play.stream(data.video_details.url)
                     }
-                    var stream = await play.stream(result[0].url)
                 }catch(error){
                     console.log("error" + error)
                     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
@@ -104,15 +104,15 @@ module.exports = {
                     var embed = new MessageEmbed()
                     .setColor('#00FFFF')
                     .setAuthor(message.author.username , message.author.avatarURL())
-                    .setTitle(result[0].title)
-                    .setURL(result[0].url)
-                    .setThumbnail(result[0].thumbnail.url)
+                    .setTitle(data.video_details.title)
+                    .setURL(data.video_details.url)
+                    .setThumbnail(data.video_details.thumbnail.url)
                     .addFields(
-                        { name: '**Duration**', value: result[0].durationRaw  , inline :true},
+                        { name: '**Duration**', value: data.video_details.durationRaw  , inline :true},
                         { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
                         { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
                     )
-                    .setFooter("By: **" + result[0].channel.name+ "**" , result[0].channel.icon.url)
+                    .setFooter("By: **" + data.video_details.channel.name+ "**" , data.video_details.channel.icon.url)
                     message.channel.send({embeds:[embed]}).catch(()=>{})
                 }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
                     queue.get(message.guildId).resources.push(audioResource)
