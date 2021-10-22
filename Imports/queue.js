@@ -1,7 +1,7 @@
 const {MessageEmbed } = require("discord.js")
 const {AudioPlayerStatus} = require("@discordjs/voice")
 
-function queueSystem(queue , message , connection  , audioResource){
+function queueSystem(queue , message , connection , audioResource){
     var guild_queue = queue.get(message.guildId)
     if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
         var currentAudioRes = connection.state.subscription.player.state.resource
@@ -20,11 +20,11 @@ function queueSystem(queue , message , connection  , audioResource){
         var embed = new MessageEmbed()
         .setColor('#00FFFF')
         .setAuthor(message.author.username , message.author.avatarURL())
-        .setTitle(currentAudioRes.metadata.data.video_details.title)
-        .setURL(currentAudioRes.metadata.data.video_details.url)
-        .setThumbnail(currentAudioRes.metadata.data.video_details.thumbnail.url)
+        .setTitle(audioResource.metadata.data.video_details.title)
+        .setURL(audioResource.metadata.data.video_details.url)
+        .setThumbnail(audioResource.metadata.data.video_details.thumbnail.url)
         .addFields(
-            { name: '**Duration**', value: currentAudioRes.metadata.data.video_details.durationRaw  , inline :true},
+            { name: '**Duration**', value: audioResource.metadata.data.video_details.durationRaw  , inline :true},
             { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
             { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
         )
