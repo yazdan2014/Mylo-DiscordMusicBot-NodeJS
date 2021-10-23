@@ -24,7 +24,7 @@ function queueSystem(queue , message , connection , audioResource){
         .setURL(audioResource.metadata.url)
         .setThumbnail(audioResource.metadata.thumbnail)
         .addFields(
-            { name: '**Duration**', value: audioResource.metadata.durationRaw  , inline :true},
+            { name: '**Duration**', value: audioResource.metadata.rawDuration  , inline :true},
             { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
             { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
         )

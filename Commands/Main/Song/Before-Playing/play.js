@@ -78,7 +78,7 @@ module.exports = {
                         type: "sp"                        
                     }
                 })
-
+                console.log(audioResource.metadata)
                 queueFunc(queue , message, connection , audioResource)
                 break
             case "search":case "yt_video":
