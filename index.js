@@ -80,6 +80,7 @@ client.once('ready', () => {
 
             if(!messageChannel) return
             if(!player.state.resource.metadata.is_seeked ){
+                if(queue.get(guild.id).loopStatue) return
                 switch(player.state.resource.metadata.type){
                     case "yt": messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
                         break
@@ -102,7 +103,7 @@ client.once('ready', () => {
 
         player.on(AudioPlayerStatus.Buffering ,async (oldState)=>{
             var messageChannel = queue.get(guild.id).messageChannel
-            await entersState(player , AudioPlayerStatus.Playing , 10_000).catch(()=>{
+            await entersState(player , AudioPlayerStatus.Playing , 5_000).catch(()=>{
                 try{
                     messageChannel.send("Something went wrong heading to the next song...").catch(()=>{})
                 }catch{}
