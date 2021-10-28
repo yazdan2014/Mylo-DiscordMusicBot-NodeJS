@@ -3,7 +3,8 @@ const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource 
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
- 
+const fetch = require('node-fetch');
+
 const table = require('text-table');
 const shuffle = require('shuffle-array')
 const changeSeek = require("./ffmpeg")
@@ -62,6 +63,18 @@ const queue = new Map()
 
 client.once('ready', () => {
 	console.log('Ready!')
+
+    //connecting to the socket 
+    const requestOptions = {
+        method: 'POST',
+        headers:{ 'Content-Type': 'application/json', 'Accept': 'application/json'},
+            body: JSON.stringify({username_or_email: "Mylo", password: "1"})
+        }
+    fetch('/api/login/', requestOptions).then(response=>response.json()).then(data=> {
+        if(data.hasOwnProperty('error')){this.setState({error: data.error})}
+        if(data.hasOwnProperty('message')){this.props.history.push('/home')}
+    })
+
     let mame= ""
     client.guilds.cache.forEach(guild => {
         var player = createAudioPlayer({
@@ -164,9 +177,6 @@ client.once('ready', () => {
         }
         queue.set(guild.id , queue_constructor)
         
-    })
-    queue.get('865338199433412609').audioPlayer.on('stateChange', p=>{
-        console.log(p.status)
     })
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(mame).catch(()=>{})
 
@@ -482,19 +492,6 @@ client.on("messageCreate", async message => {
             if(!channel) return message.channel.send("Join a channel").catch(()=>{})
             if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
 
-            if(!getVoiceConnection(message.guildId)){
-                let rawConnection = joinVoiceChannel({
-                    channelId: channel.id,
-                    guildId: channel.guild.id,
-                    adapterCreator: channel.guild.voiceAdapterCreator,
-                })
-
-                var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
-                    return message.channel.send("Something went wrong please try again").catch(()=>{})
-                })
-            }else{
-                var connection = getVoiceConnection(message.guildId)
-            }
             var row = new MessageActionRow()
             .addComponents(
 				new MessageButton()
@@ -537,6 +534,20 @@ client.on("messageCreate", async message => {
                 return embedSearch
             }
             var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
+
+            if(!getVoiceConnection(message.guildId)){
+                let rawConnection = joinVoiceChannel({
+                    channelId: channel.id,
+                    guildId: channel.guild.id,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
+                })
+
+                var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
+                    return message.channel.send("Something went wrong please try again").catch(()=>{})
+                })
+            }else{
+                var connection = getVoiceConnection(message.guildId)
+            }
 
             var is_canceled = false
             var is_collected = false
