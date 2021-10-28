@@ -533,17 +533,14 @@ client.on("messageCreate", async message => {
                 embedSearch.setDescription(outPut)
                 return embedSearch
             }
+
             var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
 
             if(!getVoiceConnection(message.guildId)){
-                let rawConnection = joinVoiceChannel({
+                var connection = joinVoiceChannel({
                     channelId: channel.id,
                     guildId: channel.guild.id,
                     adapterCreator: channel.guild.voiceAdapterCreator,
-                })
-
-                var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
-                    return message.channel.send("Something went wrong please try again").catch(()=>{})
                 })
             }else{
                 var connection = getVoiceConnection(message.guildId)
@@ -598,7 +595,13 @@ client.on("messageCreate", async message => {
                         type:"yt"
                     }
                 })
-
+                
+                if(connection.state.status != VoiceConnectionStatus.Ready){
+                    await entersState(connection , VoiceConnectionStatus.Ready , 10_000).catch(() =>{
+                        return message.channel.send("Something went wrong please try again").catch(()=>{})
+                    })
+                }
+                
                 queueFunc(queue , message , connection , audioResource)
 
             });

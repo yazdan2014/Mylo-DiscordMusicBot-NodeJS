@@ -27,15 +27,13 @@ module.exports = {
         if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
 
         if(!getVoiceConnection(message.guildId)){
-            let rawConnection = joinVoiceChannel({
+            var connection = joinVoiceChannel({
                 channelId: channel.id,
                 guildId: channel.guild.id,
                 adapterCreator: channel.guild.voiceAdapterCreator,
             })
 
-            var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(() =>{
-                return message.channel.send("Something went wrong please try again").catch(()=>{})
-            })
+            
 
         }else{
             var connection = getVoiceConnection(message.guildId)
@@ -79,6 +77,11 @@ module.exports = {
                     }
                 })
                 console.log(audioResource.metadata)
+                if(connection.state.status != VoiceConnectionStatus.Ready){
+                    await entersState(connection , VoiceConnectionStatus.Ready , 10_000).catch(() =>{
+                        return message.channel.send("Something went wrong please try again").catch(()=>{})
+                    })
+                }
                 queueFunc(queue , message, connection , audioResource)
                 break
             case "search":case "yt_video":
@@ -121,7 +124,7 @@ module.exports = {
                         type:"yt"
                     }
                 })
-        
+                
                 var guild_queue = queue.get(message.guildId)
                 if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
                     var currentAudioRes = connection.state.subscription.player.state.resource
@@ -152,6 +155,11 @@ module.exports = {
                     // .setFooter("By: **" + data.video_details.channel.name+ "**" , data.video_details.channel.iconURL())
                     message.channel.send({embeds:[embed]}).catch(()=>{})
                 }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
+                    if(connection.state.status != VoiceConnectionStatus.Ready){
+                        await entersState(connection , VoiceConnectionStatus.Ready , 10_000).catch(() =>{
+                            return message.channel.send("Something went wrong please try again").catch(()=>{})
+                        })
+                    }
                     queue.get(message.guildId).resources.push(audioResource)
                     var player = queue.get(message.guildId).audioPlayer
                     player.play(audioResource)
