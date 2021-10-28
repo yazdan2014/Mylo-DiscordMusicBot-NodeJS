@@ -535,7 +535,19 @@ client.on("messageCreate", async message => {
             }
             var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
 
+            if(!getVoiceConnection(message.guildId)){
+                let rawConnection = joinVoiceChannel({
+                    channelId: channel.id,
+                    guildId: channel.guild.id,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
+                })
 
+                var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
+                    return message.channel.send("Something went wrong please try again").catch(()=>{})
+                })
+            }else{
+                var connection = getVoiceConnection(message.guildId)
+            }
 
             var is_canceled = false
             var is_collected = false
@@ -620,19 +632,7 @@ client.on("messageCreate", async message => {
                     sentMessage.edit({content: 'You ran out of time!', components: [], embeds:[]})
                 }
             })  
-            if(!getVoiceConnection(message.guildId)){
-                let rawConnection = joinVoiceChannel({
-                    channelId: channel.id,
-                    guildId: channel.guild.id,
-                    adapterCreator: channel.guild.voiceAdapterCreator,
-                })
 
-                var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(()=>{
-                    return message.channel.send("Something went wrong please try again").catch(()=>{})
-                })
-            }else{
-                var connection = getVoiceConnection(message.guildId)
-            }
 
             break
         case "pause":
