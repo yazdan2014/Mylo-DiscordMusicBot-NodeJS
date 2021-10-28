@@ -65,15 +65,15 @@ client.once('ready', () => {
 	console.log('Ready!')
 
     //connecting to the socket 
-    const requestOptions = {
-        method: 'POST',
-        headers:{ 'Content-Type': 'application/json', 'Accept': 'application/json'},
-            body: JSON.stringify({username_or_email: "Mylo", password: "1"})
-        }
-    fetch('/api/login/', requestOptions).then(response=>response.json()).then(data=> {
-        if(data.hasOwnProperty('error')){this.setState({error: data.error})}
-        if(data.hasOwnProperty('message')){this.props.history.push('/home')}
-    })
+    // const requestOptions = {
+    //     method: 'POST',
+    //     headers:{ 'Content-Type': 'application/json', 'Accept': 'application/json'},
+    //         body: JSON.stringify({username_or_email: "Mylo", password: "1"})
+    //     }
+    // fetch('/api/login/', requestOptions).then(response=>response.json()).then(data=> {
+    //     if(data.hasOwnProperty('error')){this.setState({error: data.error})}
+    //     if(data.hasOwnProperty('message')){this.props.history.push('/home')}
+    // })
 
     let mame= ""
     client.guilds.cache.forEach(guild => {
