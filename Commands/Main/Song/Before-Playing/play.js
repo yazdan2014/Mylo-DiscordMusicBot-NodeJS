@@ -16,7 +16,7 @@ module.exports = {
     cooldown: 2,
     description: 'Plays the track with the given name as a query using YouTube search engine or using the given link \*Spotify , SoundCloud links work as well\*',
     async execute(message , client, queue, arg){
-        var query = arg
+        var query = arg.replaceAll("#", "sharp")
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         try{
@@ -76,8 +76,7 @@ module.exports = {
                         type: "sp"                        
                     }
                 })
-                console.log(audioResource.metadata)
-                if(connection.state.status != VoiceConnectionStatus.Ready){
+                if(connection.state.status == VoiceConnectionStatus.Ready){
                     await entersState(connection , VoiceConnectionStatus.Ready , 10_000).catch(() =>{
                         return message.channel.send("Something went wrong please try again").catch(()=>{})
                     })

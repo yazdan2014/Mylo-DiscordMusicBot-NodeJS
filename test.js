@@ -1,10 +1,18 @@
+// const axios = require('axios')
+// // connecting to the socket 
 
-// const play = require("play-dl")
-
-// async function myf(){
-//     if(play.is_expired()){
-//         await play.refreshToken() // This will check if access token has expired or not. If yes, then refresh the token.
+// const requestOptions = {
+//     method: 'POST',
+//     headers:{ 'Content-Type': 'application/json', 'Accept': 'application/json'},
+//     body: JSON.stringify({username_or_email: "Mylo", password: "1"})
 //     }
-//     let sp_data = await play.spotify("https://open.spotify.com/track/62LJFaYihsdVrrkgUOJC05?si=a286792f65e34ee0")
-//     console.log(sp_data.artists[0].name)
-// }
+
+// axios
+//     .post('127.0.0.1:8000/api/login/', requestOptions)
+//     .then(res => {
+//         console.log(`statusCode: ${res.status}`)
+//         console.log(res)
+//     })
+//     .catch(error => {
+//         console.error("ERROREE" + error)
+//     })
