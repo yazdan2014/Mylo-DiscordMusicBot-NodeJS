@@ -23,6 +23,7 @@
     "shuffle-array": "^1.0.1",
     "split-array": "^1.0.1",
     "text-table": "^0.2.0",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "ytdl-core": "^4.9.1"
   }
 }
