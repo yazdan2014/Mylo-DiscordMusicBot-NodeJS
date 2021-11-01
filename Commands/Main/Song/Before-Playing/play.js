@@ -1,7 +1,6 @@
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const play = require("play-dl")
 const ytdl = require("ytdl-core")
-
 /**
  * @param queue @param message @param connection @param audioResource
  */
@@ -32,7 +31,7 @@ module.exports = {
                 channelId: channel.id,
                 guildId: channel.guild.id,
                 adapterCreator: channel.guild.voiceAdapterCreator,
-            })            
+            })
 
         }else{
             var connection = getVoiceConnection(message.guildId)
@@ -51,15 +50,15 @@ module.exports = {
 
                 try{
                     var data = await play.video_info(result[0].url)
-                    // var stream = await play.stream(result[0].url)
-                    var stream = ytdl(result[0].url ,{})
+                    var stream = await play.stream(result[0].url)
                 }catch(error){
                     console.log("error" + error)
                     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
                     return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
                 }
 
-                var audioResource = createAudioResource(stream,{
+                var audioResource = createAudioResource(stream.stream,{
+                    inputType : stream.type,
                     metadata:{
                         messageChannel:message.channel,
                         title: sp_data.name,
@@ -95,9 +94,11 @@ module.exports = {
                 try{
                     if(!data){
                         var data = await play.video_info(result[0].url)
-                        var stream = await play.stream(result[0].url)
+                        // var stream = await play.stream(result[0].url)
+                        var stream = ytdl(result[0].url)
                     }else{
-                        var stream = await play.stream(data.video_details.url)
+                        // var stream = await play.stream(data.video_details.url)
+                        var stream = ytdl(data.video_details.url)
                     }
                 }catch(error){
                     console.log("error" + error)
@@ -105,8 +106,8 @@ module.exports = {
                     return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
                 }
                 
-                var audioResource = createAudioResource(stream.stream,{
-                    inputType : stream.type,
+                var audioResource = createAudioResource(stream,{
+                    // inputType : stream.type,
                     metadata:{
                         messageChannel:message.channel,
                         title: data.video_details.title,
