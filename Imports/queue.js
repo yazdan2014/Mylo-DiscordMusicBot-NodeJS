@@ -18,7 +18,7 @@ function queueSystem(queue , message , connection , audioResource){
         queue.get(message.guildId).resources.push(audioResource)
         
         var embed = new MessageEmbed()
-        .setColor('#00FFFF')
+        .setColor('#00AFF4')
         .setAuthor(message.author.username , message.author.avatarURL())
         .setTitle(audioResource.metadata.title)
         .setURL(audioResource.metadata.url)
