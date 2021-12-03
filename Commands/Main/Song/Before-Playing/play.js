@@ -50,7 +50,7 @@ module.exports = {
                 message.channel.send("Please wait while your play list is being fetched ...")
                 
                 playlist.fetched_tracks.get("1").forEach(async (track) =>{
-                    var res = play.search(`${track.name} ${track.artists[0].name} `, { limit : 1 })
+                    var res = await play.search(`${track.name} ${track.artists[0].name} `, { limit : 1 })
                     try{
                         var data = await play.video_info(res[0].url)
                         var stream = await play.stream(res[0].url)
