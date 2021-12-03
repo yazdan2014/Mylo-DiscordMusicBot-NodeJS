@@ -43,6 +43,9 @@ module.exports = {
         let check = await play.validate(query)
         switch(check){
             case "sp_playlist":
+                if(play.is_expired()){
+                    await play.refreshToken() // This will check if access token has expired or not. If yes, then refresh the token.
+                }
                 var playlist = await play.spotify(query)
                 message.channel.send("Please wait while your play list is being fetched ...")
                 
