@@ -78,10 +78,10 @@ module.exports = {
                         }
                     })
  
-                    queue.get(message.guildId).resources.push(audioResource)
+                    await queue.get(message.guildId).resources.push(audioResource)
                 })
                 if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ){
-                    queue.get(message.guildId).audioPlayer.play(queue.get(message.guildId).resources[0])
+                    await queue.get(message.guildId).audioPlayer.play(queue.get(message.guildId).resources[0])
                 }
                 break
             case "sp_track":
