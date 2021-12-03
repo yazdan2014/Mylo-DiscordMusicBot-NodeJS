@@ -50,6 +50,11 @@ module.exports = {
                 message.channel.send("Please wait while your play list is being fetched ...")
                 
                 playlist.fetched_tracks.get("1").forEach(async (track) =>{
+                    
+                    if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ){
+                        await queue.get(message.guildId).audioPlayer.play(queue.get(message.guildId).resources[0])
+                    }
+
                     var res = await play.search(`${track.name} ${track.artists[0].name} `, { limit : 1 })
                     try{
                         var data = await play.video_info(res[0].url)
@@ -80,9 +85,7 @@ module.exports = {
  
                     await queue.get(message.guildId).resources.push(audioResource)
                 })
-                if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ){
-                    await queue.get(message.guildId).audioPlayer.play(queue.get(message.guildId).resources[0])
-                }
+
                 break
             case "sp_track":
                 if(play.is_expired()){
