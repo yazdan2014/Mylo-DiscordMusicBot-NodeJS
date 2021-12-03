@@ -74,7 +74,7 @@ module.exports = {
                             type: "sp"                        
                         }
                     })
-
+ 
                     queue.get(message.guildId).resources.push(audioResource)
                 })
                 if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ){
