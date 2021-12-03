@@ -183,6 +183,7 @@ client.once('ready', () => {
 })
 
 client.on("messageCreate", async message => {
+        message.delete()
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length).toLowerCase()

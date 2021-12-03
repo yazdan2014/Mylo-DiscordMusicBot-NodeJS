@@ -42,7 +42,45 @@ module.exports = {
 
         let check = await play.validate(query)
         switch(check){
-            
+            case "sp_playlist":
+                var playlist = await play.spotify(query)
+                message.channel.send("Please wait while your play list is being fetched ...")
+                
+                playlist.fetched_tracks.get("1").forEach(track =>{
+                    var res = play.search(`${track.name} ${track.artists[0].name} `, { limit : 1 })
+                    try{
+                        var data = await play.video_info(res[0].url)
+                        var stream = await play.stream(res[0].url)
+                    }catch(error){
+                        console.log("error" + error)
+                        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+                        return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
+                    }
+                    
+                    var audioResource = createAudioResource(stream.stream,{
+                        inputType : stream.type,
+                        metadata:{
+                            messageChannel:message.channel,
+                            title: sp_data.name,
+                            url: sp_data.url,
+                            thumbnail: sp_data.thumbnail.url,
+                            guildId: message.guildId,
+                            secDuration: data.video_details.durationInSec,
+                            rawDuration: data.video_details.durationRaw,
+                            requestedBy: message.author.username,
+                            data: data ,//used for the seek option
+                            is_seeked:false,
+                            channel: data.video_details.channel,
+                            type: "sp"                        
+                        }
+                    })
+
+                    queue.get(message.guildId).resources.push(audioResource)
+                })
+                if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ){
+                    queue.get(message.guildId).audioPlayer.play(queue.get(message.guildId).resources[0])
+                }
+                break
             case "sp_track":
                 if(play.is_expired()){
                     await play.refreshToken() // This will check if access token has expired or not. If yes, then refresh the token.
