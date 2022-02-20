@@ -845,7 +845,6 @@ function secToMinSec(sec){
 
 client.on("voiceStateUpdate" , (oldState , newState)=>{
     if(!oldState.member.user.equals(client.user))return
-    if(oldState.guild.id == "877035736057151539" || oldState.guild.id == "503230476824346645") return
     let connection = getVoiceConnection(oldState.guild.id)
     let player = queue.get(oldState.guild.id).audioPlayer
     if(oldState.channel != null && newState.channel != null){ connection.subscribe(player);console.log("move");return }
@@ -865,6 +864,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     else if(!(oldState.channel == null && newState.channel != null)) return
 
     connection.subscribe(player)
+    if(oldState.guild.id == "877035736057151539" || oldState.guild.id == "503230476824346645") return
     let timeOut = setTimeout(function(){
         try{
             getVoiceConnection(oldState.guild.id).destroy()
