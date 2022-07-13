@@ -6,15 +6,14 @@ module.exports = {
         let prefix = '-'
         if (message.channel.messages.cache.size == 0) return null
         if (!message.channel.manageable) return message.channel.send("channel is not manageable for the bot")
-        message.channel.messages.fetch({limit:100}).then(async (msgs)=>{
-             for (const m of msgs){
+        message.channel.messages.fetch({limit:100}).then(async msgs=>{
+            msgs.forEach(async m =>{
                 if((m.content.startsWith(prefix) || m.author.id == client.user.id) && m.deletable){
                     try {
                         await m.delete()
-                    } catch{}
+                    } catch(err){}
                 }
-            }
-                
+            })
             message.channel.send('done! ✅').then(m =>{
                 m.delete({timeout:5000})
             })
