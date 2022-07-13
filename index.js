@@ -1,5 +1,6 @@
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
+const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
 // const fetch = require('node-fetch');
@@ -9,6 +10,7 @@ const shuffle = require('shuffle-array')
 const changeSeek = require("./ffmpeg")
 const queueFunc = require("./Imports/queue")
 const {toEmoji} = require("number-to-emoji");
+
 
 client.commands = new Collection()
 const fs = require('fs');
