@@ -63,18 +63,6 @@ const queue = new Map()
 
 client.once('ready', () => {
 	console.log('Ready!')
-
-    //connecting to the socket 
-    // const requestOptions = {
-    //     method: 'POST',
-    //     headers:{ 'Content-Type': 'application/json', 'Accept': 'application/json'},
-    //         body: JSON.stringify({username_or_email: "Mylo", password: "1"})
-    //     }
-    // fetch('/api/login/', requestOptions).then(response=>response.json()).then(data=> {
-    //     if(data.hasOwnProperty('error')){this.setState({error: data.error})}
-    //     if(data.hasOwnProperty('message')){this.props.history.push('/home')}
-    // })
-
     let mame= ""
     client.guilds.cache.forEach(guild => {
         var player = createAudioPlayer({
@@ -183,7 +171,6 @@ client.once('ready', () => {
 })
 
 client.on("messageCreate", async message => {
-    if (message.author.id == 539418112492044318) return
     let prefix = "-"
     let commandWithPrefix = message.content.split(" ")[0]
     let command = commandWithPrefix.slice(1 , commandWithPrefix.length).toLowerCase()
@@ -229,201 +216,8 @@ client.on("messageCreate", async message => {
 
     try{
     switch (command) {
-        // case "p": case "play":
-        //     var query = x
-        //     var channel = message.member.voice.channel
-        //     if(!channel) return message.channel.send("Join a channel").catch(()=>{})
-        //     try{
-        //         if((message.member.voice.channel.id !== message.guild.me.voice.channel.id) && queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
-        //     }catch{}
 
-        //     if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel").catch(()=>{})
-        //     if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
-
-        //     if(!getVoiceConnection(message.guildId)){
-        //         let rawConnection = joinVoiceChannel({
-        //             channelId: channel.id,
-        //             guildId: channel.guild.id,
-        //             adapterCreator: channel.guild.voiceAdapterCreator,
-        //         })
-
-        //         var connection = await entersState(rawConnection , VoiceConnectionStatus.Ready , 30_000).catch(() =>{
-        //             return message.channel.send("Something went wrong please try again").catch(()=>{})
-        //         })
-
-        //     }else{
-        //         var connection = getVoiceConnection(message.guildId)
-        //     }
-
-        //     message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
-
-        //     var result = await play.search(query , { limit : 1 })
-        //     if(result.length == 0) return message.channel.send("Couldn't find any result").catch(()=>{})
-        //     console.log(result[0].channel)
-        //     if(result[0].durationInSec > 3600) return message.channel.send("Video selected is longer than ``1 hour``").catch(()=>{})
-
-        //     try{
-        //         var data = await play.video_info(result[0].url)
-        //         var stream = await play.stream(result[0].url)
-        //     }catch(error){
-        //         console.log("error"+error)
-        //         client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
-        //         return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
-        //     }
-
-        //     var audioResource = createAudioResource(stream.stream,{
-        //         inputType : stream.type,
-        //         metadata:{
-        //             messageChannel:message.channel,
-        //             title: result[0].title,
-        //             url: result[0].url,
-        //             thumbnail: result[0].thumbnail.url,
-        //             guildId: message.guildId,
-        //             secDuration: result[0].durationInSec,
-        //             rawDuration: result[0].durationRaw,
-        //             requestedBy: message.author.username,
-        //             data: data ,//used for the seek option
-        //             is_seeked:false,
-        //             channel:result[0].channel,
-        //             streamData:stream
-        //         }
-        //     })
-
-        //     var guild_queue = queue.get(message.guildId)
-        //     if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing) &&  queue.get(message.guildId).resources.length != 0){
-        //         var currentAudioRes = connection.state.subscription.player.state.resource
-        //         var currentTime = new Date().getTime()
-        //         var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
-        //         var timePassedFromMusic = ((currentTime - timeMusicStarted)/1000).toFixed(0)
-        //         let estimated = -timePassedFromMusic
-        //         queue.get(message.guildId).resources.forEach(r=>{
-        //             estimated += r.metadata.secDuration
-        //         })
-        //         if(currentAudioRes.metadata.is_seeked){
-        //             estimated += currentAudioRes.metadata.seekVal
-        //         }
-        //         queue.get(message.guildId).resources.push(audioResource)
-                
-        //         var embed = new MessageEmbed()
-        //         .setColor('#00FFFF')
-        //         .setAuthor(message.author.username , message.author.avatarURL())
-        //         .setTitle(result[0].title)
-        //         .setURL(result[0].url)
-        //         .setThumbnail(result[0].thumbnail.url)
-        //         .addFields(
-        //             { name: '**Duration**', value: result[0].durationRaw  , inline :true},
-        //             { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },
-        //             { name: '**Position in queue**', value: (guild_queue.resources.length-1).toString() , inline:true }
-        //         )
-        //         .setFooter("By: **" + result[0].channel.name+ "**" , result[0].channel.icon.url)
-        //         message.channel.send({embeds:[embed]}).catch(()=>{})
-        //     }else if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle && queue.get(message.guildId).resources.length == 0){
-        //         queue.get(message.guildId).resources.push(audioResource)
-        //         var player = queue.get(message.guildId).audioPlayer
-        //         player.play(audioResource)
-        //     }else{
-        //         message.channel.send("Sorry , something went wrong that caused a queue system crash.We will have to clear your songs in the queue\n. We'll try our best to fix this issue soon...\nThx for you support , Mylo team support").catch(()=>{})
-        //         console.log(queue.get(message.guildId).audioPlayer)
-        //         console.log(queue.get(message.guildId).audioPlayer.state.status)
-        //         console.log(queue.get(message.guildId).resources)
-        //         try{
-        //             if(queue.get(message.guildId).resources.length > 0){
-        //                 queue.get(message.guildId).resources = []
-        //             }
-        //             queue.get(message.guildId).audioPlayer.stop(true);
-        //         }catch{}
-        //     }
-        //     break
         case "skip":case "s":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(!message.member.voice.channel)return message.channel.send("Youre not in a vc")
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
-            let membersCurrentlyVC = message.member.voice.channel.members.filter(member => !member.user.bot && message.author.id != member.id)
-            function playNextSong(){
-                var connection = getVoiceConnection(message.guildId)
-                if(queue.get(message.guildId).resources.length > 1){
-                    connection.state.subscription.player.stop()
-                }else if(queue.get(message.guildId).resources.length == 1 ){
-                    queue.get(message.guildId).loopStatue = false
-                    connection.state.subscription.player.stop()
-                    message.react("✅")
-                }
-                else{
-                    message.channel.send("Nothing is being played").catch(()=>{})
-                }
-            }
-
-            if(membersCurrentlyVC.size == 0 || membersCurrentlyVC.size == 1 ) return playNextSong()
-            
-
-            let userIdsAndVals = new Map()
-            let votes = 1
-            membersCurrentlyVC.forEach(member => userIdsAndVals.set(member.user.id ,{"state":false,"member":member,"clicks":0}))
-
-
-            function newDescTable(){
-                let tableArray = [[`${message.author.username}` , `✅`]] 
-                userIdsAndVals.forEach(member => {
-                    if (member.state){
-                        tableArray.push([`${member.member.user.username}` ,`✅`])
-                    }else{
-                        tableArray.push([`${member.member.user.username}` , `⚪`])
-                    }
-                })
-                return table(tableArray).toString()
-            }  
-
-            var row = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('skip')
-					.setLabel('Skip')
-					.setStyle('SUCCESS')
-			);
-
-            var embedMessage = new MessageEmbed()
-                .setAuthor(`${message.author.username} has started a music skip poll!` ,message.author.avatarURL())
-                .setTitle(`If you want the music to be skipped click on the \"Skip\" button`+ "\n")
-                .setDescription("```\n" + newDescTable() + "```")
-                .setColor("#3BA55C")
-                .setFooter("Members with dj role can use \"fs\" to force skip")
-
-            var sentMessageSkip= await message.channel.send({components:[row],embeds:[embedMessage]}).catch(()=>{})
-
-            const skipComponnentFilter = i => userIdsAndVals.has(i.user.id)
-            const skipcollector = message.channel.createMessageComponentCollector({ filter:skipComponnentFilter, time: 30000 })
-
-            skipcollector.on("collect" ,async interaction =>{
-                if(interaction.customId == "skip"){
-                    userIdsAndVals.get(interaction.user.id).clicks ++
-                    if(userIdsAndVals.get(interaction.user.id).clicks > 3) return interaction.deferUpdate()
-                    if(userIdsAndVals.get(interaction.user.id).clicks > 2) {interaction.deferUpdate();return message.channel.send("KOS KOSH ENGHAD NAZAN ROOSH DIGE KHOB").catch(()=>{})}
-                    if(userIdsAndVals.get(interaction.user.id).state){interaction.deferUpdate();return message.channel.send(`<@${interaction.user.id}> Youve already voted`).catch(()=>{})}
-                    votes++
-
-                    userIdsAndVals.get(interaction.user.id).state = true
-
-                    let newEmbed =  new MessageEmbed()
-                        .setAuthor(`${message.author.username} has started a music skip poll!` ,message.author.avatarURL())
-                        .setTitle(`If you want the music to be skipped click on the \"Skip\" button`+ "\n")
-                        .setDescription("```\n" + newDescTable() + "```")
-                        .setColor("#3BA55C")
-                        .setFooter("Members with dj role can use \"fs\" to force skip")
-                    await interaction.update({ embeds:[newEmbed] })
-
-                    if((votes/(message.member.voice.channel.members.size - 1)) >= 0.5 ){
-                        skipcollector.stop()
-                        return playNextSong()
-                    }
-                }
-            })
-            skipcollector.on("end" ,collected =>{
-                if(collected.size == 0){
-                    sentMessageSkip.edit({content: 'You ran out of time!', components: [], embeds:[]})
-                }
-            })              
-
         break
         case "fs":case "forceskip":
             if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
