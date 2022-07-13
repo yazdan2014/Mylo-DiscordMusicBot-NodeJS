@@ -9,7 +9,7 @@ module.exports = {
         console.log(message.channel.messages.cache.size)
             message.channel.messages.fetch({limit:100}).then(msgs=>{
                 msgs.map(m=>{
-                    if((m.content.startsWith(prefix) || m.author.username == client.user.id) && m.deletable){
+                    if((m.content.startsWith(prefix) || m.author.username === "888431987919028244") && m.deletable){
                         try {
                             m.delete()
                         } catch(err){}
