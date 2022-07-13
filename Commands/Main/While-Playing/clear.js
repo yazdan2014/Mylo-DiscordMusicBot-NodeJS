@@ -5,11 +5,10 @@ module.exports = {
     execute(message , client, queue, arg){
         let prefix = '-'
         if (message.channel.messages.cache.size == 0) return null
-        if (!message.channel.manageable) return message.channel.send("channel is not manageable for the bot") 
-        console.log(message.channel.messages.cache.size)
+        if (!message.channel.manageable) return message.channel.send("channel is not manageable for the bot")
             message.channel.messages.fetch({limit:100}).then(msgs=>{
                 msgs.map(m=>{
-                    if((m.content.startsWith(prefix) || m.author.id === "888431987919028244") && m.deletable){
+                    if((m.content.startsWith(prefix) || m.author.id == client.user.id) && m.deletable){
                         try {
                             m.delete()
                         } catch(err){}
