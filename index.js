@@ -1,6 +1,5 @@
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
-const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 const play = require("play-dl")
 const arraySplitter = require("split-array")
 // const fetch = require('node-fetch');
@@ -216,299 +215,55 @@ client.on("messageCreate", async message => {
 
     try{
     switch (command) {
-        case "fs":case "forceskip":
-            break
         case "seek":
-            var connection = getVoiceConnection(message.guildId)
+            message.channel.send("Seek option is temporarily unavailabe")
+            // var connection = getVoiceConnection(message.guildId)
 
-            if(!connection ) return message.channel.send("Im not in a voice channel").catch(()=>{})
-            if(!connection.state.subscription) return message.channel.send("Nothing is being played").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
+            // if(!connection ) return message.channel.send("Im not in a voice channel").catch(()=>{})
+            // if(!connection.state.subscription) return message.channel.send("Nothing is being played").catch(()=>{})
+            // if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
-            var currentAudioRes = connection.state.subscription.player.state.resource
+            // var currentAudioRes = connection.state.subscription.player.state.resource
     
-            if(!currentAudioRes) return message.channel.send("Nothing is being played").catch(()=>{})
+            // if(!currentAudioRes) return message.channel.send("Nothing is being played").catch(()=>{})
 
-            var seekVal = message.content.slice(commandWithPrefix.length +1 , message.content.length)
-            if(!(seekVal && (/^\d+$/.test(seekVal) || /^[0-5]?[0-9]:[0-5]?[0-9]$/.test(seekVal)))) return message.channel.send("Please choose a correct NATURAL NUMERIC seek value").catch(()=>{})
-            var seekValFinal = 0
+            // var seekVal = message.content.slice(commandWithPrefix.length +1 , message.content.length)
+            // if(!(seekVal && (/^\d+$/.test(seekVal) || /^[0-5]?[0-9]:[0-5]?[0-9]$/.test(seekVal)))) return message.channel.send("Please choose a correct NATURAL NUMERIC seek value").catch(()=>{})
+            // var seekValFinal = 0
 
-            if(seekVal.includes(":")){
-                seekValFinal += parseInt(seekVal.split(":")[0]) * 60 + parseInt(seekVal.split(":")[1])
-            }else{
-                seekValFinal = parseInt(seekVal)
-            }
+            // if(seekVal.includes(":")){
+            //     seekValFinal += parseInt(seekVal.split(":")[0]) * 60 + parseInt(seekVal.split(":")[1])
+            // }else{
+            //     seekValFinal = parseInt(seekVal)
+            // }
 
-            if(seekValFinal < 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" ).catch(()=>{})
+            // if(seekValFinal < 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" ).catch(()=>{})
 
-            var data = currentAudioRes.metadata.data
-            var player = connection.state.subscription.player
-            var ffmpegInstance = changeSeek(seekValFinal.toString(), data.format[0].url)
-            var resource = createAudioResource(ffmpegInstance, {
-                inputType : StreamType.OggOpus,
-                metadata:{
-                    messageChannel: message.channel,
-                    title: currentAudioRes.metadata.title,
-                    url: currentAudioRes.metadata.url,
-                    thumbnail: currentAudioRes.metadata.thumbnail,
-                    guildId: currentAudioRes.metadata.guildId,
-                    secDuration: currentAudioRes.metadata.secDuration,
-                    rawDuration: currentAudioRes.metadata.rawDuration,
-                    requestedBy: currentAudioRes.metadata.requestedBy,
-                    data: currentAudioRes.metadata.data, //used for the seek option
-                    is_seeked:true,
-                    seekVal: seekValFinal,
-                    channel:currentAudioRes.metadata.channel,
-                    type:currentAudioRes.metadata.type
-                }
-             })
-            player.play(resource)
-            break
-        case "search":
-            var query = message.content.slice(commandWithPrefix.length +1 , message.content.length).replaceAll("#", "sharp")
-            var channel = message.member.voice.channel
-            if(!channel) return message.channel.send("Join a channel").catch(()=>{})
-            if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
-
-            var row = new MessageActionRow()
-            .addComponents(
-				new MessageButton()
-                    .setCustomId('previous')
-					.setLabel('ᐊ')
-					.setStyle('SECONDARY'),
-
-                new MessageButton()
-                    .setCustomId('next')
-					.setLabel('ᐅ')
-					.setStyle('SECONDARY'),
-                new MessageButton()
-                    .setCustomId('cancel')
-					.setLabel('cancel')
-					.setStyle('DANGER'),
-			)
-            message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
-            var currentPage = 1
-            var resultsRaw = await play.search(query , { limit : 20 })
-            var results = arraySplitter(resultsRaw,5)
-
-            function createEmbbed(){
-                var embedSearch = new MessageEmbed()
-                .setColor('#1202F7')
-                .setAuthor('Requested By ' + message.author.username , message.author.avatarURL())
-                .setTitle("Send the numbers of your choice or use the cancel button")
-                .setFooter(`Page ${currentPage}/${results.length.toString()}`)
-
-                var outPut = ""
-                results[currentPage-1].forEach(function(result , i) {
-                    var finalResTitle 
-                    if(result.title.length >= 60){
-                        finalResTitle = result.title.substring(0 , 60) + "..."
-                    }else{
-                        finalResTitle = result.title
-                    }
-                    outPut += toEmoji(++i + 5*(currentPage-1)) + "`" + finalResTitle +"`"+ "\n"
-                })
-                embedSearch.setDescription(outPut)
-                return embedSearch
-            }
-
-            var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
-
-            if(!getVoiceConnection(message.guildId)){
-                var connection = joinVoiceChannel({
-                    channelId: channel.id,
-                    guildId: channel.guild.id,
-                    adapterCreator: channel.guild.voiceAdapterCreator,
-                })
-            }else{
-                var connection = getVoiceConnection(message.guildId)
-            }
-
-            var is_canceled = false
-            var is_collected = false
-
-            const messageFilter = m => m.author.id == message.author.id
-            const mcollector = message.channel.createMessageCollector({ filter:messageFilter , time: 30000 });
-
-            const componnentFilter = i => i.user.id == message.author.id
-            const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 30000 });
-            
-            connection.once(VoiceConnectionStatus.Destroyed , ()=>{
-                if(!collector.ended || !mcollector.ended){
-                    collector.stop()
-                    mcollector.stop()
-                    message.channel.send("I got disconnected from the voice channel please try again").catch(()=>{})
-                }
-            })
-
-            mcollector.on('collect', async m => {
-                if(!/^\d+$/.test(m.content)) return message.channel.send("Please select a number between 0 to " + resultsRaw.length.toString()).catch(()=>{})
-                is_collected = true
-                mcollector.stop()
-                collector.stop()
-                
-                let selected = resultsRaw[parseInt(m.content) - 1 ]
-                sentMessage.edit({embeds:[] ,components: [],content:`Selected: \`${selected.title}\``})
-                try{
-                    var data = await play.video_info(selected.url)
-                    var stream = await play.stream(selected.url)
-                }catch(error){
-                    return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
-                }
-
-                var audioResource = createAudioResource(stream.stream,{
-                    inputType : stream.type,
-                    metadata:{
-                        messageChannel:message.channel,
-                        title: selected.title,
-                        url: selected.url,
-                        thumbnail: selected.thumbnail.url,
-                        guildId: message.guildId,
-                        secDuration: selected.durationInSec,
-                        rawDuration: selected.durationRaw,
-                        requestedBy: message.author.username,
-                        data: data ,//used for the seek option
-                        is_seeked:false,
-                        channel:selected.channel,
-                        type:"yt"
-                    }
-                })
-                
-                if(connection.state.status != VoiceConnectionStatus.Ready){
-                    await entersState(connection , VoiceConnectionStatus.Ready , 10_000).catch(() =>{
-                        return message.channel.send("Something went wrong please try again").catch(()=>{})
-                    })
-                }
-                
-                queueFunc(queue , message , connection , audioResource)
-
-            });
-
-            mcollector.on('end', collected => {
-                if(collected.size == 0 && !is_canceled){
-                    message.channel.send("Didn't recive any number").catch(()=>{})
-                }
-            });
-
-            collector.on("collect" , async collected =>{
-                if(collected.customId == "cancel"){
-                    await collected.update({ content: 'Search proccess canceled successfuly!', components: [], embeds:[] });
-                    is_canceled = true
-                    collector.stop()
-                    mcollector.stop()
-                }
-                else if(collected.customId == "next"){
-                    if (currentPage == results.length) return 
-                    currentPage++
-                    await collected.update({embeds:[createEmbbed()]})
-                }
-                else if(collected.customId == "previous"){
-                    if (currentPage == 1) return
-                    currentPage--
-                    await collected.update({embeds:[createEmbbed()]})
-                }
-            })
-            collector.on("end" ,collector =>{
-                if(!is_canceled && !is_collected){
-                    sentMessage.edit({content: 'You ran out of time!', components: [], embeds:[]})
-                }
-            })  
-
-
-            break
-        case "pause":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused ) return message.channel.send("Already paused").catch(()=>{})
-
-            var player = queue.get(message.guildId).audioPlayer
-            player.pause()
-            break
-        case "unpause":case "resume":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing ) return message.channel.send("Not paused").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
-
-            var player = queue.get(message.guildId).audioPlayer
-            player.unpause()
-            break
-        case "q":case "queue":
-            if(!message.member.voice.channel) return message.channel.send("Youre not in a voice channel").catch(()=>{})
-            if(message.guild.me.voice.channelId != message.member.voice.channelId) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
-
-            var guildQueue = queue.get(message.guildId).resources
-            if(guildQueue.length == 0) return  message.channel.send("No song is being played").catch(()=>{})
-            if(guildQueue.length == 1) return  message.channel.send("There's no song in queue if you want to check").catch(()=>{})
-
-            var outPut = ""
-
-            guildQueue.forEach(function(resource,index) {
-                if(index == 0)return outPut += "▶️Now playing **" + resource.metadata.title + "**\n\n"
-                outPut +=  index + ". `" + resource.metadata.title + "`\n"
-            })
-
-            var embed = new MessageEmbed()
-            .setTitle("Queue Review")
-            .setDescription(outPut)
-            .setColor('#DFFF00')
-            .setFooter("requested by:" + message.author.username, message.author.avatarURL())
-
-            message.channel.send({embeds:[embed]})            
-            break
-        case "loop":case "repeat":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
-
-            var statue = message.content.slice(commandWithPrefix.length +1 , message.content.length)
-            if(statue){
-                switch(statue){
-                    case "on":
-                        if(queue.get(message.guildId).loopStatue){  
-                            message.channel.send("Already on🔁").catch(()=>{})
-                        }else{
-                            message.channel.send("Loop is now on🔁").catch(()=>{})
-                            queue.get(message.guildId).loopStatue = true
-                        }
-                        break
-                    case "off":
-                        if(!queue.get(message.guildId).loopStatue){  
-                            message.channel.send("Already off").catch(()=>{})
-                        }else{
-                            message.channel.send("Loop is now off").catch(()=>{})
-                            queue.get(message.guildId).loopStatue = false
-                        }
-                        break
-                }
-            }else{
-                if(!queue.get(message.guildId).loopStatue){
-                    queue.get(message.guildId).loopStatue = true
-                    message.channel.send('Loop is now on 🔁')
-                }else{
-                    queue.get(message.guildId).loopStatue = false
-                    message.channel.send('Loop is now off')
-                }
-            }
+            // var data = currentAudioRes.metadata.data
+            // var player = connection.state.subscription.player
+            // var ffmpegInstance = changeSeek(seekValFinal.toString(), data.format[0].url)
+            // var resource = createAudioResource(ffmpegInstance, {
+            //     inputType : StreamType.OggOpus,
+            //     metadata:{
+            //         messageChannel: message.channel,
+            //         title: currentAudioRes.metadata.title,
+            //         url: currentAudioRes.metadata.url,
+            //         thumbnail: currentAudioRes.metadata.thumbnail,
+            //         guildId: currentAudioRes.metadata.guildId,
+            //         secDuration: currentAudioRes.metadata.secDuration,
+            //         rawDuration: currentAudioRes.metadata.rawDuration,
+            //         requestedBy: currentAudioRes.metadata.requestedBy,
+            //         data: currentAudioRes.metadata.data, //used for the seek option
+            //         is_seeked:true,
+            //         seekVal: seekValFinal,
+            //         channel:currentAudioRes.metadata.channel,
+            //         type:currentAudioRes.metadata.type
+            //     }
+            //  })
+            // player.play(resource)
             break
         case "shuffle":
-            if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
-            if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
-            if(queue.get(message.guildId).resources.length <= 2)return message.channel.send("There's not enough song in your queue , add more").catch(()=>{})
-            if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
-            var currentAudioRes = queue.get(message.guildId).resources[0]
-            var audioRes = queue.get(message.guildId).resources
-            audioRes.shift()
-            var currentAudioResourcesArray = shuffle(audioRes)
-            
-            currentAudioResourcesArray.unshift(currentAudioRes)
-
-            queue.get(message.guildId).resources = currentAudioResourcesArray
-            message.channel.send("Done✅ \nCheck out current queue list using 'q'").catch(()=>{})
             break
         case "help":
             
@@ -663,22 +418,5 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
         }
     } , 5_000)
 })
-
-function playSong(messageOrChannel , connection , audioResource){
-    var player = queue.get(messageOrChannel.guildId).audioPlayer
-    player.play(audioResource)
-}
-
-function isValidHttpUrl(string) {
-    let url;
-    
-    try {
-      url = new URL(string);
-    } catch (_) {
-      return false;  
-    }
-  
-    return url.protocol === "http:" || url.protocol === "https:";
-}
 
 client.login(process.env.TOKEN);

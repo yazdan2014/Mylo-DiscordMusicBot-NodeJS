@@ -4,7 +4,7 @@ const play = require("play-dl")
 /**
  * @param queue @param message @param connection @param audioResource
  */
-const queueFunc = require("../../../../Imports/queue")
+const queueFunc = require("../../../Imports/queue")
 
 play.authorization()
 
