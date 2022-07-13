@@ -21,7 +21,7 @@ module.exports = {
             .setThumbnail(currentAudioRes.metadata.thumbnail)
             try{
                 message.author.send({embeds:[embed]}).catch()
-            }catch(){
+            }catch(err){
                 message.channel.send("Couldn't send you a dm")
             }
             
