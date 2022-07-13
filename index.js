@@ -210,8 +210,9 @@ client.on("messageCreate", async message => {
 
     try{
         if(commandExe) commandExe.execute(message , client, queue, arg)
-    }catch{
+    }catch(err){
         message.channel.send("Something went wrong!").catch(()=>{})
+        console.log(err)
     }
 
     try{
