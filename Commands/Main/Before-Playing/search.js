@@ -13,7 +13,7 @@ module.exports = {
     aliases:["searchsong"],
     description: 'forceskips the current song',
     async execute(message , client, queue, arg){
-        var query = message.content.slice(commandWithPrefix.length +1 , message.content.length).replaceAll("#", "sharp")
+        var query = arg.replaceAll("#", "sharp")
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
