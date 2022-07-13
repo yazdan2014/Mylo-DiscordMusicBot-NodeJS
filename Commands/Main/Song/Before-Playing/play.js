@@ -154,7 +154,7 @@ module.exports = {
                         messageChannel:message.channel,
                         title: data.video_details.title,
                         url: data.video_details.url,
-                        thumbnail: data.video_details.thumbnail.url,
+                        thumbnail: data.video_details.thumbnails[0].url,
                         guildId: message.guildId,
                         secDuration: data.video_details.durationInSec,
                         rawDuration: data.video_details.durationRaw,
