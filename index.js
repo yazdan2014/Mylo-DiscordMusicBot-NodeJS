@@ -263,12 +263,10 @@ client.on("messageCreate", async message => {
             //  })
             // player.play(resource)
             break
-        case "shuffle":
+        case "clear":
 
             break
-        case "help":
-            
-            break
+
         }
     }catch(error){
         client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm. Error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
