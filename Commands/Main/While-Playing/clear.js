@@ -8,7 +8,7 @@ module.exports = {
         if (!message.channel.manageable) return message.channel.send("channel is not manageable for the bot")
         message.channel.messages.fetch({limit:100}).then(async msgs=>{
             let col = msgs.filter(m => (m.content.startsWith(prefix) || m.author.id == client.user.id) && m.deletable)
-            await message.channel.bulkDelete(col)
+            await message.channel.bulkDelete(col,true)
             message.channel.send('done! ✅').then(m =>{
                 setTimeout(() => { m.delete() }, 5000)
             })
