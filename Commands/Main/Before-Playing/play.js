@@ -66,7 +66,7 @@ module.exports = {
                             messageChannel:message.channel,
                             title: track.name,
                             url: track.url,
-                            thumbnail: track.thumbnail.url,
+                            thumbnail: track.thumbnails[0].url,
                             guildId: message.guildId,
                             secDuration: data.video_details.durationInSec,
                             rawDuration: data.video_details.durationRaw,
@@ -186,7 +186,7 @@ module.exports = {
                     .setAuthor(message.author.username , message.author.avatarURL())
                     .setTitle(data.video_details.title)
                     .setURL(data.video_details.url)
-                    .setThumbnail(data.video_details.thumbnail.url)
+                    .setThumbnail(data.video_details.thumbnails[0].url)
                     .addFields(
                         { name: '**Duration**', value: data.video_details.durationRaw  , inline :true},
                         { name: '**Estimated time until playing**', value: secToMinSec(estimated) , inline:true },

@@ -110,7 +110,7 @@ module.exports = {
                     messageChannel:message.channel,
                     title: selected.title,
                     url: selected.url,
-                    thumbnail: selected.thumbnail.url,
+                    thumbnail: selected.thumbnails[0].url,
                     guildId: message.guildId,
                     secDuration: selected.durationInSec,
                     rawDuration: selected.durationRaw,
