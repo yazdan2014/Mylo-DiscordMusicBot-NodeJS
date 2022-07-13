@@ -14,9 +14,10 @@ module.exports = {
                     } catch(err){}
                 }
             })
+            message.channel.send('done! ✅').then(m =>{
+                m.delete({timeou:5000})
+            })
         })
-        message.channel.send('done').then(m =>{
-            m.delete({timeou:5000})
-        })
+
     }
 }
