@@ -264,8 +264,11 @@ client.on("messageCreate", async message => {
             //  })
             // player.play(resource)
             break
-        case "clear":
-
+        case "leavecleanup":
+            let vcMembers = message.member.voice.channel.members.map(m=> m.user.username)
+            queue.get(message.guildId).resources.filter(r =>{
+                vcMembers.includes(r.metadata.requestedBy)
+            })
             break
 
         }

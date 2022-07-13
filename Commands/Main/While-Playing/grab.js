@@ -12,7 +12,7 @@ module.exports = {
         var currentAudioRes = connection.state.subscription.player.state.resource
         if(!currentAudioRes) return message.channel.send("Nothing is being played").catch(()=>{})
 
-        let duration = currentAudioRes.metadata.secDuration
+        let duration = currentAudioRes.metadata.rawDuration
         var embed = new MessageEmbed()
             .setColor('#1202F7')
             .setTitle(currentAudioRes.metadata.title)
