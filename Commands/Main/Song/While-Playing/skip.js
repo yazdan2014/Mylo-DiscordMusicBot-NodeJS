@@ -5,9 +5,9 @@ const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource 
 const table = require('text-table');
 
 module.exports = {
-    name : 'fs',
-    aliases:["forceskip"],
-    description: 'force skips the current song',
+    name : 'skip',
+    aliases:["s"],
+    description: 'starts a skip poll for the current song',
     async execute(message , client, queue, arg){
         if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
         if(!message.member.voice.channel)return message.channel.send("Youre not in a vc")
