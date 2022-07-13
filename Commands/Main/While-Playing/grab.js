@@ -19,6 +19,11 @@ module.exports = {
             .setDescription(`Duration: ${duration}`)
             .setURL(currentAudioRes.metadata.url)
             .setThumbnail(currentAudioRes.metadata.thumbnail)
-            message.author.dmChannel.send({embeds:[embed]}).catch()
+            try{
+                message.author.send({embeds:[embed]}).catch()
+            }catch(){
+                message.channel.send("Couldn't send you a dm")
+            }
+            
     }
 }
