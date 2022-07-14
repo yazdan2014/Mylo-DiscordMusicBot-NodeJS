@@ -14,13 +14,18 @@ module.exports = {
         if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
         if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
 
+        let msg = await message.channel.send("Finding the lyrics...")
+
         let song = queue.get(message.guildId).resources[0].metadata
         let lyrics = await solenolyrics.requestLyricsFor(song.title)
+        if (!lyrics) return message.channel.send("No result was found")
         var embed = new MessageEmbed()
             .setColor('#1202F7')
             .setAuthor('Lyrics🎵' , client.user.avatarURL())
             .setTitle(song.title)
             .setDescription('`'+ lyrics +'`')
         message.channel.send({embeds:[embed]}).catch(()=>{})
+
+        msg.delete()
     }
 }
