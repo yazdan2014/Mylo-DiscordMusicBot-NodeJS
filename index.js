@@ -182,6 +182,13 @@ client.on("messageCreate", async message => {
     const commandExe = client.commands.get(command) || 
                        client.commands.find(c => c.aliases && c.aliases.includes(command))
 
+    if (message.content == "-test"){
+        if(queue.get(message.guildId).resources[1] === queue.get(message.guildId).resources[0]){
+            message.channel.send("true")
+        }else{
+            message.channel.send("false")
+        }
+    }
     // if(!cooldowns.has(commandExe.name)){
     //     cooldowns.set(commandExe.name, new Collection())
     // }
