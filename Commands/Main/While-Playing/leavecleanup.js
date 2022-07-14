@@ -22,7 +22,7 @@ module.exports = {
             console.log(vcMembers)
             rest_res = rest_res.filter(r=>vcMembers.includes(r.metadata.requestedBy))
             console.log(rest_res)
-            queue.get(message.guildId).resources.concat(rest_res)
+            queue.get(message.guildId).resources = queue.get(message.guildId).resources.concat(rest_res)
         }catch(err){console.log(err)}
 
     }

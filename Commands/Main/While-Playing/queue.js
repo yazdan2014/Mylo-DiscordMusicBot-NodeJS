@@ -13,7 +13,7 @@ module.exports = {
 
         var guildQueue = queue.get(message.guildId).resources
         if(guildQueue.length == 0) return  message.channel.send("No song is being played").catch(()=>{})
-        if(guildQueue.length == 1) return  message.channel.send("There's no song in queue if you want to check").catch(()=>{})
+        if(guildQueue.length == 1) return  message.channel.send("There's no song in queue for you to check").catch(()=>{})
 
         var outPut = ""
 
