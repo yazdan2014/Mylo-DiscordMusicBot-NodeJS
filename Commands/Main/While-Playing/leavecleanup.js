@@ -14,8 +14,12 @@ module.exports = {
         if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
         
         let vcMembers = message.member.voice.channel.members.map(m=> m.user.username)
-        console.log(vcMembers + message.author.username)
-        queue.get(message.guildId).resources =  queue.get(message.guildId).resources.shift().filter(r=> vcMembers.includes(r.metadata.requestedBy)).unshift(queue.get(message.guildId).resources[0])
-        
+
+        let rest_res = queue.get(message.guildId).resources.splice(1 , queue.get(message.guildId).resources.length + 1)
+        try{
+            rest_res = current_res.filter(r=>vcMembers.includes(r.metadata.requestBy))
+            queue.get(message.guildId).resources.concat(rest_res)
+        }catch{}
+
     }
 }

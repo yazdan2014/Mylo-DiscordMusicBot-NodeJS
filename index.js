@@ -114,7 +114,7 @@ client.once('ready', () => {
 
         player.on(AudioPlayerStatus.Idle , async () => {
             let currentAudioRes = queue.get(guild.id).resources[0]
-            if(currentAudioRes.metadata){
+            if(currentAudioRes){
                 var messageChannel = currentAudioRes.metadata?.messageChannel
             }
             else var messageChannel = null
