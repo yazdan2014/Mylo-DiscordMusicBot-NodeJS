@@ -17,7 +17,7 @@ module.exports = {
 
         let rest_res = queue.get(message.guildId).resources.splice(1 , queue.get(message.guildId).resources.length + 1)
         try{
-            rest_res = current_res.filter(r=>vcMembers.includes(r.metadata.requestBy))
+            rest_res = rest_res.filter(r=>vcMembers.includes(r.metadata.requestBy))
             queue.get(message.guildId).resources.concat(rest_res)
         }catch{}
 
