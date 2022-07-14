@@ -5,9 +5,6 @@ const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_S
 const play = require('./play')
 const fs = require('../While-Playing/fs')
 
-
-const {joinVoiceChannel , AudioPlayerStatus, VoiceConnectionStatus} = require("@discordjs/voice")
-
 module.exports = {
     name : 'playskip',
     aliases:["ps"],
