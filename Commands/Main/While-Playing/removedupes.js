@@ -18,7 +18,7 @@ module.exports = {
         
         queue.get(message.guildId).resources = queue.get(message.guildId).resources.filter((res , index) =>{ 
             console.log(index)
-            let first = queue.get(message.guildId).resources.find(r=> r.metadata.title == res.title)
+            let first = queue.get(message.guildId).resources.find(r=> r.metadata.title == res.metadata.title)
             console.log(first + "\n ------------------------------ \n " + queue.get(message.guildId).resources.indexOf(first))
             return queue.get(message.guildId).resources.indexOf(first) === index
         })
