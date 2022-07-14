@@ -6,7 +6,7 @@ module.exports = {
     name : 'lyrics',
     aliases:["lr"],
     description: 'Sends an embed message with the current song lyrics',
-    execute(message , client, queue, arg){
+    async execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         if(!channel.joinable) return message.channel.send("Bot doesn't have permission to join your voice channel").catch(()=>{})
