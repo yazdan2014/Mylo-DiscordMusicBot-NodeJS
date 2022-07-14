@@ -9,6 +9,8 @@ module.exports = {
     aliases:[],
     description: 'loops the current song',
     async execute(message , client, queue, arg){
+        var channel = message.member.voice.channel
+        if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
         if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
         if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})

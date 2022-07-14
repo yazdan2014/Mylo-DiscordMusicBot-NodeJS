@@ -7,6 +7,8 @@ module.exports = {
     cooldown: 2,
     description: 'sends a message including the description of the current song',
     execute(message , client, queue, arg){
+        var channel = message.member.voice.channel
+        if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         var currentTime = new Date()
         var connection = getVoiceConnection(message.guildId)
 

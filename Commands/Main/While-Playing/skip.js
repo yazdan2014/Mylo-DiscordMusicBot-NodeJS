@@ -9,6 +9,8 @@ module.exports = {
     aliases:["s"],
     description: 'starts a skip poll for the current song',
     async execute(message , client, queue, arg){
+        var channel = message.member.voice.channel
+        if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
         if(!message.member.voice.channel)return message.channel.send("Youre not in a vc")
         if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})

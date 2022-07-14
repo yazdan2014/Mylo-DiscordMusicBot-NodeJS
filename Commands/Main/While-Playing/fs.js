@@ -10,6 +10,8 @@ module.exports = {
     aliases:["forceskip"],
     description: 'forceskips the current song',
     async execute(message , client, queue, arg){
+        var channel = message.member.voice.channel
+        if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
         if(message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
         if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})

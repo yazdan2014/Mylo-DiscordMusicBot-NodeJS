@@ -11,6 +11,8 @@ module.exports = {
     aliases:[],
     description: 'loops the current song',
     async execute(message , client, queue, arg){
+        var channel = message.member.voice.channel
+        if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         if(!message.guild.me.voice.channel) return message.channel.send("Im not in a vc").catch(()=>{})
         if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
         if(queue.get(message.guildId).resources.length <= 2)return message.channel.send("There's not enough song in your queue , add more").catch(()=>{})
