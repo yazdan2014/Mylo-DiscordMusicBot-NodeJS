@@ -14,7 +14,7 @@ module.exports = {
         if(message.member.voice.channel.id !== message.guild.me.voice.channel.id)return message.channel.send("Youre not in the same voice channel as bot is").catch(()=>{})
         if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
 
-        let song = connection.state.subscription.player.state.resource.metadata
+        let song = queue.get(message.guildId).resources[0].metadata
         let lyrics = await solenolyrics.requestLyricsFor(song.title)
         var embed = new MessageEmbed()
             .setColor('#1202F7')
