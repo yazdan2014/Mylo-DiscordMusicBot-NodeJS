@@ -16,10 +16,11 @@ module.exports = {
         if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
         if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
         
-        console.log(queue.get(message.guildId).resources)
-        queue.get(message.guildId).resources = [...new Set(queue.get(message.guildId).resources)]
-        console.log("==============================")
-        console.log(queue.get(message.guildId).resources)
+        queue.get(message.guildId).resources.filter = queue.get(message.guildId).resources.filter((res , index) =>{ 
+                                                        let first = queue.get(message.guildId).resources.find(r=> r.metadata.title == res.title)
+                                                        return queue.get(message.guildId).resources.indexOf(first) == index
+                                                      })
+        
 
         message.channel.send("done!")
     }
