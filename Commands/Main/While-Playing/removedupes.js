@@ -4,8 +4,8 @@ const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_S
 
 
 module.exports = {
-    name : 'leavecleanup',
-    aliases:["lc" , "lcu"],
+    name : 'removedupes',
+    aliases:["rd"],
     description: 'Removes songs from users that have left the voice channel',
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
@@ -16,7 +16,11 @@ module.exports = {
         if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
         if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
         
+        console.log(queue.get(message.guildId).resources)
         queue.get(message.guildId).resources = [...new Set(queue.get(message.guildId).resources)]
-        message.channel.send("done")
+        console.log("==============================")
+        console.log(queue.get(message.guildId).resources)
+
+        message.channel.send("done!")
     }
 }
