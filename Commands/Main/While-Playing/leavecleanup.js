@@ -15,10 +15,7 @@ module.exports = {
         
         let vcMembers = message.member.voice.channel.members.map(m=> m.user.username)
         console.log(vcMembers + message.author.username)
-        queue.get(message.guildId).resources =  queue.get(message.guildId).resources.filter(function(r, index ){
-                                                    console.log(index)
-                                                    vcMembers.includes(r.metadata.requestedBy) || index== 0
-                                                })
+        queue.get(message.guildId).resources =  queue.get(message.guildId).resources.shift().filter(r=> vcMembers.includes(r.metadata.requestedBy)).unshif(queue.get(message.guildId).resources[0])
         
     }
 }
