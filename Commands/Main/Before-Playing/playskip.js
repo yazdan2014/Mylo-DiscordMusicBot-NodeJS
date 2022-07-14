@@ -17,9 +17,9 @@ module.exports = {
         try{
             if((message.member.voice.channel.id !== message.guild.me.voice.channel.id) && queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
         }catch{}
-
-        if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
+        
         var query = arg.replaceAll("#", "sharp")
+        if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
 
         queue.get(message.guildId).resources.splice(1 , queue.get(message.guildId).resources.length + 1)
         fs.execute(message,client,queue,arg)
