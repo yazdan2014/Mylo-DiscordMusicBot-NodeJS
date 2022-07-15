@@ -1,7 +1,7 @@
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
-
+const queueCom = require("./queue")
 
 module.exports = {
     name : 'removedupes',
@@ -18,11 +18,11 @@ module.exports = {
         
         queue.get(message.guildId).resources = queue.get(message.guildId).resources.filter((res , index) =>{
             let first = queue.get(message.guildId).resources.find(r=> r.metadata.title == res.metadata.title)
-            console.log(queue.get(message.guildId).resources.indexOf(first) === index)
             return queue.get(message.guildId).resources.indexOf(first) === index
         })
         
 
-        message.channel.send("done!")
+        message.channel.send("done! Here's your new queue")
+        queueCom.execute()
     }
 }

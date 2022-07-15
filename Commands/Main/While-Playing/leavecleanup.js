@@ -1,7 +1,7 @@
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
-
+const queueCom = require('./queue')
 
 module.exports = {
     name : 'leavecleanup',
@@ -28,6 +28,7 @@ module.exports = {
             queue.get(message.guildId).resources = queue.get(message.guildId).resources.concat(rest_res)
         }catch(err){console.log(err)}
 
-        message.channel.send("Done, check out your new queue using <prefix>queue")
+        message.channel.send("Done, Heres your new queue :")
+        queueCom.execute()
     }
 }

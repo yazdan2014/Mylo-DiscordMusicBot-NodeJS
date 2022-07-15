@@ -4,7 +4,7 @@ const arraySplitter = require("split-array")
 // const fetch = require('node-fetch');
 
 const shuffle = require('shuffle-array')
-
+const queueCom = require("./queue")
 
 module.exports = {
     name : 'shuffle',
@@ -26,6 +26,7 @@ module.exports = {
         currentAudioResourcesArray.unshift(currentAudioRes)
 
         queue.get(message.guildId).resources = currentAudioResourcesArray
-        message.channel.send("Done✅ \nCheck out current queue list using 'q'").catch(()=>{})
+        message.channel.send("Done✅ Heres your new queue:").catch(()=>{})
+        queueCom.execute()
     }
 }
