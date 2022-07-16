@@ -23,6 +23,6 @@ module.exports = {
         
 
         message.channel.send("done! Here's your new queue")
-        queueCom.execute()
+        queueCom.execute(message , client, queue, arg)
     }
 }

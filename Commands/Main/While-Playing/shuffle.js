@@ -27,6 +27,6 @@ module.exports = {
 
         queue.get(message.guildId).resources = currentAudioResourcesArray
         message.channel.send("Done✅ Heres your new queue:").catch(()=>{})
-        queueCom.execute()
+        queueCom.execute(message , client, queue, arg)
     }
 }

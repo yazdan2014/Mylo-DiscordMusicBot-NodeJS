@@ -29,6 +29,6 @@ module.exports = {
         }catch(err){console.log(err)}
 
         message.channel.send("Done, Heres your new queue :")
-        queueCom.execute()
+        queueCom.execute(message , client, queue, arg)
     }
 }
