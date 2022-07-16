@@ -19,7 +19,7 @@ module.exports = {
         if(queue.get(message.guildId).resources.length > 1){
             connection.state.subscription.player.stop()
         }else if(queue.get(message.guildId).resources.length == 1 ){
-            queue.get(message.guildId).loopStatue = false
+            queue.get(message.guildId).singleLoopStatue = false
             connection.state.subscription.player.stop()
             message.react("✅").catch(()=>{})
         }

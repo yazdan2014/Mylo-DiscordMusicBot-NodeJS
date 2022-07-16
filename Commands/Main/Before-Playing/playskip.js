@@ -18,6 +18,9 @@ module.exports = {
             if((message.member.voice.channel.id !== message.guild.me.voice.channel.id) && queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
         }catch{}
         
+        if (!queue.get(message.guildId).queueloopStatue)return message.channel.send("Queue loop is currently on , please turn it off before using this command")
+
+
         var query = arg.replaceAll("#", "sharp")
         if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
 

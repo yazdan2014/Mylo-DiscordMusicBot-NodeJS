@@ -18,6 +18,9 @@ module.exports = {
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})
         if(!query) return message.channel.send("Search for an actuall song").catch(()=>{})
 
+        if (!queue.get(message.guildId).queueloopStatue)return message.channel.send("Queue loop is currently on , please turn it off before using this command")
+
+
         var row = new MessageActionRow()
         .addComponents(
             new MessageButton()

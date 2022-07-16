@@ -70,7 +70,6 @@ client.once('ready', () => {
                 noSubscriber: NoSubscriberBehavior.Play
             }
         })
-        console.log("creating a queue system map for " + guild.name)
         mame += "creating a queue system map for " + guild.name + "\n"
 
         player.on(AudioPlayerStatus.Playing, () => {
@@ -81,7 +80,7 @@ client.once('ready', () => {
 
             if(!messageChannel) return
             if(!player.state.resource.metadata.is_seeked ){
-                if(queue.get(guild.id).loopStatue) return
+                if(queue.get(guild.id).singleLoopStatue) return
                 switch(player.state.resource.metadata.type){
                     case "yt": messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
                         break
@@ -120,7 +119,7 @@ client.once('ready', () => {
             else var messageChannel = null
             var connection = getVoiceConnection(guild.id)        
             
-            if(queue.get(guild.id).loopStatue){
+            if(queue.get(guild.id).singleLoopStatue){
                 if(!connection) return
                 try{
                     var stream = await play.stream(currentAudioRes.metadata.url)
@@ -161,7 +160,8 @@ client.once('ready', () => {
             resources: [],
             timeMusicStarted: null,
             audioPlayer: player,
-            loopStatue:false
+            singleLoopStatue:false,
+            queueLoopStatue:false
         }
         queue.set(guild.id , queue_constructor)
         
@@ -323,7 +323,7 @@ client.on("guildCreate", guild =>{
 
         var connection = getVoiceConnection(guild.id)        
 
-        if(queue.get(guild.id).loopStatue){
+        if(queue.get(guild.id).singleLoopStatue){
             if(!connection) return
             try{
                 var stream = await play.stream(currentAudioRes.metadata.url)
@@ -365,7 +365,7 @@ client.on("guildCreate", guild =>{
         resources: [],
         timeMusicStarted: null,
         audioPlayer: player,
-        loopStatue:false
+        singleLoopStatue:false
     }
     queue.set(guild.id , queue_constructor)
 })

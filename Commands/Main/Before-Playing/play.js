@@ -39,6 +39,7 @@ module.exports = {
             var connection = getVoiceConnection(message.guildId)
         }
 
+        if (!queue.get(message.guildId).queueloopStatue)return message.channel.send("Queue loop is currently on , please turn it off before adding new songs to the queue")
 
         let check = await play.validate(query)
         switch(check){
