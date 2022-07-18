@@ -38,12 +38,9 @@ module.exports = {
             let player = connection.state.subscription.player
             let url = currentAudioRes.metadata.url
 
-            console.log(player)
-            console.log(url)
-
             const source = await play.stream(url, { seek : seekValFinal }) 
 
-            var resource = createAudioResource(source , {
+            var resource = createAudioResource(source.stream , {
                 inputType : source.type,
                 metadata:{
                     messageChannel: message.channel,
