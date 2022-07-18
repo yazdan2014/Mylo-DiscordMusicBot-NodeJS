@@ -20,7 +20,7 @@ module.exports = {
 
 
         try{
-            if(parseInt(arg) <= 0) return message.channel.send('Please provide a valid number')
+            if(parseInt(arg) <= 0 || !parseInt(arg)) return message.channel.send('Please provide a valid number')
             queue.get(message.guildId).resources = removeAtIndex(queue.get(message.guildId).resources, parseInt(arg))
             message.react("✅").catch(()=>{})
         }catch(err){
