@@ -221,64 +221,6 @@ client.on("messageCreate", async message => {
         message.channel.send("Something went wrong!").catch(()=>{})
         console.log(err)
     }
-
-    try{
-    switch (command) {
-        case "seek":
-            message.channel.send("Seek option is temporarily unavailabe")
-            // var connection = getVoiceConnection(message.guildId)
-
-            // if(!connection ) return message.channel.send("Im not in a voice channel").catch(()=>{})
-            // if(!connection.state.subscription) return message.channel.send("Nothing is being played").catch(()=>{})
-            // if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
-
-            // var currentAudioRes = connection.state.subscription.player.state.resource
-    
-            // if(!currentAudioRes) return message.channel.send("Nothing is being played").catch(()=>{})
-
-            // var seekVal = message.content.slice(commandWithPrefix.length +1 , message.content.length)
-            // if(!(seekVal && (/^\d+$/.test(seekVal) || /^[0-5]?[0-9]:[0-5]?[0-9]$/.test(seekVal)))) return message.channel.send("Please choose a correct NATURAL NUMERIC seek value").catch(()=>{})
-            // var seekValFinal = 0
-
-            // if(seekVal.includes(":")){
-            //     seekValFinal += parseInt(seekVal.split(":")[0]) * 60 + parseInt(seekVal.split(":")[1])
-            // }else{
-            //     seekValFinal = parseInt(seekVal)
-            // }
-
-            // if(seekValFinal < 0 || seekValFinal >= parseInt(currentAudioRes.metadata.secDuration)) return message.channel.send("Please choose a correct value between ``0 to " + currentAudioRes.metadata.secDuration + "`` or ``"+ currentAudioRes.metadata.rawDuration + "``" ).catch(()=>{})
-
-            // var data = currentAudioRes.metadata.data
-            // var player = connection.state.subscription.player
-            // var ffmpegInstance = changeSeek(seekValFinal.toString(), data.format[0].url)
-            // var resource = createAudioResource(ffmpegInstance, {
-            //     inputType : StreamType.OggOpus,
-            //     metadata:{
-            //         messageChannel: message.channel,
-            //         title: currentAudioRes.metadata.title,
-            //         url: currentAudioRes.metadata.url,
-            //         thumbnail: currentAudioRes.metadata.thumbnail,
-            //         guildId: currentAudioRes.metadata.guildId,
-            //         secDuration: currentAudioRes.metadata.secDuration,
-            //         rawDuration: currentAudioRes.metadata.rawDuration,
-            //         requestedBy: currentAudioRes.metadata.requestedBy,
-            //         data: currentAudioRes.metadata.data, //used for the seek option
-            //         is_seeked:true,
-            //         seekVal: seekValFinal,
-            //         channel:currentAudioRes.metadata.channel,
-            //         type:currentAudioRes.metadata.type
-            //     }
-            //  })
-            // player.play(resource)
-            break
-        case "leavecleanup":
-            
-            break
-
-        }
-    }catch(error){
-        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm. Error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
-    }
 })
 
 client.on("guildCreate", guild =>{
