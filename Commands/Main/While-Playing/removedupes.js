@@ -6,7 +6,7 @@ const queueCom = require("./queue")
 module.exports = {
     name : 'removedupes',
     aliases:["rd"],
-    description: 'Removes songs from users that have left the voice channel',
+    description: 'Removes duplicated songs',
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})
