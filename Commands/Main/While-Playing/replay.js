@@ -12,6 +12,6 @@ module.exports = {
     aliases:[],
     description: 'Replays the current song',
     async execute(message , client, queue, arg){
-        replayCom.execute(message , client, queue, 0)
+        replayCom.execute(message , client, queue, "0")
     }
 }
