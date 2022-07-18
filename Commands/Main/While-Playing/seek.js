@@ -41,7 +41,7 @@ module.exports = {
             const source = await play.stream(url, { seek : seekValFinal }) 
             
             var resource = createAudioResource(source , {
-                inputType : StreamType.OggOpus,
+                inputType : source.type,
                 metadata:{
                     messageChannel: message.channel,
                     title: currentAudioRes.metadata.title,
