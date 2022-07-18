@@ -18,12 +18,14 @@ module.exports = {
         if(queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Idle ) return message.channel.send("Nothing is being played").catch(()=>{})
         if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
 
-        try{
-            queue.get(message.guildId).resources = removeAtIndex(queue.get(message.guildId).resources, parseInt(arg))
-        }catch{
-            message.channel.send('Please provide a valid number')
-        }
 
-        message.react("✅").catch(()=>{})
+        try{
+            if(parseInt(arg) <= 0) return message.channel.send('Please provide a valid number')
+            queue.get(message.guildId).resources = removeAtIndex(queue.get(message.guildId).resources, parseInt(arg))
+            message.react("✅").catch(()=>{})
+        }catch(err){
+            message.channel.send('Please provide a valid number')
+        } 
+
     }
 }
