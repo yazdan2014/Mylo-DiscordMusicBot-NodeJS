@@ -7,7 +7,6 @@ const arraySplitter = require("split-array")
 
 const table = require('text-table');
 const shuffle = require('shuffle-array')
-const changeSeek = require("./ffmpeg")
 const {toEmoji} = require("number-to-emoji");
 
 
