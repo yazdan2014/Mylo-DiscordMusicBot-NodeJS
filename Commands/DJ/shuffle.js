@@ -4,7 +4,7 @@ const arraySplitter = require("split-array")
 // const fetch = require('node-fetch');
 
 const shuffle = require('shuffle-array')
-const queueCom = require("./queue")
+const queueCom = require("../everyone/queue")
 
 module.exports = {
     name : 'shuffle',
