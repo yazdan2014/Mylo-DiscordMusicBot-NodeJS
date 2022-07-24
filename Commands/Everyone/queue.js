@@ -6,7 +6,7 @@ const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource 
 module.exports = {
     name : 'queue',
     aliases:["q"],
-    description: 'resumes the paused song',
+    description: 'Sends and embed messages including details about the current queue',
     async execute(message , client, queue, arg){
         if(!message.member.voice.channel) return message.channel.send("Youre not in a voice channel").catch(()=>{})
         if(message.guild.me.voice.channelId != message.member.voice.channelId) return message.channel.send("Youre not in the same channel as bot is").catch(()=>{})
