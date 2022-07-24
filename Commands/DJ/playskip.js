@@ -3,7 +3,7 @@ const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource 
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 
 const play = require('./play')
-const fs = require('../While-Playing/fs')
+const fs = require('../While-Playing/forceskip')
 
 module.exports = {
     name : 'playskip',
