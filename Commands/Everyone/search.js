@@ -11,7 +11,7 @@ const {toEmoji} = require("number-to-emoji");
 module.exports = {
     name : 'search',
     aliases:["searchsong"],
-    description: 'forceskips the current song',
+    description: 'Searches youtube by the query given in the arg, then sends top 20 best results listed in 4 pages',
     async execute(message , client, queue, arg){
         var query = arg.replaceAll("#", "sharp")
         var channel = message.member.voice.channel
