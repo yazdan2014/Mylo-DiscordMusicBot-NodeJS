@@ -7,7 +7,7 @@ const arraySplitter = require("split-array")
 
 module.exports = {
     name : 'forceskip',
-    aliases:["fs"],
+    aliases:["fs","forcestop"],
     description: 'forceskips the current song',
     async execute(message , client, queue, arg){
         var channel = message.member.voice.channel
