@@ -5,7 +5,7 @@ const play = require("play-dl")
 const arraySplitter = require("split-array")
 // const fetch = require('node-fetch');
 
-const queueFunc = require("../../../Imports/queue")
+const queueFunc = require("../../Imports/queue")
 const {toEmoji} = require("number-to-emoji");
 
 module.exports = {
