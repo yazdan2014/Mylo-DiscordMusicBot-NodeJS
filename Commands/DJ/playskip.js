@@ -2,8 +2,8 @@ const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Co
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 
-const play = require('./play')
-const fs = require('../While-Playing/forceskip')
+const play = require('../everyone/play')
+const fs = require('./forceskip')
 
 module.exports = {
     name : 'playskip',
