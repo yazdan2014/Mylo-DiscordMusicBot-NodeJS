@@ -184,7 +184,7 @@ client.on("messageCreate", async message => {
 
         cooldown.get(message.guildId ).count =  cooldown.get(message.guildId).count + 1 
         
-        if(cooldown.get(message.guildId).count > 6){
+        if(cooldown.get(message.guildId).count >= 6){
             cooldown.get(message.guildId ).activated = true
 
             return message.channel.send("CHIill oUt. Please try again in a little!")
