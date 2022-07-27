@@ -184,10 +184,10 @@ client.on("messageCreate", async message => {
 
         cooldown.get(message.guildId ).count =  cooldown.get(message.guildId).count + 1 
         
-        if(cooldown.get(message.guildId).count > 4){
+        if(cooldown.get(message.guildId).count > 6){
             cooldown.get(message.guildId ).activated = true
 
-            return message.channel.send("Chill tf out dude, please wait 5 secs and try again")
+            return message.channel.send("CHIill oUt. Please try again in a little!")
         }
     }else{
         cooldown.set(message.guildId , {
@@ -197,45 +197,11 @@ client.on("messageCreate", async message => {
         console.log("added!")
         setTimeout(()=>{
             cooldown.delete(message.guildId)
-        },7000)
+        },10000)
     }
 
     const commandExe = client.commands.get(command) || 
                        client.commands.find(c => c.aliases && c.aliases.includes(command))
-
-    if (message.content == "-test"){
-        if(queue.get(message.guildId).resources[1] === queue.get(message.guildId).resources[0]){
-            message.channel.send("true")
-        }else{
-            message.channel.send("false")
-        }
-    }
-    // if(!cooldowns.has(commandExe.name)){
-    //     cooldowns.set(commandExe.name, new Collection())
-    // }
-
-    // const current_time = Date.now()
-    // const cooldown_constructor = {last_try: current_time, already_sent:false}
-    // const time_stamps = cooldowns.get(commandExe.name)
-    // const cooldown_amount = (commandExe.cooldown) * 1000
-
-    // if(time_stamps.has(message.guildId)){
-    //     const expiratoin_time = time_stamps.get(message.guildId).last_try + cooldown_amount
-    //     const sent_statue = time_stamps.get(message.guildId).already_sent
-    //     if(current_time < expiratoin_time ){
-    //         const time_left = (expiratoin_time - current_time)
-
-    //         if(!sent_statue){
-    //             return message.reply(`Please ${time_left.toFixed(0)} more seconds before using the command again`)
-    //         }else{
-    //             return
-    //         }
-    //     }
-    // }
-
-    // time_stamps.set(message.guildId, cooldown_constructor)
-    // setTimeout(()=> time_stamps.delete(message.guildId) , cooldown_amount)
-
     try{
         if(commandExe) commandExe.execute(message , client, queue, arg)
     }catch(err){
