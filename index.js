@@ -11,6 +11,7 @@ const {toEmoji} = require("number-to-emoji");
 
 
 client.commands = new Collection()
+
 const fs = require('fs');
 
 fs.readdirSync('./Commands').forEach(dir =>{
@@ -53,8 +54,8 @@ fs.readdirSync('./Commands').forEach(dir =>{
     }
 })
 
-const cooldowns = new Map()
-//{"guild" , "new discord collection"}
+const cooldown = new Map()
+//{"guild" , {"count":int , "activated":bool}}
 
 const queue = new Map()
 //Global queue for the bot. Every guild will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
@@ -177,6 +178,27 @@ client.on("messageCreate", async message => {
 
     if (message.author.equals(client.user)) return;
     if (!message.content.startsWith(prefix)) return;
+
+    if(cooldown.has(message.guildId)){
+        if(cooldown.get(message.guildId).activated) return
+
+        cooldown.get(message.guildId ).count =  cooldown.get(message.guildId).count + 1 
+        
+        if(cooldown.get(message.guildId).count > 4){
+            cooldown.get(message.guildId ).activated = true
+
+            return message.channel.send("Chill tf out dude, please wait 5 secs and try again")
+        }
+    }else{
+        cooldown.set(message.guildId , {
+            count: 1,
+            activated: false
+        })
+        console.log("added!")
+        setTimeout(()=>{
+            cooldown.delete(message.guildId)
+        },7000)
+    }
 
     const commandExe = client.commands.get(command) || 
                        client.commands.find(c => c.aliases && c.aliases.includes(command))
