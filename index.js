@@ -184,20 +184,24 @@ client.on("messageCreate", async message => {
 
         cooldown.get(message.guildId ).count =  cooldown.get(message.guildId).count + 1 
         
-        if(cooldown.get(message.guildId).count >= 6){
+        if(cooldown.get(message.guildId).count >= 5){
             cooldown.get(message.guildId ).activated = true
+            
+            setTimeout(()=>{
+                cooldown.delete(message.guildId)
+            },5000)
 
-            return message.channel.send("CHIill oUt. Please try again in a little!")
+            return message.channel.send("CHIill oUt. Please try again 6secs!")
         }
     }else{
         cooldown.set(message.guildId , {
             count: 1,
             activated: false
         })
-        console.log("added!")
+
         setTimeout(()=>{
-            cooldown.delete(message.guildId)
-        },10000)
+            if(!cooldown.get(message.guildId).activated) cooldown.delete(message.guildId)
+        },5000)
     }
 
     const commandExe = client.commands.get(command) || 
