@@ -248,7 +248,7 @@ module.exports = {
                         requestedBy: message.author.username,
                         is_seeked:false,
                         channel: so_info.user,
-                        type: "sp"                        
+                        type: "so"                        
                     }
                 })
                 if(connection.state.status == VoiceConnectionStatus.Ready){
