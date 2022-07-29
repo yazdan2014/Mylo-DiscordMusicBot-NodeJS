@@ -82,10 +82,10 @@ client.once('ready', () => {
             if(!player.state.resource.metadata.is_seeked ){
                 if(queue.get(guild.id).singleLoopStatue) return
                 switch(player.state.resource.metadata.type){
-                    case "yt": messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
+                    case "yt": messageChannel.send("<:YT:1002557943306256414> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
                         break
 
-                    case "sp": messageChannel.send("<:SP:901160685264855070> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
+                    case "sp": messageChannel.send("<:SP:1002558531557400696> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
                         break
 
                     case "so": messageChannel.send("<:SO:1002539204447846420> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
