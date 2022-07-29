@@ -6,7 +6,13 @@ const play = require("play-dl")
  */
 const queueFunc = require("../../Imports/queue")
 
-play.authorization()
+play.getFreeClientID().then((clientID) => {
+    play.setToken({
+      soundcloud : {
+          client_id : clientID
+      }
+    })
+})
 
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 
