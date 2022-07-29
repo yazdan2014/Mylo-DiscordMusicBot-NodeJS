@@ -218,6 +218,40 @@ module.exports = {
                     }catch{}
                 }
             break
+            case "so_track":
+                var so_info = await play.soundcloud(arg) 
+
+                try{
+                    var stream = await play.stream_from_info(so_info)
+                }catch(error){
+                    console.log("error" + error)
+                    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+                    return message.channel.send("Something went wrong , this is probably because youre trying to play a song which which requires age verification").catch(()=>{})
+                }
+                console.log(so_info)
+                var audioResource = createAudioResource(stream.stream,{
+                    inputType : stream.type,
+                    metadata:{
+                        messageChannel:message.channel,
+                        title: so_info.name,
+                        url: so_info.url,
+                        thumbnail: so_info.thumbnail.url,
+                        guildId: message.guildId,
+                        secDuration: so_info.durationInSec,
+                        rawDuration: null,
+                        requestedBy: message.author.username,
+                        is_seeked:false,
+                        channel: so_info.user,
+                        type: "sp"                        
+                    }
+                })
+                if(connection.state.status == VoiceConnectionStatus.Ready){
+                    await entersState(connection , VoiceConnectionStatus.Ready , 10_000).catch(() =>{
+                        return message.channel.send("Something went wrong please try again").catch(()=>{})
+                    })
+                }
+                queueFunc(queue , message, connection , audioResource)
+            break
             default:
                 message.channel.send("Please use a valid url")
             break

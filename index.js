@@ -189,7 +189,7 @@ client.on("messageCreate", async message => {
             
             setTimeout(()=>{
                 cooldown.delete(message.guildId)
-            },5000)
+            },3000)
 
             return message.channel.send("CHIill oUt. Please try again 6secs!")
         }
