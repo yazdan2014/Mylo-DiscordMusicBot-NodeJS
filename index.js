@@ -87,8 +87,9 @@ client.once('ready', () => {
 
                     case "sp": messageChannel.send("<:SP:901160685264855070> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
                         break
-                    
+
                     case "so": messageChannel.send("<:SO:1002539204447846420> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
+                        break
                 }
             }else{
                 messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`).catch(()=>{})

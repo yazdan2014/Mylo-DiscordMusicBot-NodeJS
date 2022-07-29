@@ -240,14 +240,14 @@ module.exports = {
                     metadata:{
                         messageChannel:message.channel,
                         title: so_info.name,
-                        url: so_info.url,
-                        thumbnail: so_info.thumbnail.url,
+                        url: so_info.permalink,
+                        thumbnail: so_info.thumbnail,
                         guildId: message.guildId,
                         secDuration: so_info.durationInSec,
-                        rawDuration: null,
+                        rawDuration: secToMinSec(so_info.durationInSec),
                         requestedBy: message.author.username,
                         is_seeked:false,
-                        channel: so_info.user,
+                        channel: so_info.user.name,
                         type: "so"                        
                     }
                 })
