@@ -53,7 +53,7 @@ module.exports = {
         var row = new MessageActionRow()
         .addComponents(
             new MessageButton()
-                .setCustomId('skip')
+                .setCustomId('skip'+ message.id)
                 .setLabel('Skip')
                 .setStyle('SUCCESS')
         );
@@ -71,7 +71,7 @@ module.exports = {
         const skipcollector = message.channel.createMessageComponentCollector({ filter:skipComponnentFilter, time: 30000 })
 
         skipcollector.on("collect" ,async interaction =>{
-            if(interaction.customId == "skip"){
+            if(interaction.customId == "skip"+message.id){
                 userIdsAndVals.get(interaction.user.id).clicks ++
                 if(userIdsAndVals.get(interaction.user.id).clicks > 3) return interaction.deferUpdate()
                 if(userIdsAndVals.get(interaction.user.id).clicks > 2) {interaction.deferUpdate();return message.channel.send("KOS KOSH ENGHAD NAZAN ROOSH DIGE KHOB").catch(()=>{})}

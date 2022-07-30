@@ -17,13 +17,13 @@ module.exports = {
         var row = new MessageActionRow()
         .addComponents(
             new MessageButton()
-                .setCustomId('previous')
+                .setCustomId('previous'+message.id)
                 .setLabel('ᐊ')
                 .setStyle('SECONDARY')
                 .setDisabled(true),
 
             new MessageButton()
-                .setCustomId('next')
+                .setCustomId('next'+ message.id)
                 .setLabel('ᐅ')
                 .setStyle('SECONDARY')
         )
@@ -58,10 +58,10 @@ module.exports = {
         const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 120000 });
 
         collector.on("collect" , async collected =>{
-            if(collected.customId == "next"){
+            if(collected.customId == "next"+message.id){
                 currentPage++
             }
-            else if(collected.customId == "previous"){
+            else if(collected.customId == "previous"+message.id){
                 currentPage--
             }
 
