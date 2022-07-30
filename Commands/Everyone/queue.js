@@ -28,7 +28,7 @@ module.exports = {
         )
         var currentPage = 1
         var resultsRaw = guildQueue
-        var results = arraySplitter(resultsRaw,5)
+        var results = arraySplitter(resultsRaw,20)
 
         function createEmbbed(){
             var embedSearch = new MessageEmbed()
