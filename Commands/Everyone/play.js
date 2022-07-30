@@ -109,7 +109,7 @@ module.exports = {
                     inputType : stream.type,
                     metadata:{
                         messageChannel:message.channel,
-                        title: sp_data.name,
+                        title: sp_data.name + sp_data.artists[0],
                         url: sp_data.url,
                         thumbnail: sp_data.thumbnail.url,
                         guildId: message.guildId,
