@@ -19,7 +19,8 @@ module.exports = {
             new MessageButton()
                 .setCustomId('previous')
                 .setLabel('ᐊ')
-                .setStyle('SECONDARY'),
+                .setStyle('SECONDARY')
+                .setDisabled(true),
 
             new MessageButton()
                 .setCustomId('next')
@@ -31,7 +32,7 @@ module.exports = {
         var results = arraySplitter(resultsRaw,20)
 
         function createEmbbed(){
-            var embedSearch = new MessageEmbed()
+            var embedQueue = new MessageEmbed()
             .setColor('#1202F7')
             .setAuthor('Requested By ' + message.author.username , message.author.avatarURL())
             .setTitle("Queue")
@@ -47,8 +48,8 @@ module.exports = {
                 }
                 outPut += toEmoji(++i + 5*(currentPage-1)) + "`" + finalResTitle +"`"+ "\n"
             })
-            embedSearch.setDescription(outPut)
-            return embedSearch
+            embedQueue.setDescription(outPut)
+            return embedQueue
         }
 
         var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
@@ -57,15 +58,19 @@ module.exports = {
         const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 120000 });
 
         collector.on("collect" , async collected =>{
+            if(currentPage == 1) row.components[0].setDisabled(true)
+            else if(row.components[0].disabled) row.components[0].setDisabled(false)
+
+            if (currentPage == results.length) row.components[1].setDisabled(true)
+            else if(row.components[1].disabled) row.components[1].setDisabled(false)
+
             if(collected.customId == "next"){
-                if (currentPage == results.length) return 
                 currentPage++
-                await collected.update({embeds:[createEmbbed()]})
+                await collected.update({embeds:[createEmbbed()], components:[row]})
             }
             else if(collected.customId == "previous"){
-                if (currentPage == 1) return
                 currentPage--
-                await collected.update({embeds:[createEmbbed()]})
+                await collected.update({embeds:[createEmbbed()], components:[row]})
             }
         })
     }
