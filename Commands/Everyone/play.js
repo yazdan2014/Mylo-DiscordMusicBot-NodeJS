@@ -37,9 +37,7 @@ module.exports = {
                 channelId: channel.id,
                 guildId: channel.guild.id,
                 adapterCreator: channel.guild.voiceAdapterCreator,
-            })
-
-            
+            })            
 
         }else{
             var connection = getVoiceConnection(message.guildId)
@@ -59,7 +57,6 @@ module.exports = {
                 playlist.fetched_tracks.get("1").forEach(async (track) =>{
                     var res = await play.search(`${track.name} ${track.artists[0].name} `, { limit : 1 })
                     try{
-                        var data = await play.video_info(res[0].url)
                         var stream = await play.stream(res[0].url)
                     }catch(error){
                         console.log("error" + error)
@@ -75,12 +72,11 @@ module.exports = {
                             url: track.url,
                             thumbnail: track.thumbnail.url,
                             guildId: message.guildId,
-                            secDuration: data.video_details.durationInSec,
-                            rawDuration: data.video_details.durationRaw,
+                            secDuration: res[0].durationInSec,
+                            rawDuration: res[0].durationRaw,
                             requestedBy: message.author.username,
-                            data: data ,//used for the seek option
                             is_seeked:false,
-                            channel: data.video_details.channel,
+                            channel: res[0].channel.name,
                             type: "sp"                        
                         }
                     })
