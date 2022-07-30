@@ -51,6 +51,8 @@ module.exports = {
             return embedSearch
         }
 
+        var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
+
         const componnentFilter = i => i.user.id == message.author.id
         const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 120000 });
 
