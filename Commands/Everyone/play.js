@@ -51,8 +51,9 @@ module.exports = {
                 if(play.is_expired()){
                     await play.refreshToken() // This will check if access token has expired or not. If yes, then refresh the token.
                 }
-                var playlist = await play.spotify(query)
                 message.channel.send("Please wait while your play list is being fetched ...")
+                var playlist = await play.spotify(query)
+                if(playlist.fetched_tracks.get("1").length > 25) return message.channel.send("Your playlist has more than 25 songs")      
                 
                 playlist.fetched_tracks.get("1").forEach(async (track) =>{
                     var res = await play.search(`${track.name} ${track.artists[0].name} `, { limit : 1 })
