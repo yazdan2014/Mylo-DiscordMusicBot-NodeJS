@@ -73,7 +73,7 @@ module.exports = {
                             messageChannel:message.channel,
                             title: track.name,
                             url: track.url,
-                            thumbnail: track.thumbnails[0].url,
+                            thumbnail: track.thumbnail.url,
                             guildId: message.guildId,
                             secDuration: data.video_details.durationInSec,
                             rawDuration: data.video_details.durationRaw,
