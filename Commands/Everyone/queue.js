@@ -58,20 +58,20 @@ module.exports = {
         const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 120000 });
 
         collector.on("collect" , async collected =>{
+            if(collected.customId == "next"){
+                currentPage++
+            }
+            else if(collected.customId == "previous"){
+                currentPage--
+            }
             if(currentPage == 1) row.components[0].setDisabled(true)
             else if(row.components[0].disabled) row.components[0].setDisabled(false)
 
             if (currentPage == results.length) row.components[1].setDisabled(true)
             else if(row.components[1].disabled) row.components[1].setDisabled(false)
 
-            if(collected.customId == "next"){
-                currentPage++
-                await collected.update({embeds:[createEmbbed()], components:[row]})
-            }
-            else if(collected.customId == "previous"){
-                currentPage--
-                await collected.update({embeds:[createEmbbed()], components:[row]})
-            }
+
+            await collected.update({embeds:[createEmbbed()], components:[row]})
         })
     }
 }
