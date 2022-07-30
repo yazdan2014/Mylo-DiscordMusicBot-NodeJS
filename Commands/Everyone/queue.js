@@ -64,6 +64,7 @@ module.exports = {
             else if(collected.customId == "previous"){
                 currentPage--
             }
+
             if(currentPage == 1) row.components[0].setDisabled(true)
             else if(row.components[0].disabled) row.components[0].setDisabled(false)
 
@@ -73,5 +74,11 @@ module.exports = {
 
             await collected.update({embeds:[createEmbbed()], components:[row]})
         })
+
+        collector.on("end" ,collector =>{
+            row.components[0].setDisabled(true)
+            row.components[1].setDisabled(true)
+            sentMessage.edit({content: 'You ran out of time!', components: [row], embeds:[]})
+        })  
     }
 }
