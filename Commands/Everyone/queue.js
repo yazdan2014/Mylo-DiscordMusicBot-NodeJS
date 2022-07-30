@@ -78,7 +78,7 @@ module.exports = {
         collector.on("end" ,collector =>{
             row.components[0].setDisabled(true)
             row.components[1].setDisabled(true)
-            sentMessage.edit({content: 'You ran out of time!', components: [row], embeds:[]})
+            sentMessage.edit({components: [row], embeds:[createEmbbed()]})
         })  
     }
 }
