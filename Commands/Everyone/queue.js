@@ -40,10 +40,10 @@ module.exports = {
             var outPut = ""
             results[currentPage-1].forEach(function(result , i) {
                 var finalResTitle 
-                if(result.title.length >= 60){
-                    finalResTitle = result.title.substring(0 , 60) + "..."
+                if(result.metadata.title.length >= 60){
+                    finalResTitle = result.metadata.title.substring(0 , 60) + "..."
                 }else{
-                    finalResTitle = result.title
+                    finalResTitle = result.metadata.title
                 }
                 outPut += toEmoji(++i + 5*(currentPage-1)) + "`" + finalResTitle +"`"+ "\n"
             })
