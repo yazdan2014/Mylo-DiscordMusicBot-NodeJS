@@ -46,13 +46,13 @@ module.exports = {
                 }else{
                     finalResTitle = result.metadata.title
                 }
-                outPut += toEmoji(++i + 5*(currentPage-1)) + "`" + finalResTitle +"`"+ "\n"
+                outPut += (++i + 5*(currentPage-1)).toString() + ". `" + finalResTitle +"`"+ "\n"
             })
             embedQueue.setDescription(outPut)
             return embedQueue
         }
 
-        var sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
+        message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
 
         const componnentFilter = i => i.user.id == message.author.id
         const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 120000 });
