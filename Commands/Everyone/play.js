@@ -53,7 +53,7 @@ module.exports = {
                 }
                 message.channel.send("Please wait while your play list is being fetched ...")
                 var playlist = await play.spotify(query)
-                if(playlist.fetched_tracks.get("1").length > 25) return message.channel.send("Your playlist has more than 25 songs")      
+                if(playlist.fetched_tracks.get("1").length > 50) return message.channel.send("Your playlist has more than 50 songs")      
                 
                 playlist.fetched_tracks.get("1").forEach(async (track) =>{
                     var res = await play.search(`${track.name} ${track.artists[0].name} `, { limit : 1 })
