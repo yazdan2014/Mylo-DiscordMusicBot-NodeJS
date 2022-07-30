@@ -29,7 +29,7 @@ module.exports = {
         )
         var currentPage = 1
         var resultsRaw = guildQueue
-        var results = arraySplitter(resultsRaw,20)
+        var results = arraySplitter(resultsRaw,15)
 
         function createEmbbed(){
             var embedQueue = new MessageEmbed()
@@ -46,7 +46,7 @@ module.exports = {
                 }else{
                     finalResTitle = result.metadata.title
                 }
-                outPut += (++i + 5*(currentPage-1)).toString() + ". `" + finalResTitle +"`"+ "\n"
+                outPut += (++i + 15*(currentPage-1)).toString() + ". `" + finalResTitle +"`"+ "\n"
             })
             embedQueue.setDescription(outPut)
             return embedQueue
