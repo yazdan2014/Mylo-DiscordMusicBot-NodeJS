@@ -52,7 +52,7 @@ module.exports = {
             return embedQueue
         }
 
-        message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
+        let sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
 
         const componnentFilter = i => i.user.id == message.author.id
         const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 120000 });
