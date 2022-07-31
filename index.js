@@ -206,7 +206,6 @@ client.on("messageCreate", async message => {
             if(!cooldown.get(message.guildId).activated) cooldown.delete(message.guildId)
         },5000)
     }
-    message.channel.
     const commandExe = client.commands.get(command) || 
                        client.commands.find(c => c.aliases && c.aliases.includes(command))
     try{
