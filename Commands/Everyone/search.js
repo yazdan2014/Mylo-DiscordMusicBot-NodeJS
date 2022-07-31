@@ -24,16 +24,16 @@ module.exports = {
         var row = new MessageActionRow()
         .addComponents(
             new MessageButton()
-                .setCustomId('previous'+message.id)
+                .setCustomId('previous')
                 .setLabel('ᐊ')
                 .setStyle('SECONDARY'),
 
             new MessageButton()
-                .setCustomId('next'+message.id)
+                .setCustomId('next')
                 .setLabel('ᐅ')
                 .setStyle('SECONDARY'),
             new MessageButton()
-                .setCustomId('cancel'+message.id)
+                .setCustomId('cancel')
                 .setLabel('cancel')
                 .setStyle('DANGER'),
         )
@@ -142,18 +142,18 @@ module.exports = {
         });
 
         collector.on("collect" , async collected =>{
-            if(collected.customId == "cancel"+message.id){
+            if(collected.customId == "cancel"){
                 await collected.update({ content: 'Search proccess canceled successfuly!', components: [], embeds:[] });
                 is_canceled = true
                 collector.stop()
                 mcollector.stop()
             }
-            else if(collected.customId == "next"+message.id){
+            else if(collected.customId == "next"){
                 if (currentPage == results.length) return 
                 currentPage++
                 await collected.update({embeds:[createEmbbed()]})
             }
-            else if(collected.customId == "previous"+message.id){
+            else if(collected.customId == "previous"){
                 if (currentPage == 1) return
                 currentPage--
                 await collected.update({embeds:[createEmbbed()]})
