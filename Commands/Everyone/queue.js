@@ -55,7 +55,7 @@ module.exports = {
         let sentMessage = await message.channel.send({embeds:[createEmbbed()] ,components: [row]}).catch(()=>{})
 
         const componnentFilter = i => i.user.id == message.author.id
-        const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 120000 });
+        const collector = sentMessage.createMessageComponentCollector({ filter:componnentFilter, time: 120000 });
 
         collector.on("collect" , async collected =>{
             if(collected.customId == "next"+message.id){

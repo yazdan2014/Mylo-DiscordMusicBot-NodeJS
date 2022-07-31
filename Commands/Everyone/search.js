@@ -82,7 +82,7 @@ module.exports = {
         const mcollector = message.channel.createMessageCollector({ filter:messageFilter , time: 30000 });
 
         const componnentFilter = i => i.user.id == message.author.id
-        const collector = message.channel.createMessageComponentCollector({ filter:componnentFilter, time: 30000 });
+        const collector = sentMessage.createMessageComponentCollector({ filter:componnentFilter, time: 30000 });
         
         connection.once(VoiceConnectionStatus.Destroyed , ()=>{
             if(!collector.ended || !mcollector.ended){

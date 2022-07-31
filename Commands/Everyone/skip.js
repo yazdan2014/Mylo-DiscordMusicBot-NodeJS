@@ -68,7 +68,7 @@ module.exports = {
         var sentMessageSkip= await message.channel.send({components:[row],embeds:[embedMessage]}).catch(()=>{})
 
         const skipComponnentFilter = i => userIdsAndVals.has(i.user.id)
-        const skipcollector = message.channel.createMessageComponentCollector({ filter:skipComponnentFilter, time: 30000 })
+        const skipcollector = sentMessageSkip.createMessageComponentCollector({ filter:skipComponnentFilter, time: 30000 })
 
         skipcollector.on("collect" ,async interaction =>{
             if(interaction.customId == "skip"+message.id){
