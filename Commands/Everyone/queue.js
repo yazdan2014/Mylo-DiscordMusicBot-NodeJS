@@ -27,12 +27,14 @@ module.exports = {
                 .setLabel('ᐅ')
                 .setStyle('SECONDARY')
         )
-        if (results.length==1) {
-            row.components[1].setDisabled(true)
-        }
+        
         var currentPage = 1
         var resultsRaw = guildQueue
         var results = arraySplitter(resultsRaw,15)
+        
+        if (results.length==1) {
+            row.components[1].setDisabled(true)
+        }
 
         function createEmbbed(){
             var embedQueue = new MessageEmbed()
