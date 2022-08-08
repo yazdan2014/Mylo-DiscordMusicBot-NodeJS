@@ -26,6 +26,7 @@ module.exports = {
                 .setCustomId('next')
                 .setLabel('ᐅ')
                 .setStyle('SECONDARY')
+                .setDisabled((results.length==1))
         )
         var currentPage = 1
         var resultsRaw = guildQueue
