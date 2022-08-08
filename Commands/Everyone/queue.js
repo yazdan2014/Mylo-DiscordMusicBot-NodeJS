@@ -26,8 +26,10 @@ module.exports = {
                 .setCustomId('next')
                 .setLabel('ᐅ')
                 .setStyle('SECONDARY')
-                .setDisabled((results.length==1))
         )
+        if (results.length==1) {
+            row.components[1].setDisabled(true)
+        }
         var currentPage = 1
         var resultsRaw = guildQueue
         var results = arraySplitter(resultsRaw,15)
