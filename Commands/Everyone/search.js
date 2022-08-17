@@ -40,7 +40,7 @@ module.exports = {
         message.channel.send(`**Searching...**🔎 \`\`${query}\`\``).catch(()=>{})
         var currentPage = 1
         var resultsRaw = await play.search(query , { limit : 20 })
-        if (!resultsRaw) return message.channel.send("Didn't find anything")
+        if (!Array.isArray(resultsRaw)) return message.channel.send("Didn't find anything")
         var results = arraySplitter(resultsRaw,5)
 
         function createEmbbed(){
