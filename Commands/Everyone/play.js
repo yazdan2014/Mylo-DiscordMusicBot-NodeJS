@@ -6,13 +6,7 @@ const play = require("play-dl")
  */
 const queueFunc = require("../../Imports/queue")
 
-play.getFreeClientID().then((clientID) => {
-    play.setToken({
-      soundcloud : {
-          client_id : clientID
-      }
-    })
-})
+
 
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 
@@ -20,7 +14,7 @@ module.exports = {
     name : 'play',
     aliases:["p"],
     cooldown: 2,
-    description: 'Plays the track with the given name as a query using YouTube search engine or using the given link \*Spotify , SoundCloud links work as well\*',
+    description: 'Plays the track with the given name as a query using YouTube search engine or using the given link \*Spotify , SoundCloud links work as well',
     field: "Everyone",
     async execute(message , client, queue, arg){
         var query = arg.replaceAll("#", "sharp")
@@ -223,6 +217,13 @@ module.exports = {
                 }
             break
             case "so_track":
+                play.getFreeClientID().then((clientID) => {
+                    play.setToken({
+                      soundcloud : {
+                          client_id : clientID
+                      }
+                    })
+                })
                 var so_info = await play.soundcloud(arg) 
 
                 try{

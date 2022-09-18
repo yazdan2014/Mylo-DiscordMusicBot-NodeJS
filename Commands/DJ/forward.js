@@ -8,7 +8,7 @@ const play = require("play-dl")
 client.commands = new Collection()
 const fs = require('fs');
 module.exports = {
-    name : 'rewind',
+    name : 'forward',
     aliases:[],
     description: 'Seeks the current song to the point provided by the user',
     field: "DJ",

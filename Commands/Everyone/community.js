@@ -3,7 +3,7 @@ const {joinVoiceChannel , AudioPlayerStatus, VoiceConnectionStatus} = require("@
 module.exports = {
     name : 'community',
     aliases:["support", "server" , "guild"],
-    description: 'Sends the invitaion link for the bot',
+    description: 'Sends the invitaion link to community server',
     field: "Everyone",
     execute(message , client, queue, arg){
         message.channel.send("https://discord.com/oauth2/authorize?client_id=888431987919028244&scope=bot&permissions=3394624")
