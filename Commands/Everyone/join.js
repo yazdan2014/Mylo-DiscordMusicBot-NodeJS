@@ -4,6 +4,7 @@ module.exports = {
     name : 'join',
     aliases:["j","biainjabache", "summon"],
     description: 'Summons bot to the VC',
+    field: "Everyone",
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Youre not in a channel")

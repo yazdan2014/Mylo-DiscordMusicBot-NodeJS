@@ -4,6 +4,7 @@ module.exports = {
     name : 'disconnect',
     aliases:["dc" , "fuckoff", "sik","leave"],
     description: 'Disconnects the bot from the vc',
+    field: "DJ",
     execute(message , client, queue, arg){
         if(!message.member.roles.cache.some(r=> r.name.toLowerCase() == "dj") && !message.member.permissions.has("ADMINISTRATOR")) return message.channel.send("Only members with the \"DJ\" role or administrator permission can control bot actions").catch(()=>{})
         var connection = getVoiceConnection(message.guildId)

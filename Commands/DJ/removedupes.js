@@ -7,6 +7,7 @@ module.exports = {
     name : 'removedupes',
     aliases:["rd"],
     description: 'Removes duplicated songs',
+    field: "DJ",
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

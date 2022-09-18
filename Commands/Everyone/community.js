@@ -1,8 +1,8 @@
 const {joinVoiceChannel , AudioPlayerStatus, VoiceConnectionStatus} = require("@discordjs/voice")
 
 module.exports = {
-    name : 'invite',
-    aliases:[],
+    name : 'community',
+    aliases:["support", "server" , "guild"],
     description: 'Sends the invitaion link for the bot',
     field: "Everyone",
     execute(message , client, queue, arg){

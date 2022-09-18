@@ -9,6 +9,7 @@ module.exports = {
     name : 'playskip',
     aliases:["ps"],
     description: 'Adds a song to the queue and skips straight to it',
+    field: "DJ",
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

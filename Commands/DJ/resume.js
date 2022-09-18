@@ -9,6 +9,7 @@ module.exports = {
     name : 'resume',
     aliases:["unpause"],
     description: 'resumes the paused song',
+    field: "DJ",
     async execute(message , client, queue, arg)
     {
         var channel = message.member.voice.channel

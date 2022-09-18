@@ -8,6 +8,7 @@ module.exports = {
     name : 'skip',
     aliases:["s","stop"],
     description: 'starts a skip poll for the current song',
+    field: "Everyone",
     async execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

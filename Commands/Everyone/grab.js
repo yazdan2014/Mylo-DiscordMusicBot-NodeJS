@@ -5,6 +5,7 @@ module.exports = {
     name : 'grab',
     aliases:[],
     description: 'Sends descprition of the current playing song through direct messages',
+    field: "Everyone",
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

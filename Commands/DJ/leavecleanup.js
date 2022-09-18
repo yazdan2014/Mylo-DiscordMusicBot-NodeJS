@@ -6,6 +6,7 @@ module.exports = {
     name : 'leavecleanup',
     aliases:["lc" , "lcu"],
     description: 'Removes songs from users that have left the voice channel',
+    field: "DJ",
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

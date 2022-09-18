@@ -2,6 +2,7 @@ module.exports = {
     name : 'clear',
     aliases:["clean"],
     description: 'Deletes messages and commands related to mylo',
+    field: "Admin",
     execute(message , client, queue, arg){
         let prefix = '-'
         if (message.channel.messages.cache.size == 0) return null

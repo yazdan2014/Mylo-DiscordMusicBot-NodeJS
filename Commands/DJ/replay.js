@@ -11,6 +11,7 @@ module.exports = {
     name : 'replay',
     aliases:[],
     description: 'Replays the current song',
+    field: "DJ",
     async execute(message , client, queue, arg){
         replayCom.execute(message , client, queue, "0")
     }

@@ -10,6 +10,7 @@ module.exports = {
     name : 'shuffle',
     aliases:[],
     description: 'Shuffles the current queue',
+    field: "DJ",
     async execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

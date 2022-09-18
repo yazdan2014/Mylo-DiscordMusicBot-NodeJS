@@ -8,6 +8,7 @@ module.exports = {
     name : 'loop',
     aliases:[],
     description: 'loops the current song',
+    field: "DJ",
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

@@ -6,6 +6,7 @@ module.exports = {
     name : 'lyrics',
     aliases:["lr"],
     description: 'Sends an embed message with the current song lyrics',
+    field: "Everyone",
     async execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

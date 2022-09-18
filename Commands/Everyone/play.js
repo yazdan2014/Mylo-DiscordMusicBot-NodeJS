@@ -21,6 +21,7 @@ module.exports = {
     aliases:["p"],
     cooldown: 2,
     description: 'Plays the track with the given name as a query using YouTube search engine or using the given link \*Spotify , SoundCloud links work as well\*',
+    field: "Everyone",
     async execute(message , client, queue, arg){
         var query = arg.replaceAll("#", "sharp")
         var channel = message.member.voice.channel

@@ -8,6 +8,7 @@ module.exports = {
     name : 'remove',
     aliases:["r"],
     description: 'Removes the song provided by the user',
+    field: "DJ",
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

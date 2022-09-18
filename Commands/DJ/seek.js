@@ -11,6 +11,7 @@ module.exports = {
     name : 'seek',
     aliases:[],
     description: 'Seeks the current song to the point provided by the user',
+    field: "DJ",
     async execute(message , client, queue, arg){
             var connection = getVoiceConnection(message.guildId)
 

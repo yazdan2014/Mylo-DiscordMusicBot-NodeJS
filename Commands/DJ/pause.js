@@ -9,6 +9,7 @@ module.exports = {
     name : 'pause',
     aliases:[],
     description: 'Pauses the current song',
+    field: "DJ",
     async execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})

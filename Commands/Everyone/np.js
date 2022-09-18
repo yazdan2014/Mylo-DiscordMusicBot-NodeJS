@@ -4,8 +4,8 @@ const {MessageEmbed} = require("discord.js")
 module.exports = {
     name : 'nowplaying',
     aliases:["np" , "current"],
-    cooldown: 2,
     description: 'sends a message including the description of the current song',
+    field: "Everyone",
     execute(message , client, queue, arg){
         var channel = message.member.voice.channel
         if(!channel) return message.channel.send("Join a channel").catch(()=>{})
