@@ -63,14 +63,12 @@ const queue = new Map()
 
 client.once('ready', () => {
 	console.log('Ready!')
-    let mame= ""
     client.guilds.cache.forEach(guild => {
         var player = createAudioPlayer({
             behaviors:{
                 noSubscriber: NoSubscriberBehavior.Play
             }
         })
-        mame += "creating a queue system map for " + guild.name + "\n"
 
         player.on(AudioPlayerStatus.Playing, () => {
             var messageChannel = player.state.resource.metadata.messageChannel
@@ -99,7 +97,7 @@ client.once('ready', () => {
         player.on('error', error => {
             var messageChannel = queue.get(guild.id).messageChannel
             console.log(`Error: ${error} with resource`);
-            client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+            client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(`Server Name: ${guild.name}\nPlayer Error\n` +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
             
             messageChannel.send("Something went wrong").catch(()=>{})
         })
@@ -128,7 +126,7 @@ client.once('ready', () => {
                     var stream = await play.stream(currentAudioRes.metadata.url)
                 }catch(error){
                     console.log("error"+error)
-                    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+                    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(`Server Name: ${guild.name}\nPlayer Error\n` +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
                     return message.channel.send("Something went wrong").catch(()=>{})
                 }
                 var newAudioResource = createAudioResource(stream.stream, {
@@ -169,8 +167,7 @@ client.once('ready', () => {
         queue.set(guild.id , queue_constructor)
         
     })
-    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(mame).catch(()=>{})
-
+    client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Mylo is ready to be used!").catch(()=>{})
 })
 
 client.on("messageCreate", async message => {
@@ -212,6 +209,7 @@ client.on("messageCreate", async message => {
         if(commandExe) commandExe.execute(message , client, queue, arg)
     }catch(err){
         message.channel.send("Something went wrong!").catch(()=>{})
+        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(`Server Name: ${message.guild.name}\nCommand sent by: ${message.author.username} \nCommand Execution Error\n` +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
         console.log(err)
     }
 })
@@ -248,7 +246,7 @@ client.on("guildCreate", guild =>{
     player.on('error', error => {
         var messageChannel = queue.get(guild.id).messageChannel
         console.log(`Error: ${error} with resource`);
-        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+        client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(`Server Name: ${guild.name}\nPlayer Error\n` +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
         messageChannel.send("Something went wrong").catch(()=>{})
     })
 
@@ -264,7 +262,7 @@ client.on("guildCreate", guild =>{
                 var stream = await play.stream(currentAudioRes.metadata.url)
             }catch(error){
                 console.log("error"+error)
-                client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Koonkesha karetoon khoob bood ye error peyda kardinm, error:\n" +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
+                client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send(`Server Name: ${guild.name}\nPlayer Error\n` +`\`\`\`js\n${error} \`\`\` `).catch(()=>{})
                 return message.channel.send("Something went wrong").catch(()=>{})
             }
             var newAudioResource = createAudioResource(stream.stream, {

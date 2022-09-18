@@ -1,7 +1,7 @@
 module.exports = {
     name : 'clear',
     aliases:["clean"],
-    description: 'Deletes messages and commands on the bot in the channel the command is sent',
+    description: 'Deletes messages and commands related to mylo',
     execute(message , client, queue, arg){
         let prefix = '-'
         if (message.channel.messages.cache.size == 0) return null
