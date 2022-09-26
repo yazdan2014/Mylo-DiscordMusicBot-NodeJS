@@ -169,7 +169,7 @@ client.once('ready', () => {
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Mylo is ready to be used!").catch(()=>{})
 })
 
-socket.socketCreator(queue)
+// socket.socketCreator(queue)
 
 client.on("messageCreate", async message => {
     let prefix = "-"
