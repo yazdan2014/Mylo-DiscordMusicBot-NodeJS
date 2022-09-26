@@ -1,12 +1,20 @@
 const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
 const play = require("play-dl")
 
+
 /**
  * @param queue @param message @param connection @param audioResource
  */
 const queueFunc = require("../../Imports/queue")
 
-
+setInterval(function(){ 
+    play.getFreeClientID().then((clientID) => {
+    play.setToken({
+      soundcloud : {
+          client_id : clientID
+      }
+    })
+})}, 7200_000)
 
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 
@@ -39,7 +47,7 @@ module.exports = {
         }
 
         if (queue.get(message.guildId).queueloopStatue)return message.channel.send("Queue loop is currently on , please turn it off before adding new songs to the queue")
-
+        
         let check = await play.validate(query)
         switch(check){
             case "sp_playlist":
@@ -64,6 +72,7 @@ module.exports = {
                         inputType : stream.type,
                         metadata:{
                             messageChannel:message.channel,
+                            msgSent:false,
                             title: track.name,
                             url: track.url,
                             thumbnail: track.thumbnail.url,
@@ -104,8 +113,10 @@ module.exports = {
                     inputType : stream.type,
                     metadata:{
                         messageChannel:message.channel,
+                        msgSent:false,
                         title: sp_data.name + sp_data.artists[0],
-                        url: sp_data.url,
+                        url: result[0].url,
+                        sp_url:sp_data.url,
                         thumbnail: sp_data.thumbnail.url,
                         guildId: message.guildId,
                         secDuration: data.video_details.durationInSec,
@@ -151,6 +162,7 @@ module.exports = {
                     inputType : stream.type,
                     metadata:{
                         messageChannel:message.channel,
+                        msgSent:false,
                         title: data.video_details.title,
                         url: data.video_details.url,
                         thumbnail: data.video_details.thumbnails[0].url,
@@ -217,13 +229,6 @@ module.exports = {
                 }
             break
             case "so_track":
-                play.getFreeClientID().then((clientID) => {
-                    play.setToken({
-                      soundcloud : {
-                          client_id : clientID
-                      }
-                    })
-                })
                 var so_info = await play.soundcloud(arg) 
 
                 try{
@@ -238,6 +243,7 @@ module.exports = {
                     inputType : stream.type,
                     metadata:{
                         messageChannel:message.channel,
+                        msgSent:false,
                         title: so_info.name,
                         url: so_info.permalink,
                         thumbnail: so_info.thumbnail,

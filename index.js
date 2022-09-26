@@ -1,13 +1,8 @@
-const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
-const {StreamType,VoiceConnectionStatus, AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior ,joinVoiceChannel , getVoiceConnection, entersState } = require('@discordjs/voice');
+const { Client , Collection} = require('discord.js');
+const {AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior , getVoiceConnection, entersState } = require('@discordjs/voice');
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_VOICE_STATES" ] });
 const play = require("play-dl")
-const arraySplitter = require("split-array")
 // const fetch = require('node-fetch');
-
-const table = require('text-table');
-const shuffle = require('shuffle-array')
-const {toEmoji} = require("number-to-emoji");
 
 
 client.commands = new Collection()
@@ -57,8 +52,11 @@ fs.readdirSync('./Commands').forEach(dir =>{
 const cooldown = new Map()
 //{"guild" , {"count":int , "activated":bool}}
 
+
 const queue = new Map()
 //Global queue for the bot. Every guild will have a key and value pair in this map. { guild.id , [queue_constructor{resources{} ,nowplayingdate] } }
+
+const socket = require("./Dashboard/socketCreator")
 
 
 client.once('ready', () => {
@@ -77,21 +75,21 @@ client.once('ready', () => {
             queue.get(guild.id).timeMusicStarted = new Date()
 
             if(!messageChannel) return
-            if(!player.state.resource.metadata.is_seeked ){
-                if(queue.get(guild.id).singleLoopStatue) return
-                switch(player.state.resource.metadata.type){
-                    case "yt": messageChannel.send("<:YouTube:1002557862414913657> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
-                        break
 
-                    case "sp": messageChannel.send("<:Spotify:1002558485675905064> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
-                        break
+            if(queue.get(guild.id).singleLoopStatue) return
+            if(player.state.resource.metadata.msgSent) return
+            switch(player.state.resource.metadata.type){
+                case "yt": messageChannel.send("<:YouTube:1002557862414913657> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
+                    break
 
-                    case "so": messageChannel.send("<:SO:1002539204447846420> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
-                        break
-                }
-            }else{
-                messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`).catch(()=>{})
+                case "sp": messageChannel.send("<:Spotify:1002558485675905064> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
+                    break
+
+                case "so": messageChannel.send("<:SO:1002539204447846420> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{}) 
+                    break
             }
+            player.state.resource.metadata.msgSent = true
+            
         });
 
         player.on('error', error => {
@@ -133,6 +131,7 @@ client.once('ready', () => {
                     inputType : stream.type,
                     metadata:{
                         messageChannel: messageChannel,
+                        msgSent:true,
                         title: currentAudioRes.metadata.title,
                         url: currentAudioRes.metadata.url,
                         thumbnail: currentAudioRes.metadata.thumbnail,
@@ -169,6 +168,8 @@ client.once('ready', () => {
     })
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Mylo is ready to be used!").catch(()=>{})
 })
+
+socket.socketCreator(queue)
 
 client.on("messageCreate", async message => {
     let prefix = "-"
@@ -219,7 +220,7 @@ client.on("guildCreate", guild =>{
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Just joined: " + guild.name + "\nThere are currently "+ client.guilds.cache.size  + 'guilds using the coolest bot ever').catch(()=>{})
 
     try{
-        guild.channels.cache.find(c => c.type == "GUILD_TEXT" && guild.me.permissionsIn(c).has('VIEW_CHANNEL') && guild.me.permissionsIn(c).has('SEND_MESSAGES')).send("Thx for adding me!! the bot is currently on BETA demo version.\nIf you've found any bugs please contact the staff in our server.\nFeel free to join our server link is pasted down below:\nhttps://discord.gg/k3EB2MCC").catch(()=>{})
+        guild.channels.cache.find(c => c.type == "GUILD_TEXT" && guild.me.permissionsIn(c).has('VIEW_CHANNEL') && guild.me.permissionsIn(c).has('SEND_MESSAGES')).send("Thx for adding me!! the bot is currently on BETA demo version.\nIf you've found any bugs please contact the staff in our server.\nhttps://discord.gg/ApGSg9c9p6").catch(()=>{})
     }
     catch{}
 
@@ -236,7 +237,7 @@ client.on("guildCreate", guild =>{
         
         queue.get(guild.id).messageChannel = messageChannel
         if(!player.state.resource.metadata.is_seeked ){
-            messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{})
+            if(!player.state.resource.metadata.msgSent) messageChannel.send("<:YT:890526793625391104> **Playing** " + "`" + queue.get(guild.id).resources[0].metadata.title + "`").catch(()=>{})
         }else{
             messageChannel.send(`**Set position to** \`\`${secToMinSec(player.state.resource.metadata.seekVal)}\`\` ⏩`).catch(()=>{})
         }
@@ -269,6 +270,7 @@ client.on("guildCreate", guild =>{
                 inputType : stream.type,
                 metadata:{
                     messageChannel: messageChannel,
+                    msgSent:true,
                     title: currentAudioRes.metadata.title,
                     url: currentAudioRes.metadata.url,
                     thumbnail: currentAudioRes.metadata.thumbnail,
@@ -359,4 +361,4 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     } , 5_000)
 })
 
-client.login(process.env.TOKEN);
+client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.GfpJUx.HUf1tmmpBQbLgOfZUS2KkBoQsLgUa_feyLRtxQ");
