@@ -6,15 +6,16 @@ const play = require("play-dl")
  * @param queue @param message @param connection @param audioResource
  */
 const queueFunc = require("../../Imports/queue")
-
-setInterval(function(){ 
+function freetoken(){ 
     play.getFreeClientID().then((clientID) => {
     play.setToken({
       soundcloud : {
           client_id : clientID
       }
     })
-})}, 7200_000)
+})}
+freetoken()
+setInterval(freetoken, 7200_000)
 
 const { Client , MessageEmbed, MessageActionRow, MessageButton, Interaction , Collection} = require('discord.js');
 

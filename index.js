@@ -361,4 +361,5 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     } , 5_000)
 })
 
-client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.GfpJUx.HUf1tmmpBQbLgOfZUS2KkBoQsLgUa_feyLRtxQ");
+client.login(process.env.TOKEN);
+// client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.GfpJUx.HUf1tmmpBQbLgOfZUS2KkBoQsLgUa_feyLRtxQ");
