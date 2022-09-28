@@ -9,11 +9,13 @@ module.exports = (queue, message, connection)=>{
     }else if(player.state.status == AudioPlayerStatus.Idle){
         connection.send(JSON.stringify({'type': 'status', "status":"idle" , "guildId":message.guildId}))
     }
-    player.on(AudioPlayerStatus.Idle , async () => {
-        connection.send(JSON.stringify({'type': 'status', "status":"idle" , "guildId":message.guildId}))
-    })
-    player.on(AudioPlayerStatus.Playing, () => {
-        let resource =  player.state.resource
-        connection.send(JSON.stringify({'type': 'status', "status":"playing" , "guildId":message.guildId, 'metadata':resource.metadata}))
+
+    player.on("stateChange", (oldState , newState)=>{
+        if(newState.status == AudioPlayerStatus.Idle){
+            connection.send(JSON.stringify({'type': 'status', "status":"idle" , "guildId":message.guildId}))
+        }else if (newState.status == AudioPlayerStatus.Playing){
+            let resource =  player.state.resource
+            connection.send(JSON.stringify({'type': 'status', "status":"playing" , "guildId":message.guildId, 'metadata':resource.metadata}))
+        }
     })
 }

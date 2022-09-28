@@ -46,7 +46,7 @@ module.exports = (guildId, queue)=>{
             player.stop(true)
         })      
     })
-    player.removeListener
+
     player.on(AudioPlayerStatus.Idle , async () => {
         let currentAudioRes = queue.get(guildId).resources[0]
         if(currentAudioRes){
