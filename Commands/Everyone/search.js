@@ -113,6 +113,7 @@ module.exports = {
                 inputType : stream.type,
                 metadata:{
                     messageChannel:message.channel,
+                    timeMusicStarted:[0,null],
                     msgSent:false,
                     title: selected.title,
                     url: selected.url,

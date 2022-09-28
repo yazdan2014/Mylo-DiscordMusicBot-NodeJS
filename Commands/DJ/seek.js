@@ -52,6 +52,7 @@ module.exports = {
                 inputType : source.type,
                 metadata:{
                     messageChannel: message.channel,
+                    timeMusicStarted:[seekValFinal,null],
                     msgSent:false,
                     title: currentAudioRes.metadata.title,
                     url: currentAudioRes.metadata.url,

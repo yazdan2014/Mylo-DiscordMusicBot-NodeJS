@@ -6,7 +6,7 @@ function queueSystem(queue , message , connection , audioResource){
     if((queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Paused || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Playing || queue.get(message.guildId).audioPlayer.state.status == AudioPlayerStatus.Buffering) &&  queue.get(message.guildId).resources.length != 0){
         var currentAudioRes = connection.state.subscription.player.state.resource
         var currentTime = new Date().getTime()
-        var timeMusicStarted = queue.get(message.guildId).timeMusicStarted.getTime()
+        var timeMusicStarted = queue.get(message.guildId).resources[0].metadata.timeMusicStarted[1].getTime()
         var timePassedFromMusic = ((currentTime - timeMusicStarted)/1000).toFixed(0)
         let estimated = -timePassedFromMusic
         queue.get(message.guildId).resources.forEach(r=>{

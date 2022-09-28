@@ -25,7 +25,7 @@ module.exports = {
 
         var outPut = '▬'.repeat(30)
         let duration = currentAudioRes.metadata.secDuration
-        let current = Math.floor(((currentTime.getTime() - queue.get(message.guildId).timeMusicStarted.getTime() )/1000))
+        let current = Math.floor(((currentTime.getTime() - queue.get(message.guildId).resources[0].metadata.timeMusicStarted[1].getTime() )/1000))
         if(currentAudioRes.metadata.is_seeked){
             current += currentAudioRes.metadata.seekVal
         }
