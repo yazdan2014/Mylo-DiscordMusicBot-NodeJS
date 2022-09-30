@@ -1,6 +1,4 @@
 const {AudioPlayerStatus, createAudioResource ,createAudioPlayer , NoSubscriberBehavior , getVoiceConnection, entersState } = require('@discordjs/voice');
-const audioPlayerCreator = require("../../Imports/audioplayerCreator")
-
-module.exports = (queue, message, connection)=>{
-    
+module.exports = function(queue, message, connection){
+    queue.get(message.guildId).audioPlayer.removeAllListeners("stateChange")
 }

@@ -57,14 +57,14 @@ const socket = require("./Dashboard/socketCreator")
 
 
 client.once('ready', () => {
-	console.log('Ready!')
     client.guilds.cache.forEach(guild => {
         audioPlayerCreator(guild.id, queue)
     })
+    console.log('Ready!')
     client.guilds.cache.get("896070505717727272").channels.cache.get("896070505717727278").send("Mylo is ready to be used!").catch(()=>{})
 })
 
-// socket.socketCreator(queue)
+socket.socketCreator(queue)
 
 client.on("messageCreate", async message => {
     let prefix = "-"
@@ -131,7 +131,7 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     if(!oldState.member.user.equals(client.user))return
     let connection = getVoiceConnection(oldState.guild.id)
     let player = queue.get(oldState.guild.id).audioPlayer
-    if(oldState.channel != null && newState.channel != null){ connection.subscribe(player);console.log("move");return }
+    if(oldState.channel != null && newState.channel != null){ connection.subscribe(player);return }
     else if(oldState.channel != null && newState.channel == null ) { 
         try{
             connection.destroy();
@@ -170,5 +170,5 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
     } , 5_000)
 })
 
-client.login(process.env.TOKEN);
-// client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.GfpJUx.HUf1tmmpBQbLgOfZUS2KkBoQsLgUa_feyLRtxQ");
+// client.login(process.env.TOKEN);
+client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.GfpJUx.HUf1tmmpBQbLgOfZUS2KkBoQsLgUa_feyLRtxQ");
