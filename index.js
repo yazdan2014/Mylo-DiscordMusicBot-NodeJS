@@ -171,4 +171,3 @@ client.on("voiceStateUpdate" , (oldState , newState)=>{
 })
 
 // client.login(process.env.TOKEN);
-client.login("ODg4NDMxOTg3OTE5MDI4MjQ0.GfpJUx.HUf1tmmpBQbLgOfZUS2KkBoQsLgUa_feyLRtxQ");
